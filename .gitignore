@@ -1,1 +1,6 @@
 /ECommerce/nbproject/private/
+/vendor/
+/nbproject/private/
+/logs/
+/cache/
+/uploads/

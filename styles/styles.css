@@ -1,6 +1,12 @@
+body{
+   background-color: #5ab2d9; 
+}
 .productPageImage {
     width:200px !important;
 }
-.MyClass {
-    color:red;
+#logo{
+    margin-top: -15px;
+}
+.navbar{
+    background-color: #025274;
 }
