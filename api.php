@@ -28,7 +28,6 @@ DB::$password = '';
 DB::$error_handler = 'sql_error_handler';
 DB::$nonsql_error_handler = 'nonsql_error_handler';
 
-// FIXME: add monolog
 
 function nonsql_error_handler($params) {
     global $app, $log;
@@ -61,23 +60,26 @@ $view->parserOptions = array(
 );
 $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
-/////
-$lang = "";
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
-} else {
-    $lang = "en_US";
-}
+
+
+$lang = "en";
+if(isset($_GET['lang'])){
+   $lang = $_GET['lang'];
+ }
+ 
 
 // First param is the "default language" to use.
 $translator = new Translator($lang, new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
-$translator->setFallbackLocales(['en_US']);
+$translator->setFallbackLocales(['en']);
 // Add a loader that will get the php files we are going to store our translations in
 $translator->addLoader('php', new PhpFileLoader());
 // Add language files here
-$translator->addResource('php', './lang/fr_CA.php', 'fr_CA'); // Norwegian
-$translator->addResource('php', './lang/en_US.php', 'en_US'); // English
+
+$translator->addResource('php', './lang/fr_CA.php', 'fr'); // French
+$translator->addResource('php', './lang/en_US.php', 'en'); // English
+ 
+
 // Add the parserextensions TwigExtension and TranslationExtension to the view
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
@@ -122,12 +124,22 @@ $app->get('/lang', function($lang) use ($app) {
     $productList = DB::query('SELECT * FROM products');
     $app->render('index.html.twig', array('productList' => $productList
     ));
+
 });
+//$app->get('/lang', function($lang) use ($app) {
+//$testList = DB::query('SELECT * FROM users');
+//$app->render('index.html.twig', array('testList' => $testList));
+//    //$app->render('index.html.twig');
+//});
 
 
-$app->get('/product/:ID/', function($ID) use ($app) {
-    $productRecord = DB::queryFirstRow('SELECT * FROM products WHERE ID=%d', $ID);
-    $productRecord['picture'] = base64_encode($productRecord['picture']);
+
+$app->get('/product/:ID/', function($ID) use ($app, $lang) {
+    $lang = "en";
+    $productRecord = DB::queryFirstRow("SELECT * FROM products, products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
+   
+    $productRecord['picture'] = base64_encode( $productRecord['picture']);
+    
 
     $reviewList = DB::query('SELECT ID, productID, customerID, date, review, rating FROM ratingsreviews WHERE productID=%d', $ID);
     $reviewCount = DB::count();

@@ -3,11 +3,11 @@
 {% block title %} {{ "home"|trans }} {% endblock %}
 {% block head %}   
      <!-- Bootstrap Core CSS -->
-        <link href="../../bootstrap/css/shop-item.css" rel="stylesheet">
+        <link href="../../../bootstrap/css/shop-item.css" rel="stylesheet">
         
 
      <!-- jQuery -->
-    <script src="../../js/product_script.js"></script>
+    <script src="../../../js/product_script.js"></script>
 
 {% endblock %}
 
@@ -16,13 +16,11 @@
 {% if product %}
     
 <ul>
-    <li><a href="?lang=en_US">English</a></li>
-    <li><a href="?lang=fr_CA">Francais</a></li> 
-     <li><a href="/product/{{product.ID}}/en">English</a></li>
-     <li><a href="/product/{{product.ID}}/fr">Francais</a></li>
+    <li><a href="?lang=en">English</a></li>
+    <li><a href="?lang=fr   ">Francais</a></li> 
+     
 </ul>
     <div class="container">
-        <span id="productID" visibility="hidden">{{product.ID}}</span>
         <div class="row">
 
           
@@ -33,8 +31,8 @@
                     <img class="img-responsive productPageImage" src="data:image/png;base64,{{product.picture}}" alt="product image" width="200px">
                     <div class="caption-full">
                         <h4 id="productPrice" class="pull-right">${{product.price}}</h4>
-                        <h4>{{product.name_EN}}</h4>
-                        <p>{{product.description_EN}}</p>
+                            <h4>{{product.name}}</h4>
+                        <p>{{product.description}}</p>
                     </div>
                     <div class="ratings">
                         <p class="pull-right" id="reviewCount">{{reviewCount}} {{ "reviews"|trans }}</p>
@@ -47,7 +45,7 @@
                 <div class="well">
 
                     <div class="text-right">
-                        <a class="btn btn-success">Leave a Review</a>
+                        <button class="btn btn-success" id="leaveReview">Leave a Review</button>
                     </div>
 
                     <hr>

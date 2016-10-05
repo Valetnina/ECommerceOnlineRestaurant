@@ -6,3 +6,15 @@ day01--
 
        Olga
 1.TO DO: Initial Setup of the subdomain/user accouts, database import. Start working on the index page. Start populating products table
+
+
+day02--
+
+       Tina
+1.Done: Initial Setup Of the project with according libraries and bilingual support. Started working on the products page
+2.TODO: Continue product view page. Fix the language support
+
+
+       Olga
+1.Done: Setup subdomain and database on the host server. Started working on the index page. 
+2 Continue working on the index page
