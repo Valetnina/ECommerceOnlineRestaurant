@@ -9,6 +9,8 @@ class ComposerStaticInitb62af4a909437467d3a240645bea10a0
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'Symfony\\Component\\Translation\\' => 30,
+            'Symfony\\Bridge\\Twig\\' => 20,
             'Slim\\Views\\' => 11,
         ),
         'P' => 
@@ -22,6 +24,14 @@ class ComposerStaticInitb62af4a909437467d3a240645bea10a0
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Symfony\\Bridge\\Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/twig-bridge',
+        ),
         'Slim\\Views\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/views',
@@ -39,6 +49,10 @@ class ComposerStaticInitb62af4a909437467d3a240645bea10a0
     public static $prefixesPsr0 = array (
         'T' => 
         array (
+            'Twig_Extensions_' => 
+            array (
+                0 => __DIR__ . '/..' . '/twig/extensions/lib',
+            ),
             'Twig_' => 
             array (
                 0 => __DIR__ . '/..' . '/twig/twig/lib',
