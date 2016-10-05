@@ -30,7 +30,6 @@
 //            }
 
             $(document).ready(function () {
-               
                var ratingsResult = "";
                var reviewStars = Math.round($('#averageStars').text());
                for (var i=0; i< reviewStars; i++){
@@ -43,6 +42,9 @@
 
                $('#averageStars').html(ratingsResult);
                
+               $('#leaveReview').click(function() {
+                   $('#reviewForm').show();
+               });
                
                
                

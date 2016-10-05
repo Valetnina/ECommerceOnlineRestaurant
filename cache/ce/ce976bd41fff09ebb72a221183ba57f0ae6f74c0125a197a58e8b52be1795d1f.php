@@ -31,7 +31,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <meta name=\"author\" content=\"Olga_Racu & Tina_Migalatii\">
 
         <!-- Bootstrap Core CSS -->
-        <link href=\"../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
+        <link href=\"../../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
             <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>
 
 
@@ -43,7 +43,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
 <![endif]-->
 
         <!-- Styles -->
-        <link rel=\"stylesheet\" href=\"../../styles/styles.css\" />
+        <link rel=\"stylesheet\" href=\"../../../styles/styles.css\" />
         <title>";
         // line 26
         $this->displayBlock('title', $context, $blocks);
@@ -109,11 +109,11 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
     <!-- /.container -->
    
     <!-- jQuery -->
-<script src=\"../../bootstrap/js/jquery.js\"></script>
+<script src=\"../../../bootstrap/js/jquery.js\"></script>
 
     
     <!-- Bootstrap Core JavaScript -->
-    <script src=\"../../bootstrap/js/bootstrap.min.js\">
+    <script src=\"../../../bootstrap/js/bootstrap.min.js\">
         
         
         
@@ -163,7 +163,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <meta name=\"author\" content=\"Olga_Racu & Tina_Migalatii\">
 
         <!-- Bootstrap Core CSS -->
-        <link href=\"../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
+        <link href=\"../../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
             <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>
 
 
@@ -175,7 +175,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
 <![endif]-->
 
         <!-- Styles -->
-        <link rel=\"stylesheet\" href=\"../../styles/styles.css\" />
+        <link rel=\"stylesheet\" href=\"../../../styles/styles.css\" />
         <title>{% block title %}{% endblock %}</title>
         {% block head %}
         {% endblock %}
@@ -233,11 +233,11 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
     <!-- /.container -->
    
     <!-- jQuery -->
-<script src=\"../../bootstrap/js/jquery.js\"></script>
+<script src=\"../../../bootstrap/js/jquery.js\"></script>
 
     
     <!-- Bootstrap Core JavaScript -->
-    <script src=\"../../bootstrap/js/bootstrap.min.js\">
+    <script src=\"../../../bootstrap/js/bootstrap.min.js\">
         
         
         

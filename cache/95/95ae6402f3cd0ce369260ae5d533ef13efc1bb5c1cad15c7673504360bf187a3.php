@@ -39,11 +39,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
     {
         echo "   
      <!-- Bootstrap Core CSS -->
-        <link href=\"../../bootstrap/css/shop-item.css\" rel=\"stylesheet\">
+        <link href=\"../../../bootstrap/css/shop-item.css\" rel=\"stylesheet\">
         
 
      <!-- jQuery -->
-    <script src=\"../../js/product_script.js\"></script>
+    <script src=\"../../../js/product_script.js\"></script>
 
 ";
     }
@@ -56,22 +56,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
             // line 17
             echo "    
 <ul>
-    <li><a href=\"?lang=en_US\">English</a></li>
-    <li><a href=\"?lang=fr_CA\">Francais</a></li> 
-     <li><a href=\"/product/";
-            // line 21
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "ID", array()), "html", null, true);
-            echo "/en\">English</a></li>
-     <li><a href=\"/product/";
-            // line 22
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "ID", array()), "html", null, true);
-            echo "/fr\">Francais</a></li>
+    <li><a href=\"?lang=en\">English</a></li>
+    <li><a href=\"?lang=fr\">Francais</a></li> 
+     
 </ul>
     <div class=\"container\">
-        <span id=\"productID\" visibility=\"hidden\">";
-            // line 25
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "ID", array()), "html", null, true);
-            echo "</span>
         <div class=\"row\">
 
           
@@ -80,32 +69,32 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
                 <div class=\"thumbnail\">
 
                     <img class=\"img-responsive productPageImage\" src=\"data:image/png;base64,";
-            // line 33
+            // line 31
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "picture", array()), "html", null, true);
             echo "\" alt=\"product image\" width=\"200px\">
                     <div class=\"caption-full\">
                         <h4 id=\"productPrice\" class=\"pull-right\">\$";
-            // line 35
+            // line 33
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "price", array()), "html", null, true);
             echo "</h4>
-                        <h4>";
-            // line 36
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "name_EN", array()), "html", null, true);
+                            <h4>";
+            // line 34
+            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "name", array()), "html", null, true);
             echo "</h4>
                         <p>";
-            // line 37
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "description_EN", array()), "html", null, true);
+            // line 35
+            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "description", array()), "html", null, true);
             echo "</p>
                     </div>
                     <div class=\"ratings\">
                         <p class=\"pull-right\" id=\"reviewCount\">";
-            // line 40
+            // line 38
             echo twig_escape_filter($this->env, (isset($context["reviewCount"]) ? $context["reviewCount"] : null), "html", null, true);
             echo " ";
             echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("reviews"), "html", null, true);
             echo "</p>
                         <p id=\"averageStars\">";
-            // line 41
+            // line 39
             echo twig_escape_filter($this->env, (isset($context["ratingAverage"]) ? $context["ratingAverage"] : null), "html", null, true);
             echo "</p>
                             
@@ -116,7 +105,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
                 <div class=\"well\">
 
                     <div class=\"text-right\">
-                        <a class=\"btn btn-success\">Leave a Review</a>
+                        <button class=\"btn btn-success\" id=\"leaveReview\">Leave a Review</button>
                     </div>
 
                     <hr>
@@ -174,11 +163,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 
 ";
         } else {
-            // line 107
+            // line 105
             echo "    <h1>Product not found. <a href=\"\\\">Click to continue</a></h1>
 ";
         }
-        // line 109
+        // line 107
         echo "  ";
     }
 
@@ -194,7 +183,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 
     public function getDebugInfo()
     {
-        return array (  182 => 109,  178 => 107,  109 => 41,  103 => 40,  97 => 37,  93 => 36,  89 => 35,  84 => 33,  73 => 25,  67 => 22,  63 => 21,  57 => 17,  55 => 16,  52 => 15,  38 => 4,  30 => 3,  11 => 1,);
+        return array (  171 => 107,  167 => 105,  98 => 39,  92 => 38,  86 => 35,  82 => 34,  78 => 33,  73 => 31,  57 => 17,  55 => 16,  52 => 15,  38 => 4,  30 => 3,  11 => 1,);
     }
 
     public function getSource()
@@ -204,11 +193,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 {% block title %} {{ \"home\"|trans }} {% endblock %}
 {% block head %}   
      <!-- Bootstrap Core CSS -->
-        <link href=\"../../bootstrap/css/shop-item.css\" rel=\"stylesheet\">
+        <link href=\"../../../bootstrap/css/shop-item.css\" rel=\"stylesheet\">
         
 
      <!-- jQuery -->
-    <script src=\"../../js/product_script.js\"></script>
+    <script src=\"../../../js/product_script.js\"></script>
 
 {% endblock %}
 
@@ -217,13 +206,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 {% if product %}
     
 <ul>
-    <li><a href=\"?lang=en_US\">English</a></li>
-    <li><a href=\"?lang=fr_CA\">Francais</a></li> 
-     <li><a href=\"/product/{{product.ID}}/en\">English</a></li>
-     <li><a href=\"/product/{{product.ID}}/fr\">Francais</a></li>
+    <li><a href=\"?lang=en\">English</a></li>
+    <li><a href=\"?lang=fr\">Francais</a></li> 
+     
 </ul>
     <div class=\"container\">
-        <span id=\"productID\" visibility=\"hidden\">{{product.ID}}</span>
         <div class=\"row\">
 
           
@@ -234,8 +221,8 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
                     <img class=\"img-responsive productPageImage\" src=\"data:image/png;base64,{{product.picture}}\" alt=\"product image\" width=\"200px\">
                     <div class=\"caption-full\">
                         <h4 id=\"productPrice\" class=\"pull-right\">\${{product.price}}</h4>
-                        <h4>{{product.name_EN}}</h4>
-                        <p>{{product.description_EN}}</p>
+                            <h4>{{product.name}}</h4>
+                        <p>{{product.description}}</p>
                     </div>
                     <div class=\"ratings\">
                         <p class=\"pull-right\" id=\"reviewCount\">{{reviewCount}} {{ \"reviews\"|trans }}</p>
@@ -248,7 +235,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
                 <div class=\"well\">
 
                     <div class=\"text-right\">
-                        <a class=\"btn btn-success\">Leave a Review</a>
+                        <button class=\"btn btn-success\" id=\"leaveReview\">Leave a Review</button>
                     </div>
 
                     <hr>
