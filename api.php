@@ -5,15 +5,28 @@ require_once 'vendor/autoload.php';
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
+//Internationlization
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Translator;
+
+
 // create a log channel
 $log = new Logger('main');
 $log->pushHandler(new StreamHandler('logs/everything.log', Logger::DEBUG));
 $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 
-DB::$dbName = 'cp_4724_fastfood-online';
-DB::$user = 'cp_4724_fastfood-online';
-DB::$password = '+fR-P!TXFqrT';
-DB::$host = 'www.ipd8.info:3306'; // sometimes needed on Mac OSX
+//DB::$dbName = 'cp4724_fastfood';
+//DB::$user = 'cp4724_fastfood-online';
+//DB::$password = 'X]&}^5{TL$)t';
+//DB::$host = 'www.ipd8.info'; // sometimes needed on Mac OSX
+DB::$dbName = 'ecommerce';
+DB::$user = 'root';
+DB::$password = '';
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+
+
 DB::$error_handler = 'sql_error_handler';
 DB::$nonsql_error_handler = 'nonsql_error_handler';
 
@@ -38,38 +51,89 @@ function sql_error_handler($params) {
     die; // don't want to keep going if a query broke
 }
 
+
+
 $app = new \Slim\Slim(array(
     'view' => new \Slim\Views\Twig()
         ));
 
 $view = $app->view();
+
 $view->parserOptions = array(
     'debug' => true,
     'cache' => dirname(__FILE__) . '/cache'
 );
 $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
+/////
+$lang = "";
+if(isset($_GET['lang'])){
+   $lang = $_GET['lang'];
+ }else {
+     $lang = "en_US";     
+ }
+ 
+// First param is the "default language" to use.
+$translator = new Translator($lang, new MessageSelector());
+// Set a fallback language incase you don't have a translation in the default language
+$translator->setFallbackLocales(['en_US']);
+// Add a loader that will get the php files we are going to store our translations in
+$translator->addLoader('php', new PhpFileLoader());
+// Add language files here
+$translator->addResource('php', './lang/fr_CA.php', 'fr_CA'); // Norwegian
+$translator->addResource('php', './lang/en_US.php', 'en_US'); // English
+ 
+
+// Add the parserextensions TwigExtension and TranslationExtension to the view
+$view->parserExtensions = array(
+    new \Slim\Views\TwigExtension(),
+    new TranslationExtension($translator)
+);
+
+
+
+//////
+
 
 \Slim\Route::setDefaultConditions(array(
     'ID' => '\d+'
 ));
 
+
+
 //$app->response->headers->set('content-type', 'application/json');
 
 $app->get('/', function() use ($app) {
-    $testList = DB::query('SELECT * FROM users');
-    $app->render('index.html.twig', array('testList' => $testList));
-   // $app->render('index.html.twig');
+$testList = DB::query('SELECT * FROM users');
+$app->render('index.html.twig', array('testList' => $testList));
+    //$app->render('index.html.twig');
+});
+$app->get('/lang', function($lang) use ($app) {
+$testList = DB::query('SELECT * FROM users');
+$app->render('index.html.twig', array('testList' => $testList));
+    //$app->render('index.html.twig');
 });
 
 
-
-$app->get('/product', function() use ($app) {
-    //$adList = DB::query('SELECT * FROM ad');
-    //$app->render('index.html.twig', array('adList' => $adList));
-    $app->render('product_view.html.twig');
+$app->get('/product/:ID/', function($ID) use ($app) {
+    $productRecord = DB::queryFirstRow('SELECT * FROM products WHERE ID=%d', $ID);
+    $productRecord['picture'] = base64_encode( $productRecord['picture']);
+    
+    $reviewList = DB::query('SELECT ID, productID, customerID, date, review, rating FROM ratingsreviews WHERE productID=%d', $ID);
+    $reviewCount = DB::count();
+    
+    $ratingSum = 0;
+    foreach ($reviewList as $value){
+      $ratingSum += $value['rating'];
+    }
+    $ratingAverage = $ratingSum / $reviewCount;
+    $app->render('product_view.html.twig', array(
+        'product' => $productRecord,
+        'reviewList' => $reviewList,
+        'reviewCount' =>$reviewCount,
+        'ratingAverage' => $ratingAverage
+));
 });
-
 /*
 
     function isTodoItemValid($todo, &$error, $skipID='false') {
