@@ -84,7 +84,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
         </div>
         <div class=\"row\">
 
-            <div class=\"col-md-3 myClass\" style=\"height:800px\">
+            <div class=\"col-md-3 category\">
                 <p class=\"lead\">Categories</p>
                 <div class=\"list-group\">
                     ";
@@ -257,7 +257,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
         </div>
         <div class=\"row\">
 
-            <div class=\"col-md-3 myClass\" style=\"height:800px\">
+            <div class=\"col-md-3 category\">
                 <p class=\"lead\">Categories</p>
                 <div class=\"list-group\">
                     {% for category in categoryList %}

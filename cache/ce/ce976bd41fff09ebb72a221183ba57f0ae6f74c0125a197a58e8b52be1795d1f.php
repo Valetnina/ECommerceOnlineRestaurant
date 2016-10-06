@@ -70,7 +70,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
-                <ul class=\"nav navbar-nav\">
+                <ul class=\"nav navbar-nav fontsize\">
                     <li>
                         <a href=\"#\">About</a>
                     </li>
@@ -83,7 +83,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                 </ul>
                 <img src=\"images/french.png\" width=\"70\" class=\"flag-fr flag-hover\">
                 <img src=\"images/eng.png\" width=\"70\" class=\"flag-en flag-hover\">
-                <ul class=\"nav navbar-nav log-register\">
+                <ul class=\"nav navbar-nav log-register fontsize\">
                     <li>
                         <a href=\"#\">Login</a>
                     </li>
@@ -211,7 +211,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
-                <ul class=\"nav navbar-nav\">
+                <ul class=\"nav navbar-nav fontsize\">
                     <li>
                         <a href=\"#\">About</a>
                     </li>
@@ -224,7 +224,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                 </ul>
                 <img src=\"images/french.png\" width=\"70\" class=\"flag-fr flag-hover\">
                 <img src=\"images/eng.png\" width=\"70\" class=\"flag-en flag-hover\">
-                <ul class=\"nav navbar-nav log-register\">
+                <ul class=\"nav navbar-nav log-register fontsize\">
                     <li>
                         <a href=\"#\">Login</a>
                     </li>
