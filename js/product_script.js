@@ -51,7 +51,7 @@ $(document).ready(function () {
         for (var i; i < id; i++) {
             alert("hello");
             $('#star1').html(i);
-            $('#star1').addClass('glyphicon glyphicon-star reviewEmptyStar').removeClass('glyphicon glyphicon-star-empty reviewEmptyStar');
+            $('#star1').removeClass('glyphicon-star-empty').addClass('reviewEmptyStar');
         }
     });
     $("#postReview").click(function () {

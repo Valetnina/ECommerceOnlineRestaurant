@@ -5,11 +5,38 @@ body{
     width:200px !important;
 }
 #logo{
-    margin-top: -15px;
+    margin-top: -5px;
+    width: 120px;
+    margin-left: -95px;
 }
 .navbar{
     background-color: #025274;
 }
 .reviewEmptyStar {
     font-size: 40px;
+}
+.log-register{
+    float: right;
+    margin-right: 30px;
+}
+.flag{
+   width: 45px; 
+}
+.flag-fr{
+   margin: 3px 10px 0 270px;
+}
+.flag-en{
+   margin-top: 3px;
+}
+.cart{
+    width: 30px;
+    margin-top: -10px;
+    padding-bottom: -5px;
+}
+.fontsize{
+    font-size: 18px;
+}
+.category{
+    margin-left: 30px;
+    height: 800px;
 }

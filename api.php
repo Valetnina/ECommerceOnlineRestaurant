@@ -22,7 +22,7 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 
 DB::$error_handler = 'sql_error_handler';
@@ -129,9 +129,6 @@ $app->get('/', function() use ($app) {
         $product['average'] = $reviewsAverage['average'];
         $product['picture'] = base64_encode($product['picture']);
     }
-    
-    
-
     $app->render('index.html.twig', array('prodList' => $prodList,
         'categoryList' => $categoryList));
     //$app->render('index.html.twig');
