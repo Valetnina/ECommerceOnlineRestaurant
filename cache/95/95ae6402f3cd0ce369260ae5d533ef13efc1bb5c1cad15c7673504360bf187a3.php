@@ -56,98 +56,173 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
         if ((isset($context["product"]) ? $context["product"] : null)) {
             // line 17
             echo "
-        <ul>
-            <li><a href=\"?lang=en\">English</a></li>
-            <li><a href=\"?lang=fr\">Francais</a></li> 
-
-        </ul>
         <div class=\"container\">
             <div class=\"row\">
 
                 <span id=\"productID\" hidden>";
-            // line 26
+            // line 21
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "ID", array()), "html", null, true);
             echo "</span>
                 <div class=\"col-md-9\">
 
-                    <div class=\"thumbnail\">
+                    <div class=\"thumbnail\"> 
 
                         <img class=\"img-responsive productPageImage\" src=\"data:image/png;base64,";
-            // line 31
+            // line 26
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "picture", array()), "html", null, true);
             echo "\" alt=\"product image\" width=\"200px\">
                         <div class=\"caption-full\">
                             <h4 id=\"productPrice\" class=\"pull-right\">\$";
-            // line 33
+            // line 28
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "price", array()), "html", null, true);
             echo "</h4>
                             <h4>";
-            // line 34
+            // line 29
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "name", array()), "html", null, true);
             echo "</h4>
                             <p>";
-            // line 35
+            // line 30
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["product"]) ? $context["product"] : null), "description", array()), "html", null, true);
             echo "</p>
                         </div>
                         <div class=\"ratings\">
                             <p class=\"pull-right\" ><span id=\"reviewCount\">";
-            // line 38
+            // line 33
             echo twig_escape_filter($this->env, (isset($context["reviewCount"]) ? $context["reviewCount"] : null), "html", null, true);
             echo "</span> ";
             echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("reviews"), "html", null, true);
             echo "</p>
-                            <p><span id=\"averageStars\">";
-            // line 39
+                            <p>";
+            // line 34
+            $context["k"] = (isset($context["ratingAverage"]) ? $context["ratingAverage"] : null);
+            // line 35
+            echo "                                ";
+            if (((isset($context["k"]) ? $context["k"] : null) == 0)) {
+                // line 36
+                echo "                                ";
+            } else {
+                // line 37
+                echo "                                    ";
+                $context['_parent'] = $context;
+                $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["k"]) ? $context["k"] : null)));
+                foreach ($context['_seq'] as $context["_key"] => $context["i"]) {
+                    // line 38
+                    echo "                                        <span class=\"glyphicon glyphicon-star\"></span>
+                                    ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['i'], $context['_parent'], $context['loop']);
+                $context = array_intersect_key($context, $_parent) + $_parent;
+                // line 40
+                echo "                                ";
+            }
+            // line 41
+            echo "                                ";
+            $context["t"] = (5 - (isset($context["ratingAverage"]) ? $context["ratingAverage"] : null));
+            // line 42
+            echo "                                ";
+            if (((isset($context["t"]) ? $context["t"] : null) == 5)) {
+                // line 43
+                echo "                                ";
+            } else {
+                // line 44
+                echo "                                    ";
+                $context['_parent'] = $context;
+                $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["t"]) ? $context["t"] : null)));
+                foreach ($context['_seq'] as $context["_key"] => $context["s"]) {
+                    // line 45
+                    echo "                                        <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
+                                    ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['s'], $context['_parent'], $context['loop']);
+                $context = array_intersect_key($context, $_parent) + $_parent;
+                // line 47
+                echo "                                ";
+            }
+            // line 48
+            echo "
+                                <span id=\"averageStars\">";
+            // line 49
             echo twig_escape_filter($this->env, (isset($context["ratingAverage"]) ? $context["ratingAverage"] : null), "html", null, true);
             echo "</span> ";
             echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("stars"), "html", null, true);
             echo "</p>
                         </div>
                     </div>
-                        
-                        <div class=\"well\">
+
+                    <div class=\"well\">
 
                         <div class=\"text-right\">
-                        <button class=\"btn btn-success\" id=\"leaveReview\">";
-            // line 46
-            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Leave a Review"), "html", null, true);
-            echo "</button>
-                    </div>
-                        <div id =\"reviewForm\">
-                            <label>";
-            // line 49
-            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Review"), "html", null, true);
-            echo ": </label><br><textarea rows=\"4\" cols=\"80\" name=\"reviewText\"></textarea><span class=\"error\"></span><br><br>
-                            <label>";
-            // line 50
-            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Rate"), "html", null, true);
-            echo ": </label>
-                            <div id=\"selectedRating\">
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star1\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star2\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star3\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star4\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star5\"></span>
-                            </div>        
-                               <br><br> <button class=\"btn btn-success\" id=\"postReview\">";
-            // line 58
+                            <button class=\"btn btn-success\" id=\"leaveReview\">";
+            // line 56
             echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Leave a Review"), "html", null, true);
             echo "</button>
                         </div>
-                            
-                       <hr>
-                       <div id=\"reviewList\">
-                       
-                       </div>
-                    </div>
-  <li><button id=\"page\">1</button></li>
-  <li><button id=\"page\">1</button></li>
+                        <div id =\"reviewForm\">
+                            <label>";
+            // line 59
+            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Review"), "html", null, true);
+            echo ": </label><br><textarea rows=\"4\" cols=\"80\" name=\"reviewText\"></textarea><span class=\"error\"></span><br><br>
+                            <label>";
+            // line 60
+            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Rate"), "html", null, true);
+            echo ": </label>
+                            <div id=\"selectedRating\">
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star1\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star2\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star3\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star4\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star5\"></span>
+                            </div>        
+                            <br><br> <button class=\"btn btn-success\" id=\"postReview\">";
+            // line 68
+            echo twig_escape_filter($this->env, $this->env->getExtension('translator')->trans("Leave a Review"), "html", null, true);
+            echo "</button>
+                        </div>
 
-  <li><a href=\"#\">3</a></li>
-  <li><a href=\"#\">4</a></li>
-  <li><a href=\"#\">5</a></li>
-</ul>
+                        <hr>
+                        <div id=\"reviewList\">
+
+                        </div>
+                    </div>
+                    <ul class=\"pagination\">
+                        <li><button id=\"previous\">«</button></li>
+                        ";
+            // line 78
+            $context["t"] = (isset($context["totalPages"]) ? $context["totalPages"] : null);
+            // line 79
+            echo "                         ";
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(range(1, 3));
+            foreach ($context['_seq'] as $context["_key"] => $context["i"]) {
+                // line 80
+                echo "                                        <li><button class=\"active\">";
+                echo twig_escape_filter($this->env, $context["i"], "html", null, true);
+                echo "</button></li>
+                                    ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['i'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 82
+            echo "                                    ";
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["t"]) ? $context["t"] : null)));
+            foreach ($context['_seq'] as $context["_key"] => $context["i"]) {
+                // line 83
+                echo "                                        <li><button class=\"active\">";
+                echo twig_escape_filter($this->env, $context["i"], "html", null, true);
+                echo "</button></li>
+                                    ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['i'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 85
+            echo "                        <li><button id=\"next\">»</button></li>
+                    </ul>
+
                 </div>
 
             </div>
@@ -156,11 +231,11 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 
     ";
         } else {
-            // line 80
+            // line 95
             echo "        <h1>Product not found. <a href=\"\\\">Click to continue</a></h1>
             ";
         }
-        // line 82
+        // line 97
         echo "        ";
     }
 
@@ -176,7 +251,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 
     public function getDebugInfo()
     {
-        return array (  164 => 82,  160 => 80,  135 => 58,  124 => 50,  120 => 49,  114 => 46,  102 => 39,  96 => 38,  90 => 35,  86 => 34,  82 => 33,  77 => 31,  69 => 26,  58 => 17,  55 => 16,  52 => 15,  38 => 4,  30 => 3,  11 => 1,);
+        return array (  239 => 97,  235 => 95,  223 => 85,  214 => 83,  209 => 82,  200 => 80,  195 => 79,  193 => 78,  180 => 68,  169 => 60,  165 => 59,  159 => 56,  147 => 49,  144 => 48,  141 => 47,  134 => 45,  129 => 44,  126 => 43,  123 => 42,  120 => 41,  117 => 40,  110 => 38,  105 => 37,  102 => 36,  99 => 35,  97 => 34,  91 => 33,  85 => 30,  81 => 29,  77 => 28,  72 => 26,  64 => 21,  58 => 17,  55 => 16,  52 => 15,  38 => 4,  30 => 3,  11 => 1,);
     }
 
     public function getSource()
@@ -198,18 +273,13 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 {% block content %}
     {% if product %}
 
-        <ul>
-            <li><a href=\"?lang=en\">English</a></li>
-            <li><a href=\"?lang=fr\">Francais</a></li> 
-
-        </ul>
         <div class=\"container\">
             <div class=\"row\">
 
                 <span id=\"productID\" hidden>{{product.ID}}</span>
                 <div class=\"col-md-9\">
 
-                    <div class=\"thumbnail\">
+                    <div class=\"thumbnail\"> 
 
                         <img class=\"img-responsive productPageImage\" src=\"data:image/png;base64,{{product.picture}}\" alt=\"product image\" width=\"200px\">
                         <div class=\"caption-full\">
@@ -219,40 +289,60 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
                         </div>
                         <div class=\"ratings\">
                             <p class=\"pull-right\" ><span id=\"reviewCount\">{{reviewCount}}</span> {{ \"reviews\"|trans }}</p>
-                            <p><span id=\"averageStars\">{{ratingAverage}}</span> {{ \"stars\"|trans }}</p>
+                            <p>{% set k = ratingAverage  %}
+                                {% if k == 0 %}
+                                {% else %}
+                                    {% for i in range(1,k) %}
+                                        <span class=\"glyphicon glyphicon-star\"></span>
+                                    {% endfor %}
+                                {% endif %}
+                                {% set t = (5 - ratingAverage) %}
+                                {% if t == 5 %}
+                                {% else %}
+                                    {% for s in range(1,t) %}
+                                        <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <span id=\"averageStars\">{{ratingAverage}}</span> {{ \"stars\"|trans }}</p>
                         </div>
                     </div>
-                        
-                        <div class=\"well\">
+
+                    <div class=\"well\">
 
                         <div class=\"text-right\">
-                        <button class=\"btn btn-success\" id=\"leaveReview\">{{\"Leave a Review\"|trans}}</button>
-                    </div>
+                            <button class=\"btn btn-success\" id=\"leaveReview\">{{\"Leave a Review\"|trans}}</button>
+                        </div>
                         <div id =\"reviewForm\">
                             <label>{{ \"Review\"|trans }}: </label><br><textarea rows=\"4\" cols=\"80\" name=\"reviewText\"></textarea><span class=\"error\"></span><br><br>
                             <label>{{ \"Rate\"|trans }}: </label>
                             <div id=\"selectedRating\">
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star1\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star2\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star3\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star4\"></span>
-                                    <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star5\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star1\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star2\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star3\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star4\"></span>
+                                <span class=\"glyphicon glyphicon-star-empty reviewEmptyStar\" id=\"star5\"></span>
                             </div>        
-                               <br><br> <button class=\"btn btn-success\" id=\"postReview\">{{\"Leave a Review\"|trans}}</button>
+                            <br><br> <button class=\"btn btn-success\" id=\"postReview\">{{\"Leave a Review\"|trans}}</button>
                         </div>
-                            
-                       <hr>
-                       <div id=\"reviewList\">
-                       
-                       </div>
-                    </div>
-  <li><button id=\"page\">1</button></li>
-  <li><button id=\"page\">1</button></li>
 
-  <li><a href=\"#\">3</a></li>
-  <li><a href=\"#\">4</a></li>
-  <li><a href=\"#\">5</a></li>
-</ul>
+                        <hr>
+                        <div id=\"reviewList\">
+
+                        </div>
+                    </div>
+                    <ul class=\"pagination\">
+                        <li><button id=\"previous\">«</button></li>
+                        {% set t = totalPages %}
+                         {% for i in 1..3 %}
+                                        <li><button class=\"active\">{{i}}</button></li>
+                                    {% endfor %}
+                                    {% for i in range(1,t) %}
+                                        <li><button class=\"active\">{{i}}</button></li>
+                                    {% endfor %}
+                        <li><button id=\"next\">»</button></li>
+                    </ul>
+
                 </div>
 
             </div>

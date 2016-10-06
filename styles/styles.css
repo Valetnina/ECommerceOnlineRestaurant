@@ -40,6 +40,19 @@ body{
     margin-left: 30px;
     height: 800px;
 }
-emptystar {
-    
+.reviewEmptyStar {
+    font-size: 35px;
+}
+ul.pagination {
+    display: inline-block;
+    margin: auto;
+    padding: 0;
+}
+
+ul.pagination li {display: inline;}
+
+ul.pagination li button {
+    color: black;
+    float: left;
+    padding: 8px 16px;
 }

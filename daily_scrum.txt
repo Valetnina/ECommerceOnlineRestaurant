@@ -18,3 +18,15 @@ day02--
        Olga
 1.Done: Setup subdomain and database on the host server. Started working on the index page. 
 2 Continue working on the index page
+
+
+day03--
+
+       Tina
+1.Done: Worked on the products page. Added reviews form. pagination in progress
+2.TODO: Fix the ajax load of reviews, add pagination. Start working on the cart
+
+
+       Olga
+1.Done: Worked on the design of the index page.
+2 TODO: Implement ajax loading of the products according to categories.

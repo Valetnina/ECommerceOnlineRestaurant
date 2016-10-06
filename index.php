@@ -15,6 +15,9 @@ $log = new Logger('main');
 $log->pushHandler(new StreamHandler('logs/everything.log', Logger::DEBUG));
 $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 
+//Define Constants
+define("ROWSPERPAGE", 5);
+
 //DB::$dbName = 'cp4724_fastfood';
 //DB::$user = 'cp4724_fastfood-online';
 //DB::$password = 'X]&}^5{TL$)t';
@@ -116,14 +119,6 @@ $app->get('/', function() use ($app) {
     //$app->render('index.html.twig');
 });
 
-$app->get('/lang', function($lang) use ($app) {
-    $productList = DB::query('SELECT * FROM products');
-    
-    
-    $app->render('index.html.twig', array('productList' => $productList
-    ));
-});
-
 $app->get('/', function() use ($app) {
     $categoryList = DB::query('SELECT * FROM productcategory');
 
@@ -137,15 +132,7 @@ $app->get('/', function() use ($app) {
     }
     $app->render('index.html.twig', array('prodList' => $prodList,
         'categoryList' => $categoryList));
-    //$app->render('index.html.twig');
 });
-//$app->get('/lang', function($lang) use ($app) {
-//$testList = DB::query('SELECT * FROM users');
-//$app->render('index.html.twig', array('testList' => $testList));
-//    //$app->render('index.html.twig');
-//});
-
-
 
 $app->get('/cart', function() use ($app) {
 //$app->get('/lang', function($lang) use ($app) {
@@ -154,17 +141,16 @@ $app->get('/cart', function() use ($app) {
 $app->render('cart_view.html.twig');
 });
 
-$app->get('/reviews/product/:ID', function($ID) use ($app) {
-    $rowsNum = 5;
-    $pageNum = 1;
-    $start = ((int)$pageNum - 1) * $rowsNum;
-    
 
+$app->get('/reviews/product/:ID', function($ID) use ($app) {
+    $pageNum = 1;
+    $start = ((int)$pageNum - 1) * ROWSPERPAGE;
+    
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
             . 'date, review, rating, firstName FROM ratingsreviews,'
             . ' users WHERE ratingsreviews.customerID = users.ID'
             . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
-            . 'LIMIT %d, %d', $ID, $start, $rowsNum);
+            . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE);
     $reviewCount = DB::count();
     $reviewCountUpdated = $reviewCount;
 
@@ -183,18 +169,43 @@ $app->get('/reviews/product/:ID', function($ID) use ($app) {
 $app->render('reviews.html.twig', array(
         'reviewList' => $reviewList,
         'reviewCount' => $reviewCount,
-        'ratingAverage' => $ratingAverage
+        'ratingAverage' => $ratingAverage,
+     
 ) );
 });
 
 
 
 $app->get('/product/:ID', function($ID) use ($app, $lang) {
-    $lang = "en";
-    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture, nutritionalValue, name, description FROM products, products_i18n WHERE  products_i18n.productID = products.ID AND lang='en' AND products.ID=2", $lang, $ID);
-    $productRecord['picture'] = base64_encode( $productRecord['picture']);
+    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
+            . " nutritionalValue, name, description FROM products, "
+            . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
+    $productRecord['picture'] = base64_encode($productRecord['picture']);
+    
+    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
+            . 'date, review, rating, firstName FROM ratingsreviews,'
+            . ' users WHERE ratingsreviews.customerID = users.ID'
+            . ' AND productID=%d', $ID);
+    $reviewCount = DB::count();
+    $reviewCountUpdated = $reviewCount;
+    $totalPages = ceil($reviewCount/ROWSPERPAGE);
+
+    $ratingSum = 0;
+    foreach ($reviewList as &$value) {
+        if($value['rating'] == 0){
+            $reviewCountUpdated --;
+            continue;
+        }
+        $ratingSum += $value['rating'];
+    }
+    $ratingAverage = round($ratingSum / $reviewCountUpdated);
+    
+    
     $app->render('product_view.html.twig', array(
-        'product' => $productRecord
+        'product' => $productRecord,
+        'reviewCount' => $reviewCount,
+        'ratingAverage' => $ratingAverage,
+       'totalPages' => $totalPages
         
     ));
 });

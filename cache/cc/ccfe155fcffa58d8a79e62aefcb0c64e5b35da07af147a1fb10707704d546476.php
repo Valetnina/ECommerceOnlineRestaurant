@@ -37,7 +37,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
     {
         echo "   
     <!-- Custom CSS -->
-    <link href=\"../bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
+    <link href=\"/bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
 ";
     }
 
@@ -63,13 +63,13 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
                     </ol>
                     <div class=\"carousel-inner\">
                         <div class=\"item active car\">
-                            <img class=\"slide-image\" src=\"images/car-1.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-1.jpg\" alt=\"\">
                         </div>
                         <div class=\"item\">
-                            <img class=\"slide-image\" src=\"images/car-2.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-2.jpg\" alt=\"\">
                         </div> 
                         <div class=\"item\">
-                            <img class=\"slide-image\" src=\"images/car-3.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-3.jpg\" alt=\"\">
                         </div> 
                     </div>
                     <a class=\"left carousel-control\" href=\"#carousel-example-generic\" data-slide=\"prev\">
@@ -214,7 +214,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
 {% block title %} E-Shop{% endblock %}
 {% block head %}   
     <!-- Custom CSS -->
-    <link href=\"../bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
+    <link href=\"/bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
 {% endblock %}
 
 {% block content %}
@@ -236,13 +236,13 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
                     </ol>
                     <div class=\"carousel-inner\">
                         <div class=\"item active car\">
-                            <img class=\"slide-image\" src=\"images/car-1.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-1.jpg\" alt=\"\">
                         </div>
                         <div class=\"item\">
-                            <img class=\"slide-image\" src=\"images/car-2.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-2.jpg\" alt=\"\">
                         </div> 
                         <div class=\"item\">
-                            <img class=\"slide-image\" src=\"images/car-3.jpg\" alt=\"\">
+                            <img class=\"slide-image\" src=\"/images/car-3.jpg\" alt=\"\">
                         </div> 
                     </div>
                     <a class=\"left carousel-control\" href=\"#carousel-example-generic\" data-slide=\"prev\">
