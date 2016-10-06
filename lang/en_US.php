@@ -6,5 +6,9 @@ return array(
     'home' => 'Home',
     'produit' => 'product',
     'reviews' => 'reviews',
-    'name' => 'name_EN',
+    'Review' => 'Review',
+    'Leave a Review' => 'Leave a Review',
+    'Rate' => 'Rate',
+    'stars' => 'stars',
+    'days ago' => 'days ago',
 );

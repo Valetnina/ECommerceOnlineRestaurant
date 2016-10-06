@@ -102,7 +102,7 @@ $view->parserExtensions = array(
 
 
 $app->get('/', function() use ($app) {
-    $categoryList = DB::query('SELECT * FROM productcategory');
+    $categoryList = DB::query('SELECT * FROM productcategory WHERE lang');
 
     $prodList = DB::query('SELECT * FROM products');
 

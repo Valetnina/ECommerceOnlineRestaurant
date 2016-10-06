@@ -1,149 +1,107 @@
-// $(document).ajaxError(function () {
-//                alert("AJAX request failed");
-//            });
-//            function getProductByID(ID) {
-//               
-//                $.ajax({
-//                    url: "/api.php/product/" + ID,
-//                    type: "GET",
-//                    dataType: "json"
-//                }).done(function (data) {
-//                    alert(data['price']);
-//                    $('#productPrice').text(data['price']);
-//                   /* var result = '<tbody>';
-//                    for (var i = 0; i < data.length; i++) {
-//                        var item = data[i];
-//                        var checked = (item.isDone == 'true') ? 'checked' : "";
-//                        result += "\
-//                    <tr class='rows'>\n\
-//                    <td>" + item.ID + "</td>\n\
-//                    <td>" + item.title + "</td>\n\
-//                    <td>" + item.dueDate + "</td>\n\
-//                    <td><input type='checkbox' " + checked + "></td></tr>";
-//
-//                    }
-//                    result += "</tbody>";
-//                    $('#todoList tbody').html("");
-//
-//                    $('#todoList thead').after(result); */
-//                });
-//            }
-
-            $(document).ready(function () {
-               var ratingsResult = "";
-               var reviewStars = Math.round($('#averageStars').text());
-               for (var i=0; i< reviewStars; i++){
-                   ratingsResult += "<span class='glyphicon glyphicon-star'></span>";                                   
-               }
-                for (var i=0; i< 5-reviewStars; i++){
-                   ratingsResult += "<span class='glyphicon glyphicon-star-empty'></span>";                                   
-               }
-               ratingsResult += "&nbsp" + reviewStars + " stars";
-
-               $('#averageStars').html(ratingsResult);
-               
-               $('#leaveReview').click(function() {
-                   $('#reviewForm').show();
-               });
-               
-               
-               
-//                getProductByID($('#productID').text());
-//                
-//       
-//                $("#addTodo").click(function () {
-//                    var title = $("input[name=title]").val();
-//                    var dueDate = $("input[name=dueDate]").val();
-//                    if(!validateInput(title, dueDate)){
-//                        return;
-//                    }
-//                    $.ajax({
-//                        url: "/api.php/todoitems",
-//                        data: JSON.stringify({
-//                            title: title,
-//                            dueDate: dueDate,
-//                            isDone: 'false',
-//                        }),
-//                        type: "POST",
-//                        dataType: "json"
-//                    }).done(function () {
-//                        getToDoList();
-//                        alert("addedd successfully");
-//                    });
-//                });
-//                $('#todoList').on("click", ".rows", function (e) {
-//                    //Change color of the clicked row to make it look like it's selected
-//                    $(this).closest('tr').css({backgroundColor: 'grey'});
-//                    $(this).closest('tr').siblings().css({backgroundColor: 'white'});
-//                    //Get the seleceted Item ID
-//                    var todoID = $(this).closest('tr').children('td:first').text();
-//                    $.ajax({
-//                        url: "/api.php/todoitems/" + todoID,
-//                        // data: {},
-//                        type: "GET",
-//                        dataType: "json"
-//                    }).done(function (data) {
-//                        $("input[name=itemId]").val(data.ID);
-//                        $("input[name=titleToEdit]").val(data.title);
-//                        $("input[name=dueDateToEdit]").val(data.dueDate);
-//                        if (data.isDone == 'true') {
-//                            $('input[name=isDoneToEdit]').prop('checked', true);
-//                        } else {
-//                            $('input[name=isDoneToEdit]').removeProp('checked');
-//                        }
-//
-//                    });
-//                });
-//                $("#cancelTodo").click(function () {
-//                    $("input[name=itemId]").val("");
-//                    $("input[name=titleToEdit]").val("");
-//                    $("input[name=dueDateToEdit]").val("");
-//                    $('input[name=isDoneToEdit]').prop('checked', false);
-//                });
-//                $("#deleteTodo").click(function () {
-//                    //get current selected item
-//                    var ID = $("input[name=itemId]").val();
-//                    if(ID == ""){
-//                        alert("There is currently no item to delete");
-//                        return;
-//                    }
-//                    $.ajax({
-//                        url: "/api.php/todoitems/" + ID,
-//                        type: "DELETE",
-//                        dataType: "json"
-//                    }).done(function () {
-//                        //Refresh the table
-//                        getToDoList();
-//                        alert("The record " + ID + " was deleted");
-//                    });
-//                });
-//                 $("#saveTodo").click(function () {
-//                    //get current selected item
-//                    var ID = $("input[name=itemId]").val();
-//                    if(ID == ""){
-//                        alert("There is currently no item to save");
-//                        return;
-//                    }
-//                    var title = $("input[name=titleToEdit]").val();
-//                    var dueDate = $("input[name=dueDateToEdit]").val();
-//                    if(!validateInput(title, dueDate)){
-//                        return;
-//                    }
-//                    
-//                    var isChecked =  $('input[name=isDoneToEdit]').prop('checked') ? "true" : "false";
-//                    $.ajax({
-//                        url: "/api.php/todoitems/" + ID ,
-//                        data: JSON.stringify({
-//                            title: title,
-//                            dueDate: dueDate,
-//                            isDone: isChecked
-//                        }),
-//                        type: "PUT",
-//                        dataType: "json"
-//                    }).done(function () {
-//                        getToDoList();
-//                        alert("updated successfully");
-//                    });
-//                });
+ $(document).ajaxError(function () {
+                alert("AJAX request failed");
             });
+
+function getStars(average) {
+    var ratingsResult = "";
+  
+    for (var i = 0; i < average; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star'></span>";
+    }
+    for (var i = 0; i < 5 - average; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star-empty'></span>";
+    }
+    ratingsResult += "&nbsp" + average;
+
+    $('#averageStars').html(ratingsResult);
+  }
+function getReviewList(reviewList) {
+    var ratingsResult = '<div class="row" style="margin: 25px 0 0 0"><div class="col-md-12">';
+    for(var j=0; j< reviewList.length; j++){
+        /*
+    for (var i = 0; i < reviewList[i]; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star'></span>";
+    }
+    for (var i = 0; i < 5 - reviewList; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star-empty'></span>";
+    }*/
+    ratingsResult +=  reviewList['firstName'] + '<span class="pull-right">' + 
+            reviewList['firstName'] + '{{"days ago"|trans}}</span><br><p>' + 
+             reviewList['rating'] + '</p></div></div>';
+}
+
+    $('#reviewList').html(ratingsResult);
+  }
+  
+$(document).ready(function () {
+    var selectedRating = 0;
+    $(".error").text("");
+    $('#reviewForm').hide();
+    $('#leaveReview').show();
+    
+    getStars($('#averageStars').text());
+
+    $('#leaveReview').click(function () {
+        $('#reviewForm').show();
+        $('#leaveReview').hide();
+    });
+    $('.reviewEmptyStar').click(function () {
+        var id = $(this).attr('id').slice(-1);
+        selectedRating = id;
+        for (var i; i < id; i++) {
+            alert("hello");
+            $('#star1').html(i);
+            $('#star1').addClass('glyphicon glyphicon-star reviewEmptyStar').removeClass('glyphicon glyphicon-star-empty reviewEmptyStar');
+        }
+    });
+    $("#postReview").click(function () {
+        var review = $("textarea[name=reviewText]").val();
+        var rating = selectedRating;
+        //FIXME get the current date and time for mysql format
+        var date = "2016-10-04 00:00:00";
+        var productID = $('#productID').text();
+        //FIXME ask for current logged user
+        var customerID = 1;
+
+        //FIXME: validate input for stars
+        if (review.length < 1 || review.length > 500) {
+            $(".error").text("You cannot send an empty message");
+            return;
+        } else {
+            $(".error").text("");
+        }
+
+
+        $.ajax({
+            url: "/api.php/product/" + productID,
+            data: JSON.stringify({
+                productID: productID,
+                customerID: customerID,
+                date: date,
+                rating: rating,
+                review: review,
+            }),
+            type: "POST",
+            dataType: "json"
+        }).done(function () {
+            $.ajax({
+                url: "/api.php/productComment/" + productID,
+                type: "GET",
+                dataType: "json"
+            }).done(function (data) {
+               //Refresh fields
+               $('#reviewCount').text(data['reviewCount']);
+               getStars(data['ratingAverage']);
+               alert(data['reviewList']);
+               getReviewList(data['reviewList']); 
+               
+            });
+             var selectedRating = 0;
+             $("textarea[name=reviewText]").val("");
+             $('#reviewForm').hide();
+             $('#leaveReview').show();
+        });
+    });
+
+});
 
