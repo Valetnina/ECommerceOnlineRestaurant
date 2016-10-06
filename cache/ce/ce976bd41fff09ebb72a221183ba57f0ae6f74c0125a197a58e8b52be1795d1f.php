@@ -79,8 +79,8 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                             <a href=\"#\">Contact</a>
                         </li>
                     </ul>
-                    <a href=\"?lang=en\"><img src=\"/images/eng.png\" width=\"70\" class=\"flag flag-fr\" id=\"lang-fr\"></a>
-                    <a href=\"?lang=fr\"><img src=\"/images/french.png\" width=\"70\" class=\"flag flag-en\" id=\"lang-en\"></a> 
+                    <a href=\"/?lang=en\"><img src=\"/images/eng.png\" width=\"70\" class=\"flag flag-fr\" id=\"lang-fr\"></a>
+                    <a href=\"/?lang=fr\"><img src=\"/images/french.png\" width=\"70\" class=\"flag flag-en\" id=\"lang-en\"></a> 
                     <ul class=\"nav navbar-nav log-register fontsize\">
                         <li>
                             <a href=\"#\">Login</a>
@@ -213,8 +213,8 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                             <a href=\"#\">Contact</a>
                         </li>
                     </ul>
-                    <a href=\"?lang=en\"><img src=\"/images/eng.png\" width=\"70\" class=\"flag flag-fr\" id=\"lang-fr\"></a>
-                    <a href=\"?lang=fr\"><img src=\"/images/french.png\" width=\"70\" class=\"flag flag-en\" id=\"lang-en\"></a> 
+                    <a href=\"/?lang=en\"><img src=\"/images/eng.png\" width=\"70\" class=\"flag flag-fr\" id=\"lang-fr\"></a>
+                    <a href=\"/?lang=fr\"><img src=\"/images/french.png\" width=\"70\" class=\"flag flag-en\" id=\"lang-en\"></a> 
                     <ul class=\"nav navbar-nav log-register fontsize\">
                         <li>
                             <a href=\"#\">Login</a>

@@ -28,7 +28,6 @@ DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
 DB::$nonsql_error_handler = 'nonsql_error_handler';
 
-
 function nonsql_error_handler($params) {
     global $app, $log;
     $log->error("Database error: " . $params['error']);
@@ -63,10 +62,10 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
 $lang = "en";
-if(isset($_GET['lang'])){
-   $lang = $_GET['lang'];
- }
- 
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'];
+}
+
 
 // First param is the "default language" to use.
 $translator = new Translator($lang, new MessageSelector());
@@ -78,8 +77,6 @@ $translator->addLoader('php', new PhpFileLoader());
 
 $translator->addResource('php', './lang/fr_CA.php', 'fr'); // French
 $translator->addResource('php', './lang/en_US.php', 'en'); // English
- 
-
 // Add the parserextensions TwigExtension and TranslationExtension to the view
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
@@ -99,8 +96,6 @@ $view->parserExtensions = array(
 
 //$app->response->headers->set('content-type', 'application/json');
 
-
-
 $app->get('/', function() use ($app) {
     $lang = "fr";
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
@@ -118,26 +113,27 @@ $app->get('/', function() use ($app) {
 
 $app->get('/lang', function($lang) use ($app) {
     $productList = DB::query('SELECT * FROM products');
-    
-    
+
+
     $app->render('index.html.twig', array('productList' => $productList
     ));
 });
 
-$app->get('/', function() use ($app) {
-    $categoryList = DB::query('SELECT * FROM productcategory');
+$app->get('/category/:categoryID', function($categoryID) use ($app) {
 
-    $prodList = DB::query('SELECT * FROM products');
+    $prodList = DB::query('SELECT * FROM products WHERE productCategoryID = %d', $categoryID);
 
-    foreach ($prodList as &$product) {
-        $ID = $product['ID'];
-        $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-        $product['average'] = $reviewsAverage['average'];
-        $product['picture'] = base64_encode($product['picture']);
+    if ($prodList) {
+        foreach ($prodList as &$product) {
+            $ID = $product['ID'];
+            $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
+            $product['average'] = $reviewsAverage['average'];
+            $product['picture'] = base64_encode($product['picture']);
+        }
+    } else {
+        //log ("");
     }
-    $app->render('index.html.twig', array('prodList' => $prodList,
-        'categoryList' => $categoryList));
-    //$app->render('index.html.twig');
+    $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
 //$app->get('/lang', function($lang) use ($app) {
 //$testList = DB::query('SELECT * FROM users');
@@ -151,40 +147,40 @@ $app->get('/cart', function() use ($app) {
 //$app->get('/lang', function($lang) use ($app) {
 //$testList = DB::query('SELECT * FROM users');
 //$app->render('index.html.twig', array('testList' => $testList));
-$app->render('cart_view.html.twig');
+    $app->render('cart_view.html.twig');
 });
 
 $app->get('/reviews/product/:ID', function($ID) use ($app) {
     $rowsNum = 5;
     $pageNum = 1;
-    $start = ((int)$pageNum - 1) * $rowsNum;
-    
+    $start = ((int) $pageNum - 1) * $rowsNum;
+
 
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-            . 'date, review, rating, firstName FROM ratingsreviews,'
-            . ' users WHERE ratingsreviews.customerID = users.ID'
-            . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
-            . 'LIMIT %d, %d', $ID, $start, $rowsNum);
+                    . 'date, review, rating, firstName FROM ratingsreviews,'
+                    . ' users WHERE ratingsreviews.customerID = users.ID'
+                    . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
+                    . 'LIMIT %d, %d', $ID, $start, $rowsNum);
     $reviewCount = DB::count();
     $reviewCountUpdated = $reviewCount;
 
     $ratingSum = 0;
     foreach ($reviewList as &$value) {
-        $now =  new DateTime('now');
-        $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a")-1;
-        if($value['rating'] == 0){
+        $now = new DateTime('now');
+        $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a") - 1;
+        if ($value['rating'] == 0) {
             $reviewCountUpdated --;
             continue;
         }
         $ratingSum += $value['rating'];
     }
     $ratingAverage = round($ratingSum / $reviewCountUpdated);
-    
-$app->render('reviews.html.twig', array(
+
+    $app->render('reviews.html.twig', array(
         'reviewList' => $reviewList,
         'reviewCount' => $reviewCount,
         'ratingAverage' => $ratingAverage
-) );
+    ));
 });
 
 
@@ -192,10 +188,9 @@ $app->render('reviews.html.twig', array(
 $app->get('/product/:ID', function($ID) use ($app, $lang) {
     $lang = "en";
     $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture, nutritionalValue, name, description FROM products, products_i18n WHERE  products_i18n.productID = products.ID AND lang='en' AND products.ID=2", $lang, $ID);
-    $productRecord['picture'] = base64_encode( $productRecord['picture']);
+    $productRecord['picture'] = base64_encode($productRecord['picture']);
     $app->render('product_view.html.twig', array(
         'product' => $productRecord
-        
     ));
 });
 //FIXME: ask if it's a good idea
@@ -206,21 +201,21 @@ $app->get('/productComment/:ID', function($ID) use ($app) {
 
     $ratingSum = 0;
     foreach ($reviewList as $value) {
-         if($value['rating'] == 0){
+        if ($value['rating'] == 0) {
             $reviewCountUpdated --;
             continue;
         }
         $ratingSum += $value['rating'];
     }
     $ratingAverage = round($ratingSum / $reviewCountUpdated);
-  echo json_encode(array('reviewCount' => $reviewCount, 'ratingAverage' => $ratingAverage, 'reviewList' => $reviewList), JSON_PRETTY_PRINT);
-  });
-  
-  
- $app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
-  $body = $app->request->getBody();
-  $record = json_decode($body, TRUE);
-  //FIXME ADD validation
+    echo json_encode(array('reviewCount' => $reviewCount, 'ratingAverage' => $ratingAverage, 'reviewList' => $reviewList), JSON_PRETTY_PRINT);
+});
+
+
+$app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
+    $body = $app->request->getBody();
+    $record = json_decode($body, TRUE);
+    //FIXME ADD validation
 //  if (!isTodoItemValid($record, $error)) {
 //
 //  $log->debug("Failed POST . Invalid data. ".$error);
@@ -229,11 +224,11 @@ $app->get('/productComment/:ID', function($ID) use ($app) {
 //  echo json_encode($error);
 //  return;
 //  }
-  DB::insert('ratingsreviews', $record);
-  echo DB::insertId();
-  // POST / INSERT is special - returns 201
-  $app->response->setStatus(201);
-  });
+    DB::insert('ratingsreviews', $record);
+    echo DB::insertId();
+    // POST / INSERT is special - returns 201
+    $app->response->setStatus(201);
+});
 
 /*
 

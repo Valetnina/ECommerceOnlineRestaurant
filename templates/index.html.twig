@@ -4,6 +4,9 @@
 {% block head %}   
     <!-- Custom CSS -->
     <link href="/bootstrap/css/shop-homepage.css" rel="stylesheet">
+     <!-- jQuery -->
+    <script src="/js/index_script.js"></script>
+    
 {% endblock %}
 
 {% block content %}
@@ -48,39 +51,15 @@
 
             <div class="col-md-3 category">
                 <p class="lead">Categories</p>
-                <div class="list-group">
+                <div class="list-group" id="navCategory">
                     {% for category in categoryList %}
-                        <button class="list-group-item">{{ category.name }}</button>
+                        <button class="list-group-item categoryIdClass" id="category_{{category.ID}}">{{ category.name }}</button>
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="row">
-                {% for product in prodList %}
-                    <div class="col-sm-4 col-lg-4 col-md-4">
-                        <div class="thumbnail">
-                            <img src="data:image/png;base64,{{product.picture}}" alt="product image" width="100px">
-                            <div class="caption">
-                                <h4 class="pull-right">{{ product.price }}</h4>
-                                <h4><a href="#">{{ product.name_EN }}</a>
-                                </h4>
-                                <p>{{ product.description_EN }}</p>
-                            </div>
-                            <div class="ratings">
-                                <p class="pull-right">{{product.average}} reviews</p>
-                                <p>
-                                    {% set k = product.average %}
-                                    {% for i in range(1, k) %}
-                                    <span class="glyphicon glyphicon-star" id="star-full"></span>
-                                    {% endfor %}
-                                    {% set t = (5 - product.average) %}
-                                    {% for s in range(1, t) %}
-                                    <span class="glyphicon glyphicon-star-empty" id="star-empty"></span>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
+            <div class="row" id="index-products">
+                
                 </div>
 
             </div>
