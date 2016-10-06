@@ -58,7 +58,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
             echo "
         <ul>
             <li><a href=\"?lang=en\">English</a></li>
-            <li><a href=\"?lang=fr   \">Francais</a></li> 
+            <li><a href=\"?lang=fr\">Francais</a></li> 
 
         </ul>
         <div class=\"container\">
@@ -280,7 +280,7 @@ class __TwigTemplate_8dff9deb620169f340758fbc4091dd840d779d78fae91ceb5571a81232c
 
         <ul>
             <li><a href=\"?lang=en\">English</a></li>
-            <li><a href=\"?lang=fr   \">Francais</a></li> 
+            <li><a href=\"?lang=fr\">Francais</a></li> 
 
         </ul>
         <div class=\"container\">

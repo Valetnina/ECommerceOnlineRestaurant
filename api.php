@@ -102,10 +102,9 @@ $view->parserExtensions = array(
 
 
 $app->get('/', function() use ($app) {
-    $categoryList = DB::query('SELECT * FROM productcategory WHERE lang');
-
+    $lang = "fr";
+    $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
     $prodList = DB::query('SELECT * FROM products');
-
     foreach ($prodList as &$product) {
         $ID = $product['ID'];
         $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
@@ -122,6 +121,8 @@ $app->get('/', function() use ($app) {
 
 $app->get('/lang', function($lang) use ($app) {
     $productList = DB::query('SELECT * FROM products');
+    
+    
     $app->render('index.html.twig', array('productList' => $productList
     ));
 });
