@@ -3,11 +3,11 @@
 {% block title %} {{ "home"|trans }} {% endblock %}
 {% block head %}   
     <!-- Bootstrap Core CSS -->
-    <link href="../../../bootstrap/css/shop-item.css" rel="stylesheet">
+    <link href="/bootstrap/css/shop-item.css" rel="stylesheet">
 
 
     <!-- jQuery -->
-    <script src="../../../js/product_script.js"></script>
+    <script src="/js/product_script.js"></script>
 
 {% endblock %}
 
@@ -39,8 +39,8 @@
                             <p><span id="averageStars">{{ratingAverage}}</span> {{ "stars"|trans }}</p>
                         </div>
                     </div>
-
-                    <div class="well">
+                        
+                        <div class="well">
 
                         <div class="text-right">
                         <button class="btn btn-success" id="leaveReview">{{"Leave a Review"|trans}}</button>
@@ -48,45 +48,21 @@
                         <div id ="reviewForm">
                             <label>{{ "Review"|trans }}: </label><br><textarea rows="4" cols="80" name="reviewText"></textarea><span class="error"></span><br><br>
                             <label>{{ "Rate"|trans }}: </label>
- 
+                            <div id="selectedRating">
                                     <span class="glyphicon glyphicon-star-empty reviewEmptyStar" id="star1"></span>
                                     <span class="glyphicon glyphicon-star-empty reviewEmptyStar" id="star2"></span>
                                     <span class="glyphicon glyphicon-star-empty reviewEmptyStar" id="star3"></span>
                                     <span class="glyphicon glyphicon-star-empty reviewEmptyStar" id="star4"></span>
                                     <span class="glyphicon glyphicon-star-empty reviewEmptyStar" id="star5"></span>
-                                    
+                            </div>        
                                <br><br> <button class="btn btn-success" id="postReview">{{"Leave a Review"|trans}}</button>
                         </div>
                             
                        <hr>
                        <div id="reviewList">
-                       {% for rating in reviewList %}
-                        <div class="row" style="margin: 25px 0 0 0">
-                            <div class="col-md-12">
-                                {% set k = rating.rating  %}
-                                {% if k == 0 %}
-                                    {% else %}
-                                    {% for i in range(1,k) %}
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    {% endfor %}
-                                    {% endif %}
-                                    {% set t = (5 - rating.rating) %}
-                                    {% if t == 5 %}
-                                        {% else %}
-                                    {% for s in range(1,t) %}
-                                    <span class="glyphicon glyphicon-star-empty" id="star-empty"></span>
-                                    {% endfor %}
-                                                                        {% endif %}
-
-                                {{rating.firstName}}
-                                <span class="pull-right">{{rating.daysCount }} {{"days ago"|trans}}</span><br>
-                                <p>{{rating.review}}</p>
-                            </div>
-                        </div>
-                           {% endfor %}
+                       
                        </div>
                     </div>
-<ul class="pagination">
   <li><button id="page">1</button></li>
   <li><button id="page">1</button></li>
 
