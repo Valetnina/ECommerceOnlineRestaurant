@@ -5,8 +5,33 @@ body{
     width:200px !important;
 }
 #logo{
-    margin-top: -15px;
+    margin-top: -5px;
+    width: 120px;
+    margin-left: -95px;
 }
 .navbar{
     background-color: #025274;
+}
+.log-register{
+    float: right;
+    margin-right: 30px;
+}
+.flag-fr{
+   width: 45px;
+   margin: 3px 10px 0 270px;
+}
+.flag-en{
+   width: 45px;
+   margin-top: 3px;
+}
+.flag-fr > img:hover {
+   width: 50px; 
+}
+.cart{
+    margin: 0;
+    padding: 0;
+    width: 30px;
+    margin-top: -10px;
+    padding-bottom: -5px;
+    
 }

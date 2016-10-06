@@ -116,7 +116,7 @@ $app->get('/', function() use ($app) {
     
 
     $app->render('index.html.twig', array('prodList' => $prodList,
-        'categoryList' => $categoryList, 'recentProductsList' => $recentProductsList));
+        'categoryList' => $categoryList));
     //$app->render('index.html.twig');
 });
 
