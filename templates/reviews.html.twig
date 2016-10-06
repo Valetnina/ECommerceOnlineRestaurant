@@ -1,0 +1,25 @@
+
+                   {% for rating in reviewList %}
+                        <div class="row" style="margin: 25px 0 0 0">
+                            <div class="col-md-12">
+                                {% set k = rating.rating  %}
+                                {% if k == 0 %}
+                                    {% else %}
+                                    {% for i in range(1,k) %}
+                                    <span class="glyphicon glyphicon-star"></span>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% set t = (5 - rating.rating) %}
+                                    {% if t == 5 %}
+                                        {% else %}
+                                    {% for s in range(1,t) %}
+                                    <span class="glyphicon glyphicon-star-empty" id="star-empty"></span>
+                                    {% endfor %}
+                                    {% endif %}
+
+                                {{rating.firstName}}
+                                <span class="pull-right">{{rating.daysCount }} {{"days ago"|trans}}</span><br>
+                                <p>{{rating.review}}</p>
+                            </div>
+                        </div>
+                           {% endfor %}

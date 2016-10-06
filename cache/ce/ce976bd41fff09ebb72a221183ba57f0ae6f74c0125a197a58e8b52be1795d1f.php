@@ -31,9 +31,9 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <meta name=\"author\" content=\"Olga_Racu & Tina_Migalatii\">
 
         <!-- Bootstrap Core CSS -->
-        <link href=\"../../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
+        <link href=\"/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
             <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>
-            <script src=\"../../bootstrap/js/bootstrap.min.js\"></script>
+            <script src=\"/bootstrap/js/bootstrap.min.js\"></script>
 
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -44,7 +44,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
 <![endif]-->
 
         <!-- Styles -->
-        <link rel=\"stylesheet\" href=\"../../../styles/styles.css\" />
+        <link rel=\"stylesheet\" href=\"/styles/styles.css\" />
         <title>";
         // line 27
         $this->displayBlock('title', $context, $blocks);
@@ -66,7 +66,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                     <span class=\"icon-bar\"></span>
                     <span class=\"icon-bar\"></span>
                 </button>
-                <a class=\"navbar-brand\" href=\"#\"><img src=\"images/Logo_Big.png\" id=\"logo\"></a>
+                <a class=\"navbar-brand\" href=\"#\"><img src=\"/images/Logo_Big.png\" id=\"logo\"></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
@@ -81,8 +81,8 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                         <a href=\"#\">Contact</a>
                     </li>
                 </ul>
-                <img src=\"images/french.png\" width=\"70\" class=\"flag-fr flag-hover\">
-                <img src=\"images/eng.png\" width=\"70\" class=\"flag-en flag-hover\">
+                <img src=\"/images/french.png\" width=\"70\" class=\"flag-fr flag\" id=\"lang-fr\">
+                <img src=\"/images/eng.png\" width=\"70\" class=\"flag-en flag\" id=\"lang-en\">
                 <ul class=\"nav navbar-nav log-register fontsize\">
                     <li>
                         <a href=\"#\">Login</a>
@@ -91,7 +91,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                         <a href=\"#\">Register</a>
                     </li>
                     <li>
-                        <a href=\"#\"><img src=\"images/cart.png\" class=\"cart\"></a>
+                        <a href=\"#\"><img src=\"/images/cart.png\" class=\"cart\"></a>
                     </li>
                 </ul>
             </div>
@@ -123,11 +123,11 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
     <!-- /.container -->
    
     <!-- jQuery -->
-<script src=\"../../../bootstrap/js/jquery.js\"></script>
+<script src=\"/bootstrap/js/jquery.js\"></script>
 
     
     <!-- Bootstrap Core JavaScript -->
-    <script src=\"../../../bootstrap/js/bootstrap.min.js\">
+    <script src=\"/bootstrap/js/bootstrap.min.js\">
         
         
         
@@ -177,9 +177,9 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <meta name=\"author\" content=\"Olga_Racu & Tina_Migalatii\">
 
         <!-- Bootstrap Core CSS -->
-        <link href=\"../../../bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
+        <link href=\"/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">
             <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>
-            <script src=\"../../bootstrap/js/bootstrap.min.js\"></script>
+            <script src=\"/bootstrap/js/bootstrap.min.js\"></script>
 
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -190,7 +190,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
 <![endif]-->
 
         <!-- Styles -->
-        <link rel=\"stylesheet\" href=\"../../../styles/styles.css\" />
+        <link rel=\"stylesheet\" href=\"/styles/styles.css\" />
         <title>{% block title %}{% endblock %}</title>
         {% block head %}
         {% endblock %}
@@ -207,7 +207,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                     <span class=\"icon-bar\"></span>
                     <span class=\"icon-bar\"></span>
                 </button>
-                <a class=\"navbar-brand\" href=\"#\"><img src=\"images/Logo_Big.png\" id=\"logo\"></a>
+                <a class=\"navbar-brand\" href=\"#\"><img src=\"/images/Logo_Big.png\" id=\"logo\"></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
@@ -222,8 +222,8 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                         <a href=\"#\">Contact</a>
                     </li>
                 </ul>
-                <img src=\"images/french.png\" width=\"70\" class=\"flag-fr flag-hover\">
-                <img src=\"images/eng.png\" width=\"70\" class=\"flag-en flag-hover\">
+                <img src=\"/images/french.png\" width=\"70\" class=\"flag-fr flag\" id=\"lang-fr\">
+                <img src=\"/images/eng.png\" width=\"70\" class=\"flag-en flag\" id=\"lang-en\">
                 <ul class=\"nav navbar-nav log-register fontsize\">
                     <li>
                         <a href=\"#\">Login</a>
@@ -232,7 +232,7 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
                         <a href=\"#\">Register</a>
                     </li>
                     <li>
-                        <a href=\"#\"><img src=\"images/cart.png\" class=\"cart\"></a>
+                        <a href=\"#\"><img src=\"/images/cart.png\" class=\"cart\"></a>
                     </li>
                 </ul>
             </div>
@@ -261,11 +261,11 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
     <!-- /.container -->
    
     <!-- jQuery -->
-<script src=\"../../../bootstrap/js/jquery.js\"></script>
+<script src=\"/bootstrap/js/jquery.js\"></script>
 
     
     <!-- Bootstrap Core JavaScript -->
-    <script src=\"../../../bootstrap/js/bootstrap.min.js\">
+    <script src=\"/bootstrap/js/bootstrap.min.js\">
         
         
         

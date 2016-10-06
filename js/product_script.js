@@ -15,6 +15,18 @@ function getStars(average) {
 
     $('#averageStars').html(ratingsResult);
   }
+  function getReviewStars(selectedRating) {
+    var ratingsResult = "";
+    for (var i = 0; i < selectedRating; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star'></span>";
+    }
+    for (var i = 0; i < 5 - selectedRating; i++) {
+        ratingsResult += "<span class='glyphicon glyphicon-star-empty'></span>";
+    }
+    ratingsResult += "&nbsp" + selectedRating;
+  
+    $('#selectedRating').html(ratingsResult);
+  }
 function getReviewList(reviewList) {
     var ratingsResult = '<div class="row" style="margin: 25px 0 0 0"><div class="col-md-12">';
     for(var j=0; j< reviewList.length; j++){
@@ -34,13 +46,16 @@ function getReviewList(reviewList) {
   }
   
 $(document).ready(function () {
+    var productID = $('#productID').text();
+    $('#reviewList').load('/reviews/product/'+productID);
+    
+    getStars($('#averageStars').text());
+  
     var selectedRating = 0;
     $(".error").text("");
     $('#reviewForm').hide();
     $('#leaveReview').show();
     
-    getStars($('#averageStars').text());
-
     $('#leaveReview').click(function () {
         $('#reviewForm').show();
         $('#leaveReview').hide();
@@ -48,17 +63,14 @@ $(document).ready(function () {
     $('.reviewEmptyStar').click(function () {
         var id = $(this).attr('id').slice(-1);
         selectedRating = id;
-        for (var i; i < id; i++) {
-            alert("hello");
-            $('#star1').html(i);
-            $('#star1').removeClass('glyphicon-star-empty').addClass('reviewEmptyStar');
-        }
+        getReviewStars(selectedRating);
     });
     $("#postReview").click(function () {
         var review = $("textarea[name=reviewText]").val();
         var rating = selectedRating;
         //FIXME get the current date and time for mysql format
-        var date = "2016-10-04 00:00:00";
+        var date =(new Date()).toISOString().substring(0, 19).replace('T', ' ')
+        //var date = "2016-10-04 00:00:00";
         var productID = $('#productID').text();
         //FIXME ask for current logged user
         var customerID = 1;
@@ -71,9 +83,8 @@ $(document).ready(function () {
             $(".error").text("");
         }
 
-
         $.ajax({
-            url: "/api.php/product/" + productID,
+            url: "/index.php/reviews/product/" + productID,
             data: JSON.stringify({
                 productID: productID,
                 customerID: customerID,
@@ -84,24 +95,30 @@ $(document).ready(function () {
             type: "POST",
             dataType: "json"
         }).done(function () {
+            alert("added succesfully");
+           // $('body').load('/index.php/reviews/product/'+productID);
+            /*
             $.ajax({
-                url: "/api.php/productComment/" + productID,
+                url: "/index.php/product/" + productID,
                 type: "GET",
                 dataType: "json"
             }).done(function (data) {
+                alert("refreshed");
                //Refresh fields
-               $('#reviewCount').text(data['reviewCount']);
-               getStars(data['ratingAverage']);
-               alert(data['reviewList']);
-               getReviewList(data['reviewList']); 
+              // $('#reviewCount').text(data['reviewCount']);
+              // getStars(data['ratingAverage']);
+              // getReviewList(data['reviewList']); 
                
             });
+            /*
              var selectedRating = 0;
              $("textarea[name=reviewText]").val("");
+             getReviewStars(0);
              $('#reviewForm').hide();
              $('#leaveReview').show();
+             */
         });
-    });
 
-});
+    
+    });
 

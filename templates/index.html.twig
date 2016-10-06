@@ -3,7 +3,7 @@
 {% block title %} E-Shop{% endblock %}
 {% block head %}   
     <!-- Custom CSS -->
-    <link href="../bootstrap/css/shop-homepage.css" rel="stylesheet">
+    <link href="/bootstrap/css/shop-homepage.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -25,13 +25,13 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="item active car">
-                            <img class="slide-image" src="images/car-1.jpg" alt="">
+                            <img class="slide-image" src="/images/car-1.jpg" alt="">
                         </div>
                         <div class="item">
-                            <img class="slide-image" src="images/car-2.jpg" alt="">
+                            <img class="slide-image" src="/images/car-2.jpg" alt="">
                         </div> 
                         <div class="item">
-                            <img class="slide-image" src="images/car-3.jpg" alt="">
+                            <img class="slide-image" src="/images/car-3.jpg" alt="">
                         </div> 
                     </div>
                     <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
@@ -67,7 +67,7 @@
                                 <p>{{ product.description_EN }}</p>
                             </div>
                             <div class="ratings">
-                                <p class="pull-right">{{ product.average }} reviews</p>
+                                <p class="pull-right">{{product.average}} reviews</p>
                                 <p>
                                     {% set k = product.average %}
                                     {% for i in range(1, k) %}

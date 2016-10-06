@@ -278,7 +278,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
                                 <p>{{ product.description_EN }}</p>
                             </div>
                             <div class=\"ratings\">
-                                <p class=\"pull-right\">{{ product.average }} reviews</p>
+                                <p class=\"pull-right\">{{product.average}} reviews</p>
                                 <p>
                                     {% set k = product.average %}
                                     {% for i in range(1, k) %}
