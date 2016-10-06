@@ -22,7 +22,7 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 
 DB::$error_handler = 'sql_error_handler';
@@ -87,9 +87,7 @@ $view->parserExtensions = array(
 );
 
 
-
-//////
-
+////////
 
 \Slim\Route::setDefaultConditions(array(
     'ID' => '\d+'
@@ -116,39 +114,71 @@ $app->get('/', function() use ($app) {
     
 
     $app->render('index.html.twig', array('prodList' => $prodList,
-        'categoryList' => $categoryList, 'recentProductsList' => $recentProductsList));
+        'categoryList' => $categoryList));
     //$app->render('index.html.twig');
 });
 
-$app->get('/lang', function($lang) use ($app) {
-    $productList = DB::query('SELECT * FROM products');
-    $app->render('index.html.twig', array('productList' => $productList
-    ));
+$app->get('/', function() use ($app) {
+    $categoryList = DB::query('SELECT * FROM productcategory');
 
+    $prodList = DB::query('SELECT * FROM products');
+
+    foreach ($prodList as &$product) {
+        $ID = $product['ID'];
+        $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
+        $product['average'] = $reviewsAverage['average'];
+        $product['picture'] = base64_encode($product['picture']);
+    }
+    
+    
+
+    $app->render('index.html.twig', array('prodList' => $prodList,
+        'categoryList' => $categoryList));
+    //$app->render('index.html.twig');
 });
+
+
+$app->get('/cart', function() use ($app) {
 //$app->get('/lang', function($lang) use ($app) {
 //$testList = DB::query('SELECT * FROM users');
 //$app->render('index.html.twig', array('testList' => $testList));
-//    //$app->render('index.html.twig');
-//});
+$app->render('cart_view.html.twig');
+});
 
 
 
-$app->get('/product/:ID/', function($ID) use ($app, $lang) {
+$app->get('/product/:ID', function($ID) use ($app, $lang) {
     $lang = "en";
-    $productRecord = DB::queryFirstRow("SELECT * FROM products, products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
+    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture, nutritionalValue, name, description FROM products, products_i18n WHERE  products_i18n.productID = products.ID AND lang='en' AND products.ID=2", $lang, $ID);
    
     $productRecord['picture'] = base64_encode( $productRecord['picture']);
     
+    $rowsNum = 5;
+    $pageNum = 1;
+    $start = ((int)$pageNum - 1) * $rowsNum;
+    
 
-    $reviewList = DB::query('SELECT ID, productID, customerID, date, review, rating FROM ratingsreviews WHERE productID=%d', $ID);
+    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
+            . 'date, review, rating, firstName FROM ratingsreviews,'
+            . ' users WHERE ratingsreviews.customerID = users.ID'
+            . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
+            . 'LIMIT %d, %d', $ID, $start, $rowsNum);
     $reviewCount = DB::count();
+    $reviewCountUpdated = $reviewCount;
 
     $ratingSum = 0;
-    foreach ($reviewList as $value) {
+    foreach ($reviewList as &$value) {
+        $now =  new DateTime('now');
+        $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a")-1;
+        if($value['rating'] == 0){
+            $reviewCountUpdated --;
+            continue;
+        }
         $ratingSum += $value['rating'];
     }
-    $ratingAverage = $ratingSum / $reviewCount;
+    $ratingAverage = round($ratingSum / $reviewCountUpdated);
+    
+    
     $app->render('product_view.html.twig', array(
         'product' => $productRecord,
         'reviewList' => $reviewList,
@@ -156,6 +186,57 @@ $app->get('/product/:ID/', function($ID) use ($app, $lang) {
         'ratingAverage' => $ratingAverage
     ));
 });
+//FIXME: ask if it's a good idea
+$app->get('/productComment/:ID', function($ID) use ($app) {
+//  $record = DB::queryFirstRow("SELECT * FROM todoitems WHERE ID=%d", $ID);
+//  // 404 if record not found
+//  if (!$record) {
+//  $app->response->setStatus(404);
+//  echo json_encode("Record not found");
+//  return;
+//  }
+    $reviewList = DB::query('SELECT ID, productID, customerID, date, review, rating FROM ratingsreviews WHERE productID=%d ORDER BY ID DESC ', $ID);
+    $reviewCount = DB::count();
+    if(!$reviewList){
+        echo "Hello";
+    }else {
+        echo "dsdas";
+    }
+     print_r($reviewList);
+    $reviewCountUpdated = $reviewCount;
+
+    $ratingSum = 0;
+    foreach ($reviewList as $value) {
+         if($value['rating'] == 0){
+            $reviewCountUpdated --;
+            continue;
+        }
+        $ratingSum += $value['rating'];
+    }
+    $ratingAverage = round($ratingSum / $reviewCountUpdated);
+    print_r($reviewList);
+  echo json_encode(array('reviewCount' => $reviewCount, 'ratingAverage' => $ratingAverage, 'reviewList' => $reviewList), JSON_PRETTY_PRINT);
+  });
+  
+  
+ $app->post('/product/:ID', function() use ($app, $log) {
+  $body = $app->request->getBody();
+  $record = json_decode($body, TRUE);
+  //FIXME ADD validation
+//  if (!isTodoItemValid($record, $error)) {
+//
+//  $log->debug("Failed POST . Invalid data. ".$error);
+//
+//  $app->response->setStatus(400);
+//  echo json_encode($error);
+//  return;
+//  }
+  DB::insert('ratingsreviews', $record);
+  echo DB::insertId();
+  // POST / INSERT is special - returns 201
+  $app->response->setStatus(201);
+  });
+
 /*
 
   function isTodoItemValid($todo, &$error, $skipID='false') {
@@ -221,38 +302,13 @@ $app->get('/product/:ID/', function($ID) use ($app, $lang) {
   echo json_encode($recordList, JSON_PRETTY_PRINT);
   });
 
-  $app->get('/todoitems/:ID', function($ID) use ($app) {
-  $record = DB::queryFirstRow("SELECT * FROM todoitems WHERE ID=%d", $ID);
-  // 404 if record not found
-  if (!$record) {
-  $app->response->setStatus(404);
-  echo json_encode("Record not found");
-  return;
-  }
-  echo json_encode($record, JSON_PRETTY_PRINT);
-  });
+  
 
   $app->delete('/todoitems/:ID', function($ID) {
   DB::delete('todoitems', "ID=%d", $ID);
   echo 'true';
   });
-  $app->post('/todoitems', function() use ($app, $log) {
-  $body = $app->request->getBody();
-  $record = json_decode($body, TRUE);
-  if (!isTodoItemValid($record, $error)) {
-
-  $log->debug("Failed POST . Invalid data. ".$error);
-
-  $app->response->setStatus(400);
-  echo json_encode($error);
-  return;
-  }
-  DB::insert('todoitems', $record);
-  echo DB::insertId();
-  // POST / INSERT is special - returns 201
-  $app->response->setStatus(201);
-  });
-
+ 
   $app->put('/todoitems/:ID', function($ID) use ($app, $log) {
   $body = $app->request->getBody();
   $record = json_decode($body, TRUE);

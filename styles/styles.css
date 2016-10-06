@@ -10,3 +10,6 @@ body{
 .navbar{
     background-color: #025274;
 }
+.reviewEmptyStar {
+    font-size: 40px;
+}
