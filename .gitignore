@@ -1,17 +1,7 @@
-/ECommerce/nbproject/private/
-/ECommerce/logs/
-/ECommerce/cache/
-/ECommerce/uploads/
+nbproject/private/
+logs/
+cache/
+uploads/
 
 /vendor/
-cache/ce/ce976bd41fff09ebb72a221183ba57f0ae6f74c0125a197a58e8b52be1795d1f.php
-cache/8d/8d573a700d5abc6453e40b433d7294ac78c586841b799059c47758c24cc0fb08.php
-cache/71/71feb562cde279a2aabe133b2a36f3b0c0fdf34ae2c0ebfa4a3e300baad7dcea.php
-cache/ce/ce976bd41fff09ebb72a221183ba57f0ae6f74c0125a197a58e8b52be1795d1f.php
-cache/8d/8d573a700d5abc6453e40b433d7294ac78c586841b799059c47758c24cc0fb08.php
-cache/71/71feb562cde279a2aabe133b2a36f3b0c0fdf34ae2c0ebfa4a3e300baad7dcea.php
-cache/0f/0fbe8805643893affb10449e9d3c798bb78e49ff982e7ee5dd1f09214107c828.php
-logs/errors.log
-logs/everything.log
-nbproject/private/private.xml
-styles/styles.css
+

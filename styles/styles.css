@@ -56,3 +56,9 @@ ul.pagination li button {
     float: left;
     padding: 8px 16px;
 }
+ul.pagination li button {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+}
+
