@@ -1,6 +1,1 @@
     
-[2016-10-07 19:20:23] main.ERROR:  in query: SELECT products.ID as productID, picture, name, price FROM products, products_i18n WHERE products.productID = products_i18n.productID AND lang='en' [] []
-[2016-10-07 20:51:17] main.ERROR: SQL error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE productID=2' at line 1 [] []
-[2016-10-07 20:51:17] main.ERROR:  in query: SELECT AVG(rating) as average, count(review) as totalReviews FROM ratingsreviews group by productID WHERE productID=2 [] []
-[2016-10-07 20:53:18] main.ERROR: SQL error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE productID=2' at line 1 [] []
-[2016-10-07 20:53:18] main.ERROR:  in query: SELECT AVG(rating) as average, count(review) as totalReviews FROM ratingsreviews group by productID WHERE productID=2 [] []
