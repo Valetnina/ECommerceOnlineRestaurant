@@ -38,12 +38,9 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
         echo "   
     <!-- Custom CSS -->
     <link href=\"/bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
-<<<<<<< HEAD
-=======
-     <!-- jQuery -->
+    <!-- jQuery -->
     <script src=\"/js/index_script.js\"></script>
-    
->>>>>>> origin/master
+
 ";
     }
 
@@ -89,17 +86,16 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
 
         </div>
         <div class=\"row\">
-
             <div class=\"col-md-3 category\">
                 <p class=\"lead\">Categories</p>
                 <div class=\"list-group\" id=\"navCategory\">
                     ";
-        // line 55
+        // line 54
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["categoryList"]) ? $context["categoryList"] : null));
         foreach ($context['_seq'] as $context["_key"] => $context["category"]) {
-            // line 56
-            echo "                        <button class=\"list-group-item\" id=\"category_";
+            // line 55
+            echo "                        <button class=\"list-group-item categoryIdClass\" id=\"category_";
             echo twig_escape_filter($this->env, $this->getAttribute($context["category"], "ID", array()), "html", null, true);
             echo "\">";
             echo twig_escape_filter($this->env, $this->getAttribute($context["category"], "name", array()), "html", null, true);
@@ -109,19 +105,19 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['category'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 58
+        // line 57
         echo "                </div>
             </div>
 
             <div class=\"row\" id=\"index-products\">
-                
-                </div>
 
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 </div>
 
@@ -140,7 +136,7 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
 
     public function getDebugInfo()
     {
-        return array (  110 => 58,  99 => 56,  95 => 55,  51 => 13,  48 => 12,  36 => 4,  30 => 3,  11 => 1,);
+        return array (  109 => 57,  98 => 55,  94 => 54,  51 => 13,  48 => 12,  36 => 4,  30 => 3,  11 => 1,);
     }
 
     public function getSource()
@@ -151,12 +147,9 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
 {% block head %}   
     <!-- Custom CSS -->
     <link href=\"/bootstrap/css/shop-homepage.css\" rel=\"stylesheet\">
-<<<<<<< HEAD
-=======
-     <!-- jQuery -->
+    <!-- jQuery -->
     <script src=\"/js/index_script.js\"></script>
-    
->>>>>>> origin/master
+
 {% endblock %}
 
 {% block content %}
@@ -198,25 +191,24 @@ class __TwigTemplate_db6ee13b7975ae4eb6b3fa133965f4d554a564262b0df1494a487c36589
 
         </div>
         <div class=\"row\">
-
             <div class=\"col-md-3 category\">
                 <p class=\"lead\">Categories</p>
                 <div class=\"list-group\" id=\"navCategory\">
                     {% for category in categoryList %}
-                        <button class=\"list-group-item\" id=\"category_{{category.ID}}\">{{ category.name }}</button>
+                        <button class=\"list-group-item categoryIdClass\" id=\"category_{{category.ID}}\">{{ category.name }}</button>
                     {% endfor %}
                 </div>
             </div>
 
             <div class=\"row\" id=\"index-products\">
-                
-                </div>
 
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 </div>
 

@@ -10,7 +10,7 @@ $(document).ready(function () {
 
         var array_categoryID = category_ID.split('_');
         var categoryID = array_categoryID[1];
-        alert(categoryID);
+        //alert(categoryID);
 
         /* var result = ($(this).text());
          * categoryString = result.toString().toLowerCase()

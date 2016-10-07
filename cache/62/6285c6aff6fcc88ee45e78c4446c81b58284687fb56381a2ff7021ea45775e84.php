@@ -20,68 +20,85 @@ class __TwigTemplate_ed39ef6ea1f4c3af0ea8615dea4996b70b0b588925e950ce211c097c60b
         $context['_seq'] = twig_ensure_traversable((isset($context["prodList"]) ? $context["prodList"] : null));
         foreach ($context['_seq'] as $context["_key"] => $context["product"]) {
             // line 2
-            echo "                    <div class=\"col-sm-4 col-lg-4 col-md-4\">
-                        <div class=\"thumbnail\">
-                            <img src=\"data:image/png;base64,";
-            // line 4
+            echo "    
+    <div class=\"col-sm-4 col-lg-4 col-md-4 div-products\">                          
+        <div class=\"thumbnail product-thumbnail\">
+            <img src=\"data:image/png;base64,";
+            // line 5
             echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "picture", array()), "html", null, true);
             echo "\" alt=\"product image\" width=\"100px\">
-                            <div class=\"caption\">
-                                <h4 class=\"pull-right\">";
-            // line 6
+            <div class=\"caption\">
+                <h4 class=\"pull-right\">\$ ";
+            // line 7
             echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "price", array()), "html", null, true);
             echo "</h4>
-                                <h4><a href=\"#\">";
-            // line 7
-            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "name_EN", array()), "html", null, true);
+                <h4><a href=\"#\">";
+            // line 8
+            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "name", array()), "html", null, true);
             echo "</a>
-                                </h4>
-                                <p>";
-            // line 9
-            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "description_EN", array()), "html", null, true);
+                </h4>
+                <p>";
+            // line 10
+            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "description", array()), "html", null, true);
             echo "</p>
-                            </div>
-                            <div class=\"ratings\">
-                                <p class=\"pull-right\">";
-            // line 12
-            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "average", array()), "html", null, true);
+            </div>
+            <div class=\"ratings\">
+                <p class=\"pull-right\">";
+            // line 13
+            echo twig_escape_filter($this->env, $this->getAttribute($context["product"], "totalReviews", array()), "html", null, true);
             echo " reviews</p>
-                                <p>
-                                    ";
-            // line 14
-            $context["k"] = $this->getAttribute($context["product"], "average", array());
-            // line 15
-            echo "                                    ";
-            $context['_parent'] = $context;
-            $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["k"]) ? $context["k"] : null)));
-            foreach ($context['_seq'] as $context["_key"] => $context["i"]) {
-                // line 16
-                echo "                                    <span class=\"glyphicon glyphicon-star\" id=\"star-full\"></span>
-                                    ";
-            }
-            $_parent = $context['_parent'];
-            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['i'], $context['_parent'], $context['loop']);
-            $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 18
-            echo "                                    ";
-            $context["t"] = (5 - $this->getAttribute($context["product"], "average", array()));
-            // line 19
-            echo "                                    ";
-            $context['_parent'] = $context;
-            $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["t"]) ? $context["t"] : null)));
-            foreach ($context['_seq'] as $context["_key"] => $context["s"]) {
-                // line 20
-                echo "                                    <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
-                                    ";
-            }
-            $_parent = $context['_parent'];
-            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['s'], $context['_parent'], $context['loop']);
-            $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 22
-            echo "                                </p>
-                            </div>
-                        </div>
+                <p>
                     ";
+            // line 15
+            if (($this->getAttribute($context["product"], "average", array()) < 1)) {
+                // line 16
+                echo "                    ";
+            } else {
+                // line 17
+                echo "                        ";
+                $context['_parent'] = $context;
+                $context['_seq'] = twig_ensure_traversable(range(1, $this->getAttribute($context["product"], "average", array())));
+                foreach ($context['_seq'] as $context["_key"] => $context["i"]) {
+                    // line 18
+                    echo "                            <span class=\"glyphicon glyphicon-star\" id=\"star-full\"></span>
+                        ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['i'], $context['_parent'], $context['loop']);
+                $context = array_intersect_key($context, $_parent) + $_parent;
+                // line 20
+                echo "                    ";
+            }
+            // line 21
+            echo "                    ";
+            $context["t"] = (5 - $this->getAttribute($context["product"], "average", array()));
+            // line 22
+            echo "                    ";
+            if (($this->getAttribute($context["product"], "average", array()) > 4)) {
+                // line 23
+                echo "                    ";
+            } else {
+                // line 24
+                echo "                        ";
+                $context['_parent'] = $context;
+                $context['_seq'] = twig_ensure_traversable(range(1, (isset($context["t"]) ? $context["t"] : null)));
+                foreach ($context['_seq'] as $context["_key"] => $context["s"]) {
+                    // line 25
+                    echo "                            <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
+                        ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['s'], $context['_parent'], $context['loop']);
+                $context = array_intersect_key($context, $_parent) + $_parent;
+                // line 27
+                echo "                    ";
+            }
+            // line 28
+            echo "                </p>
+            </div>
+        </div>
+    </div>
+";
         }
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['product'], $context['_parent'], $context['loop']);
@@ -100,36 +117,43 @@ class __TwigTemplate_ed39ef6ea1f4c3af0ea8615dea4996b70b0b588925e950ce211c097c60b
 
     public function getDebugInfo()
     {
-        return array (  81 => 22,  74 => 20,  69 => 19,  66 => 18,  59 => 16,  54 => 15,  52 => 14,  47 => 12,  41 => 9,  36 => 7,  32 => 6,  27 => 4,  23 => 2,  19 => 1,);
+        return array (  97 => 28,  94 => 27,  87 => 25,  82 => 24,  79 => 23,  76 => 22,  73 => 21,  70 => 20,  63 => 18,  58 => 17,  55 => 16,  53 => 15,  48 => 13,  42 => 10,  37 => 8,  33 => 7,  28 => 5,  23 => 2,  19 => 1,);
     }
 
     public function getSource()
     {
         return "{% for product in prodList %}
-                    <div class=\"col-sm-4 col-lg-4 col-md-4\">
-                        <div class=\"thumbnail\">
-                            <img src=\"data:image/png;base64,{{product.picture}}\" alt=\"product image\" width=\"100px\">
-                            <div class=\"caption\">
-                                <h4 class=\"pull-right\">{{ product.price }}</h4>
-                                <h4><a href=\"#\">{{ product.name_EN }}</a>
-                                </h4>
-                                <p>{{ product.description_EN }}</p>
-                            </div>
-                            <div class=\"ratings\">
-                                <p class=\"pull-right\">{{product.average}} reviews</p>
-                                <p>
-                                    {% set k = product.average %}
-                                    {% for i in range(1, k) %}
-                                    <span class=\"glyphicon glyphicon-star\" id=\"star-full\"></span>
-                                    {% endfor %}
-                                    {% set t = (5 - product.average) %}
-                                    {% for s in range(1, t) %}
-                                    <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
+    
+    <div class=\"col-sm-4 col-lg-4 col-md-4 div-products\">                          
+        <div class=\"thumbnail product-thumbnail\">
+            <img src=\"data:image/png;base64,{{product.picture}}\" alt=\"product image\" width=\"100px\">
+            <div class=\"caption\">
+                <h4 class=\"pull-right\">\$ {{ product.price }}</h4>
+                <h4><a href=\"#\">{{ product.name }}</a>
+                </h4>
+                <p>{{ product.description }}</p>
+            </div>
+            <div class=\"ratings\">
+                <p class=\"pull-right\">{{product.totalReviews}} reviews</p>
+                <p>
+                    {% if product.average < 1 %}
+                    {% else %}
+                        {% for i in range(1, product.average ) %}
+                            <span class=\"glyphicon glyphicon-star\" id=\"star-full\"></span>
+                        {% endfor %}
+                    {% endif %}
+                    {% set t = (5 - product.average) %}
+                    {% if product.average > 4 %}
+                    {% else %}
+                        {% for s in range(1, t) %}
+                            <span class=\"glyphicon glyphicon-star-empty\" id=\"star-empty\"></span>
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 ";
     }
 }

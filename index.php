@@ -99,44 +99,25 @@ $view->parserExtensions = array(
 
 //$app->response->headers->set('content-type', 'application/json');
 
-$app->get('/', function() use ($app) {
-    $lang = "fr";
+$app->get('/', function() use ($app, $lang) {
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
-    $prodList = DB::query('SELECT * FROM products');
+   
+    $app->render('index.html.twig', array(
+        'categoryList' => $categoryList));
+});
+
+
+
+$app->get('/category/:categoryID', function($categoryID) use ($app, $lang) {
+     $prodList = DB::query('SELECT * FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $lang);
+    
     foreach ($prodList as &$product) {
-        $ID = $product['ID'];
+        $ID = $product['productID'];
         $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-        $product['average'] = $reviewsAverage['average'];
+        $product['average'] = round($reviewsAverage['average']);
         $product['picture'] = base64_encode($product['picture']);
     }
-    $app->render('index.html.twig', array('prodList' => $prodList,
-        'categoryList' => $categoryList));
-    //$app->render('index.html.twig');
-});
-
-$app->get('/lang', function($lang) use ($app) {
-    $productList = DB::query('SELECT * FROM products');
-
-
-    $app->render('index.html.twig', array('productList' => $productList
-    ));
-});
-
-$app->get('/category/:categoryID', function($categoryID) use ($app) {
-
-    $prodList = DB::query('SELECT * FROM products WHERE productCategoryID = %d', $categoryID);
-
-    if ($prodList) {
-        foreach ($prodList as &$product) {
-            $ID = $product['ID'];
-            $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-            $product['average'] = $reviewsAverage['average'];
-            $product['picture'] = base64_encode($product['picture']);
-        }
-    } else {
-        //log ("");
-    }
-    $app->render('index-products.html.twig', array('prodList' => $prodList));
+        $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
 
 $app->get('/cart', function() use ($app) {
