@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    
         $(".quanInput").bind('input', function () {
             var quantity = $(this).val();
             var itemID = $(this).attr('itemID');
@@ -7,19 +8,20 @@ $(document).ready(function () {
             
             var data = {quantity: quantity};
             $.ajax({
-                url: "/ipd7/justcart/api.php/cartItems/" + itemID,
+                url: "/cart/" + itemID,
                 type: "PUT",
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (result) {
                     console.log("cartItems update returned: " + result);
                     if (!result) {
-                        alert("Error updaing quantity of the product");
+                    alert("Error updaing quantity of the product");
                     }
+                   
                 },
                 error: function() {
                     console.log("cartItems update FAILED");
-                    alert("Error updaing quantity of the product");
+                    alert("Error updating quantity of the product");
                 }
             });
 
