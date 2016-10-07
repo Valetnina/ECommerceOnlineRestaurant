@@ -9,5 +9,4 @@ return array(
     'Leave a Review' => 'Laisse une évaluation',
     'stars' => 'étoiles',
     'days ago' => 'jours ',
-
 );
