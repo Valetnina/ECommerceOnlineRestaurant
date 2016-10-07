@@ -123,9 +123,9 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <!-- jQuery -->
         <script src=\"/bootstrap/js/jquery.js\"></script>
         <!-- Bootstrap Core JavaScript -->
-        <script src=\"/bootstrap/js/bootstrap.min.js\">
-            < /body>
-                    < /html>
+        <script src=\"/bootstrap/js/bootstrap.min.js\"></script>
+            </body>
+                    </html>
     ";
     }
 
@@ -254,9 +254,9 @@ class __TwigTemplate_0823507f2a31a94ddd655ae23ecaebcffc54e21f8449ba158dd0e867110
         <!-- jQuery -->
         <script src=\"/bootstrap/js/jquery.js\"></script>
         <!-- Bootstrap Core JavaScript -->
-        <script src=\"/bootstrap/js/bootstrap.min.js\">
-            < /body>
-                    < /html>
+        <script src=\"/bootstrap/js/bootstrap.min.js\"></script>
+            </body>
+                    </html>
     ";
     }
 }
