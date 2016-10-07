@@ -56,3 +56,12 @@ ul.pagination li button {
     float: left;
     padding: 8px 16px;
 }
+#reviewList {
+    min-height: 400px;
+}
+.activePage {
+    background-color: #449d44;
+}
+.disabled {
+    color: lightgray !important;
+}

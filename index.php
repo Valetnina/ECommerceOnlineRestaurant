@@ -1,6 +1,7 @@
 <?php
 
 require_once 'vendor/autoload.php';
+session_start();
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -17,7 +18,7 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 
 //Define Constants
 define("ROWSPERPAGE", 5);
-
+//$totalPages = 1;
 //DB::$dbName = 'cp4724_fastfood';
 //DB::$user = 'cp4724_fastfood-online';
 //DB::$password = 'X]&}^5{TL$)t';
@@ -25,7 +26,7 @@ define("ROWSPERPAGE", 5);
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -89,10 +90,10 @@ $view->parserExtensions = array(
 
 
 //////
-
-
+//FIXME: VAlidate all parameters
 \Slim\Route::setDefaultConditions(array(
-    'ID' => '\d+'
+    'ID' => '\d+',
+    'slug' => '[A-Za-z0-9-]+'
 ));
 
 
@@ -147,15 +148,14 @@ $app->get('/cart', function() use ($app) {
 });
 
 
-$app->get('/reviews/product/:ID', function($ID) use ($app) {
-    $pageNum = 1;
-    $start = ((int)$pageNum - 1) * ROWSPERPAGE;
-    
+$app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($app) {
+    $start = ((int) $pageNum - 1) * ROWSPERPAGE;
+
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-            . 'date, review, rating, firstName FROM ratingsreviews,'
-            . ' users WHERE ratingsreviews.customerID = users.ID'
-            . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
-            . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE);
+                    . 'date, review, rating, firstName FROM ratingsreviews,'
+                    . ' users WHERE ratingsreviews.customerID = users.ID'
+                    . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
+                    . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE);
     $reviewCount = DB::count();
     $reviewCountUpdated = $reviewCount;
 
@@ -175,53 +175,44 @@ $app->get('/reviews/product/:ID', function($ID) use ($app) {
         'reviewList' => $reviewList,
         'reviewCount' => $reviewCount,
         'ratingAverage' => $ratingAverage,
-     
-) );
+    ));
 });
-
 
 
 $app->get('/product/:ID', function($ID) use ($app, $lang) {
+    global $totalPages;
     $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
-            . " nutritionalValue, name, description FROM products, "
-            . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
+                    . " nutritionalValue, name, description FROM products, "
+                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
     $productRecord['picture'] = base64_encode($productRecord['picture']);
-    
-    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-            . 'date, review, rating, firstName FROM ratingsreviews,'
-            . ' users WHERE ratingsreviews.customerID = users.ID'
-            . ' AND productID=%d', $ID);
-    $reviewCount = DB::count();
-    $reviewCountUpdated = $reviewCount;
-    $totalPages = ceil($reviewCount/ROWSPERPAGE);
 
-    $ratingSum = 0;
-    foreach ($reviewList as &$value) {
-        if($value['rating'] == 0){
-            $reviewCountUpdated --;
-            continue;
-        }
-        $ratingSum += $value['rating'];
-    }
-    $ratingAverage = round($ratingSum / $reviewCountUpdated);
-    
-    
+
+    //FIXME: HOW TO UPDATE global variable from within callback function
+    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
+                    . 'date, review, rating, firstName FROM ratingsreviews,'
+                    . ' users WHERE ratingsreviews.customerID = users.ID'
+                    . ' AND productID=%d', $ID);
+    $reviewCount = DB::count();
+    $totalPages = ceil($reviewCount / ROWSPERPAGE);
+
+    echo "Helo zasdasdas" . $totalPages;
     $app->render('product_view.html.twig', array(
         'product' => $productRecord,
-        'reviewCount' => $reviewCount,
-        'ratingAverage' => $ratingAverage,
-       'totalPages' => $totalPages
-        
+        'totalPages' => $totalPages
     ));
 });
-//FIXME: ask if it's a good idea
-$app->get('/productComment/:ID', function($ID) use ($app) {
-    $reviewList = DB::query('SELECT ID, productID, customerID, date, review, rating FROM ratingsreviews WHERE productID=%d ORDER BY ID DESC ', $ID);
+
+$app->get('/rating/:ID', function($ID) use ($app, $lang, &$totalPages) {
+    //global $totalPages;
+    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
+                    . 'date, review, rating, firstName FROM ratingsreviews,'
+                    . ' users WHERE ratingsreviews.customerID = users.ID'
+                    . ' AND productID=%d', $ID);
     $reviewCount = DB::count();
     $reviewCountUpdated = $reviewCount;
-
+    $totalPages = ceil($reviewCount / ROWSPERPAGE);
     $ratingSum = 0;
-    foreach ($reviewList as $value) {
+    foreach ($reviewList as &$value) {
         if ($value['rating'] == 0) {
             $reviewCountUpdated --;
             continue;
@@ -229,71 +220,133 @@ $app->get('/productComment/:ID', function($ID) use ($app) {
         $ratingSum += $value['rating'];
     }
     $ratingAverage = round($ratingSum / $reviewCountUpdated);
-    echo json_encode(array('reviewCount' => $reviewCount, 'ratingAverage' => $ratingAverage, 'reviewList' => $reviewList), JSON_PRETTY_PRINT);
-});
 
+    $app->render('rating.html.twig', array(
+        'reviewCount' => $reviewCount,
+        'ratingAverage' => $ratingAverage,
+    ));
+});
 
 $app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-    //FIXME ADD validation
-//  if (!isTodoItemValid($record, $error)) {
-//
-//  $log->debug("Failed POST . Invalid data. ".$error);
-//
-//  $app->response->setStatus(400);
-//  echo json_encode($error);
-//  return;
-//  }
+    if (!isReviewPostValid($record, $error)) {
+
+        $log->debug("Failed POST . Invalid data. " . $error);
+
+        $app->response->setStatus(400);
+        echo json_encode($error);
+        return;
+    }
     DB::insert('ratingsreviews', $record);
     echo DB::insertId();
     // POST / INSERT is special - returns 201
     $app->response->setStatus(201);
 });
 
+function isReviewPostValid($review, &$error) {
+
+    if (count($review) != 5) {
+        $error = 'Invalid number of fields in data provided';
+        return FALSE;
+    }
+    if (!isset($review['productID']) || (!is_numeric($review['productID']))) {
+        $error = 'Product ID is not provided or it is not numeric';
+        return FALSE;
+    }
+    if (!isset($review['customerID']) || (!is_numeric($review['customerID']))) {
+        $error = 'Customer ID is not provided or it is not numeric';
+        return FALSE;
+    }
+    if (strlen($review['review']) < 1 || strlen($review['review']) > 500) {
+        $error = 'Review text is not valid';
+        return FALSE;
+    }
+    if (!in_array($review['rating'], array("1", "2", "3", "4", "5", "0"), true)) {
+        $error = 'Rating number of stars is invalid';
+        return FALSE;
+    }
+    $date = DateTime::createFromFormat('Y-m-d H:i:s', $review['date']);
+    if (!$date) {
+        $error = 'Date is not in the correct format';
+        return FALSE;
+    }
+    return TRUE;
+}
+
+$app->map('/cart', function() use ($app) {
+    // handle incoming post, if there is one
+    // either add item to cart or change its quantity
+    if ($app->request()->post()) {
+        $productID = $app->request()->post('productID');
+        $quantity = $app->request()->post('quantity');
+        $item = DB::queryFirstRow("SELECT * FROM cartItems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
+        if ($item) { // add quantity to existing item
+            DB::update('cartItems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
+        } else { // create new item in the cart
+            DB::insert('cartItems', array(
+                'sessionID' => session_id(),
+                'productID' => $productID,
+                'quantity' => $quantity
+            ));
+        }
+    }
+    // display cart's content
+    $cartItems = DB::query(
+                    "SELECT cartItems.ID, products.name, products.price, cartItems.quantity "
+                    . "FROM cartItems, products "
+                    . "WHERE products.ID = cartItems.productID AND sessionID=%s", session_id());
+    //print_r($cartItems);
+    $app->render('cart.html.twig', array("cartItems" => $cartItems));
+})->via('GET', 'POST');
+
+// custom API call - the easy way out
+$app->get('/updateCart/:ID/:quantity', function($ID, $quantity) {
+    // TODO:
+});
+
+// RESTful
+$app->put('/cartItems/:ID', function($ID) {
+    
+});
 /*
+$app->get('/product/:slug', function($slug) use ($app) {
+    $product = DB::queryOneRow("SELECT * FROM products WHERE slug=%s", $slug);
+    if (!$product) {
+        echo "Product not found";
+        return;
+    }
+    $app->render('product.html.twig', array("product" => $product));
+});*/
+// RESTful
+$app->put('/cartItems/:ID', function($ID) use ($app) {
+    $json = $app->request()->getBody();
+    $data = json_decode($json, true);
+    // only expect 
+    if ((count($data) != 1) || (!isset($data['quantity']))) {
+        $app->response()->status(400);
+        echo json_encode("400: data in body invalid");
+        return;
+    }
+    $quantity = $data['quantity'];
+    if ($quantity < 0) {
+        $app->response()->status(400);
+        echo json_encode("400: quantity invalid");
+        return;
+    }
+    DB::update('cartItems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
+    echo json_encode(DB::affectedRows() == 1);
+});
 
-  function isTodoItemValid($todo, &$error, $skipID='false') {
 
-  if (!isset($todo['ID'])) {
+// FUTURE WORK
+$app->delete('/cartItems/:ID', function($ID) use ($app) {
+    
+});
 
-  if(count($todo) != ($skipID ? 3 : 4)){
-  $error = 'Invalid number of fields in data provided';
-  return FALSE;
-  }
-  if(!$skipID){
-  if(!isset($todo['ID']) || (!is_numeric($todo['ID']))){
-  $error = 'ID is not provided or it is not numeric';
-  return FALSE;
-  }
-  }
-  if (!isset($todo['title']) || !isset($todo['dueDate']) || !isset($todo['isDone'])) {
-  $error = 'The passed fields do not correspond to the expected list';
 
-  return FALSE;
-  }
-  if (strlen($todo['title']) < 1 || strlen($todo['title']) > 100) {
-  $error = 'Title is not valid';
-  return FALSE;
-  }
-  if (!in_array($todo['isDone'], array('true', 'false'))) {
-  $error = 'isDone is not true nor false';
-  return FALSE;
-  }
-  $f = 'Y-m-d';
-  $tempDate = explode('-', $todo['dueDate']);
-  if (count($tempDate) != 3) {
-  $error = 'dueDate is not in the correct format';
-  return FALSE;
-  } elseif (!checkdate($tempDate[1], $tempDate[2], $tempDate[0])
-  || date($todo['dueDate'], $f) < date('2000-01-01', $f)
-  || date($todo['dueDate'], $f) > date('2099-01-01', $f)) {
-  $error = 'dueDate could not be parsed into a valid date between 2000-01-01 and 2099-01-01';
-  return FALSE;
-  }
-  }
-  return TRUE;
-  }
+
+/*
   function getAuthUserID(){
   global $app, $log;
   $username = $app->request->headers("PHP_AUTH_USER");

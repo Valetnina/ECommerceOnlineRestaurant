@@ -11,4 +11,5 @@ return array(
     'Rate' => 'Rate',
     'stars' => 'stars',
     'days ago' => 'days ago',
+    'Nutritional Value' => 'Nutritional Value',
 );
