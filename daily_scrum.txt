@@ -30,3 +30,19 @@ day03--
        Olga
 1.Done: Worked on the design of the index page.
 2 TODO: Implement ajax loading of the products according to categories.
+
+day04--
+
+       Tina
+1.Done: Fixed the ajax load of reviews, added pagination. Startd working on the cart
+2.TODO: Finish implementing the cart functionality and start working on the registration and login.
+. TOASK: TotalPages ? Ask teacher about password recovery table design
+
+
+       Olga
+1.Done: Implemented ajax load products by categories. Started populating products ield in he database
+2 TODO: Finish the products table. Make products link to the products page. Implement slug on product search
+
+
+
+email vm!0%.&7i{K;

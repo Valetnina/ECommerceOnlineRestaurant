@@ -18,15 +18,15 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 
 //Define Constants
 define("ROWSPERPAGE", 5);
-//$totalPages = 1;
-//DB::$dbName = 'cp4724_fastfood';
-//DB::$user = 'cp4724_fastfood-online';
-//DB::$password = 'X]&}^5{TL$)t';
-//DB::$host = 'www.ipd8.info'; // sometimes needed on Mac OSX
+define("TAX", 0.15);
+$totalPages = 1;
+//DB::$dbName = 'cp4724_fastfood-online';
+//DB::$user = 'cp4724_fastfood';
+//DB::$password = '[^)EJ;Fw%402';
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -139,14 +139,6 @@ $app->get('/category/:categoryID', function($categoryID) use ($app) {
     }
     $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
-
-$app->get('/cart', function() use ($app) {
-//$app->get('/lang', function($lang) use ($app) {
-//$testList = DB::query('SELECT * FROM users');
-//$app->render('index.html.twig', array('testList' => $testList));
-    $app->render('cart_view.html.twig');
-});
-
 
 $app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($app) {
     $start = ((int) $pageNum - 1) * ROWSPERPAGE;
@@ -273,8 +265,7 @@ function isReviewPostValid($review, &$error) {
     }
     return TRUE;
 }
-
-$app->map('/cart', function() use ($app) {
+$app->map('/cart', function() use ($app, $lang) {
     // handle incoming post, if there is one
     // either add item to cart or change its quantity
     if ($app->request()->post()) {
@@ -293,33 +284,33 @@ $app->map('/cart', function() use ($app) {
     }
     // display cart's content
     $cartItems = DB::query(
-                    "SELECT cartItems.ID, products.name, products.price, cartItems.quantity "
-                    . "FROM cartItems, products "
-                    . "WHERE products.ID = cartItems.productID AND sessionID=%s", session_id());
-    //print_r($cartItems);
-    $app->render('cart.html.twig', array("cartItems" => $cartItems));
+                    "SELECT cartItems.ID, name, price, quantity, picture "
+                    . "FROM cartItems, products, products_i18n "
+                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $lang);
+    $cartTotal = 0;
+    foreach ($cartItems as &$item) {
+        $item['picture'] = base64_encode($item['picture']);
+        $item['total'] = ($item['quantity'] * $item['price']);
+        $cartTotal += $item['total'];
+    }
+    $cartTax = TAX * $cartTotal;
+    $cartTotalToPay = $cartTax + $cartTotal ;
+    
+    $app->render('cart_view.html.twig', array(
+        'cartItems' => $cartItems,
+        'cartTotal' => $cartTotal,
+        'cartTax' => $cartTax,
+        'cartTotalToPay' => $cartTotalToPay,
+        ));
 })->via('GET', 'POST');
 
 // custom API call - the easy way out
 $app->get('/updateCart/:ID/:quantity', function($ID, $quantity) {
-    // TODO:
+    
 });
 
 // RESTful
-$app->put('/cartItems/:ID', function($ID) {
-    
-});
-/*
-$app->get('/product/:slug', function($slug) use ($app) {
-    $product = DB::queryOneRow("SELECT * FROM products WHERE slug=%s", $slug);
-    if (!$product) {
-        echo "Product not found";
-        return;
-    }
-    $app->render('product.html.twig', array("product" => $product));
-});*/
-// RESTful
-$app->put('/cartItems/:ID', function($ID) use ($app) {
+$app->put('/cart/:ID', function($ID) use ($app) {
     $json = $app->request()->getBody();
     $data = json_decode($json, true);
     // only expect 

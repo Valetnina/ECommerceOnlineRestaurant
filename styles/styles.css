@@ -65,3 +65,17 @@ ul.pagination li button {
 .disabled {
     color: lightgray !important;
 }
+#cartTable {
+    margin: 50px 20px;
+}
+.cartImage {
+    width: 100px !important;
+}
+#cartTable td,th {
+    width: 200px;
+    border-bottom: 1px solid #9d9d9d;
+}
+#totals {
+    width: 40%;
+    text-align: right;
+}
