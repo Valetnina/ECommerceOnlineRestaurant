@@ -20,13 +20,13 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
 $totalPages = 1;
-//DB::$dbName = 'cp4724_fastfood-online';
-//DB::$user = 'cp4724_fastfood';
-//DB::$password = '[^)EJ;Fw%402';
-DB::$dbName = 'ecommerce';
-DB::$user = 'root';
-DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+DB::$dbName = 'cp4724_fastfood-online';
+DB::$user = 'cp4724_fastfood';
+DB::$password = '[^)EJ;Fw%402';
+//DB::$dbName = 'ecommerce';
+//DB::$user = 'root';
+//DB::$password = '';
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -63,7 +63,12 @@ $view->parserOptions = array(
 );
 $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
-
+//facebook login
+$fb = new Facebook\Facebook([
+  'app_id' => '881440665321233',
+  'app_secret' => '67f11e93f3dab0dd13e91f61d85e9f4a',
+  'default_graph_version' => 'v2.5',
+]);
 
 //$lang = "en";
 //
@@ -82,6 +87,7 @@ if (!isset($_GET['lang'])) {
     if ($lang == 'en' || $lang == 'fr') {
         setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
     } else {
+        //FIXME: if it's the first time, it throws an error,
         $lang = $_COOKIE['lang'];
     }
 }
@@ -115,6 +121,104 @@ $view->parserExtensions = array(
 
 //$app->response->headers->set('content-type', 'application/json');
  
+if (!isset($_SESSION['user'])) {
+    $_SESSION['user'] = array();
+}
+$app->get('/emailexists/:email', function($email) use ($app, $log) {
+    $user = DB::queryFirstRow("SELECT * FROM users WHERE email=%s", $email);
+    if ($user) {
+        echo "Email already registered";
+    }
+});
+
+// State 1: first show
+$app->get('/register', function() use ($app, $log) {
+    $app->render('register.html.twig');
+});
+// State 2: submission
+$app->post('/register', function() use ($app, $log) {
+    $name = $app->request->post('name');
+    $email = $app->request->post('email');
+    $pass1 = $app->request->post('pass1');
+    $pass2 = $app->request->post('pass2');
+    $valueList = array ('name' => $name, 'email' => $email);
+    // submission received - verify
+    $errorList = array();
+    if (strlen($name) < 4) {
+        array_push($errorList, "Name must be at least 4 characters long");
+        unset($valueList['name']);
+    }
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
+        array_push($errorList, "Email does not look like a valid email");
+        unset($valueList['email']);
+    } else {
+        $user = DB::queryFirstRow("SELECT ID FROM users WHERE email=%s", $email);        
+        if ($user) {
+            array_push($errorList, "Email already registered");
+            unset($valueList['email']);
+        }
+    }
+    if (!preg_match('/[0-9;\'".,<>`~|!@#$%^&*()_+=-]/', $pass1) || (!preg_match('/[a-z]/', $pass1)) || (!preg_match('/[A-Z]/', $pass1)) || (strlen($pass1) < 8)) {
+        array_push($errorList, "Password must be at least 8 characters " .
+                "long, contain at least one upper case, one lower case, " .
+                " one digit or special character");
+    } else if ($pass1 != $pass2) {
+        array_push($errorList, "Passwords don't match");
+    }
+    //
+    if ($errorList) {
+        // STATE 3: submission failed        
+        $app->render('register.html.twig', array(
+            'errorList' => $errorList, 'v' => $valueList
+        ));
+    } else {
+        // STATE 2: submission successful
+        DB::insert('users', array(
+            'name' => $name, 'email' => $email,
+            'password' => password_hash($pass1, CRYPT_BLOWFISH)
+            // 'password' => hash('sha256', $pass1)
+        ));
+        $id = DB::insertId();
+        $log->debug(sprintf("User %s created", $id));
+        $app->render('register_success.html.twig');
+    }
+});
+
+// State 1: first show
+$app->get('/login', function() use ($app, $log) {
+    $app->render('login.html.twig');
+});
+// State 2: submission
+$app->post('/login', function() use ($app, $log) {
+    $email = $app->request->post('email');
+    $pass = $app->request->post('pass');
+    $user = DB::queryFirstRow("SELECT * FROM users WHERE email=%s", $email);    
+    if (!$user) {
+        $log->debug(sprintf("User failed for email %s from IP %s",
+                    $email, $_SERVER['REMOTE_ADDR']));
+        $app->render('login.html.twig', array('loginFailed' => TRUE));
+    } else {
+        // password MUST be compared in PHP because SQL is case-insenstive
+        //if ($user['password'] == hash('sha256', $pass)) {
+        if (password_verify($pass, $user['password'])) {
+            // LOGIN successful
+            unset($user['password']);
+            $_SESSION['user'] = $user;
+            $log->debug(sprintf("User %s logged in successfuly from IP %s",
+                    $user['ID'], $_SERVER['REMOTE_ADDR']));
+            $app->render('login_success.html.twig');
+        } else {
+            $log->debug(sprintf("User failed for email %s from IP %s",
+                    $email, $_SERVER['REMOTE_ADDR']));
+            $app->render('login.html.twig', array('loginFailed' => TRUE));            
+        }
+    }
+});
+
+$app->get('/logout', function() use ($app, $log) {
+    $_SESSION['user'] = array();
+    $app->render('logout_success.html.twig');
+});
 
 //Handler for the home page
 
@@ -315,6 +419,29 @@ $app->map('/cart', function() use ($app) {
     ));
 })->via('GET', 'POST');
 
+$app->get('/cartUpdate', function() use ($app) {
+    // display cart's content
+    $cartItems = DB::query(
+                    "SELECT cartItems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
+                    . "FROM cartItems, products, products_i18n "
+                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
+    $cartTotal = 0;
+    foreach ($cartItems as &$item) {
+        $item['picture'] = base64_encode($item['picture']);
+        $item['total'] = ($item['quantity'] * $item['price']);
+        $cartTotal += $item['total'];
+    }
+    $cartTax = TAX * $cartTotal;
+    $cartTotalToPay = $cartTax + $cartTotal;
+    print_r($cartItems);
+    $app->render('cart_view.html.twig', array(
+        'cartItems' => $cartItems,
+        'cartTotal' => $cartTotal,
+        'cartTax' => $cartTax,
+        'cartTotalToPay' => $cartTotalToPay,
+    ));
+});
+
 
 // RESTful update cart when quantity changed
 $app->put('/cart/:ID', function($ID) use ($app) {
@@ -346,7 +473,6 @@ $app->delete('/cartItems/:ID', function($ID) use ($app) {
     } else {
         echo FALSE;
     }
-
 });
 
 

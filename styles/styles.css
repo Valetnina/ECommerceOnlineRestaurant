@@ -75,3 +75,18 @@ ul.pagination li button {
         padding:20px;
 
 }
+#loginContainer {
+    width: 70%;
+    margin: auto;
+    background-color: white;
+    text-align: center;
+    margin-top: 50px;
+    
+}
+.navbar-fixed-top {
+    margin-bottom: 30px;
+}
+label {
+    width: 200px;
+    text-align: right;
+}

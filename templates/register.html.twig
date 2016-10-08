@@ -1,0 +1,35 @@
+{% extends "master.html.twig" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block head %}
+    <!-- jQuery -->
+    <script src="/js/register.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container" id="loginContainer">
+  <div class="row">
+    <h1>Sign Up</h1>
+
+    {% if errorList %}
+        <ul>
+            {% for error in errorList %}
+                <li>{{ error }}</li>
+                {% endfor %}
+        </ul>
+    {% endif %}
+    <form method="post">
+        <label>{{"First Name"|trans}}: </label> <input type="text" name="name" value="{{v.firstName}}"><br><br>
+        <label>{{"Last Name"|trans}}: </label> <input type="text" name="name" value="{{v.lastName}}"><br><br>
+
+        <label>Email: </label><input type="text" name="email" value="{{v.email}}">
+        <span id="result"></span><br>
+        <label>Password: </label><input type="password" name="pass1"><br>
+        <label>Confirm Password: </label> <input type="password" name="pass2"><br>
+        <input type="submit" value="{{"Create Account"|trans}}">
+    </form>
+        <div>
+</div>
+{% endblock %}

@@ -24,4 +24,8 @@ return array(
     'Remove from cart'=> 'Remove from cart',
      'Calories'=> 'Calories',
     'No Products in the Cart Yet' => 'No Products in the Cart yet',
+    'Create Account' => 'Create Account',
+    'First Name' => 'First Name',
+        'Last Name' => 'Last Name',
+
 );

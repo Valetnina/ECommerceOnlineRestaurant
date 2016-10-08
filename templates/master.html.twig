@@ -11,6 +11,24 @@
         <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="/bootstrap/js/bootstrap.min.js"></script>
+        
+        <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '881440665321233',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -57,14 +75,15 @@
                     <a href="?lang=fr"><img src="/images/french.png" width="70" class="flag flag-en" id="lang-en"></a> 
                     <ul class="nav navbar-nav log-register fontsize">
                         <li>
-                            <a href="#">Login</a>
+                            <a href="/login">Login</a>
                         </li>
                         <li>
-                            <a href="#">Register</a>
+                            <a href="/register">Register</a>
                         </li>
                         <li>
                             <a href="/cart"><img src="/images/cart.png" class="cart"></a>
                         </li>
+                        <li></li>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
