@@ -26,7 +26,7 @@ $totalPages = 1;
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -65,14 +65,29 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
 
-$lang = "en";
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
+//$lang = "en";
+//
+//if (isset($_GET['lang'])) {
+//    $lang = $_GET['lang'];
+//} 
+
+if (!isset($_GET['lang'])) {
+    if (isset($_COOKIE['lang'])) {
+        $lang = $_COOKIE['lang'];
+    } else {
+        $lang = 'en';
+    }
+} else {
+    $lang = (string) $_GET['lang'];
+    if ($lang == 'en' || $lang == 'fr') {
+        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    } else {
+        $lang = $_COOKIE['lang'];
+    }
 }
 
-
 // First param is the "default language" to use.
-$translator = new Translator($lang, new MessageSelector());
+$translator = new Translator($_COOKIE['lang'], new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
 $translator->setFallbackLocales(['en']);
 // Add a loader that will get the php files we are going to store our translations in
@@ -99,28 +114,55 @@ $view->parserExtensions = array(
 
 
 //$app->response->headers->set('content-type', 'application/json');
+ 
 
+//Handler for the home page
+
+//FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
 $app->get('/', function() use ($app, $lang) {
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
-   
+
     $app->render('index.html.twig', array(
         'categoryList' => $categoryList));
 });
 
+//Ajax -> refresh products by filter
+$app->get('/category/:categoryID', function($categoryID) use ($app) {
+    $prodList = DB::query('SELECT products.ID as productID, name, description, price, picture FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $_COOKIE['lang']);
 
-
-$app->get('/category/:categoryID', function($categoryID) use ($app, $lang) {
-     $prodList = DB::query('SELECT * FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $lang);
-    
     foreach ($prodList as &$product) {
         $ID = $product['productID'];
         $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
         $product['average'] = round($reviewsAverage['average']);
         $product['picture'] = base64_encode($product['picture']);
     }
-        $app->render('index-products.html.twig', array('prodList' => $prodList));
+    $app->render('index-products.html.twig', array('prodList' => $prodList));
+});
+// Handling the product_view page
+// First show of the product with static content
+$app->get('/product/:ID', function($ID) use ($app) {
+    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
+                    . " nutritionalValue, name, description FROM products, "
+                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $_COOKIE['lang'], $ID);
+    $productRecord['picture'] = base64_encode($productRecord['picture']);
+
+
+    //FIXME: HOW TO UPDATE global variable from within callback function
+    /* $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
+      . 'date, review, rating, firstName FROM ratingsreviews,'
+      . ' users WHERE ratingsreviews.customerID = users.ID'
+      . ' AND productID=%d', $ID);
+      $reviewCount = DB::count();
+      $totalPages = ceil($reviewCount / ROWSPERPAGE);
+     */
+    $app->render('product_view.html.twig', array(
+        'product' => $productRecord,
+            // 'totalPages' => $totalPages
+    ));
 });
 
+
+//handle the ajax -> changing pages in reviews
 $app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($app) {
     $start = ((int) $pageNum - 1) * ROWSPERPAGE;
 
@@ -129,54 +171,29 @@ $app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($ap
                     . ' users WHERE ratingsreviews.customerID = users.ID'
                     . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
                     . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE);
-    $reviewCount = DB::count();
-    $reviewCountUpdated = $reviewCount;
 
-    $ratingSum = 0;
     foreach ($reviewList as &$value) {
         $now = new DateTime('now');
         $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a") - 1;
-        if ($value['rating'] == 0) {
-            $reviewCountUpdated --;
-            continue;
-        }
-        $ratingSum += $value['rating'];
     }
-    $ratingAverage = round($ratingSum / $reviewCountUpdated);
 
-    $app->render('reviews.html.twig', array(
-        'reviewList' => $reviewList,
-        'reviewCount' => $reviewCount,
-        'ratingAverage' => $ratingAverage,
-    ));
-});
-
-
-$app->get('/product/:ID', function($ID) use ($app, $lang) {
-    global $totalPages;
-    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
-                    . " nutritionalValue, name, description FROM products, "
-                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
-    $productRecord['picture'] = base64_encode($productRecord['picture']);
-
-
-    //FIXME: HOW TO UPDATE global variable from within callback function
+    //\FIXME: Probably not a good idea => Get the total Number of available pages to prevent requesting a page that does not exist
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
                     . 'date, review, rating, firstName FROM ratingsreviews,'
                     . ' users WHERE ratingsreviews.customerID = users.ID'
                     . ' AND productID=%d', $ID);
     $reviewCount = DB::count();
     $totalPages = ceil($reviewCount / ROWSPERPAGE);
-
-    echo "Helo zasdasdas" . $totalPages;
-    $app->render('product_view.html.twig', array(
-        'product' => $productRecord,
+    $app->render('reviews.html.twig', array(
+        'reviewList' => $reviewList,
+        'page' => $pageNum,
         'totalPages' => $totalPages
     ));
 });
 
-$app->get('/rating/:ID', function($ID) use ($app, $lang, &$totalPages) {
-    //global $totalPages;
+
+//ajax=> refresh the average rating and number of comments for a products
+$app->get('/rating/:ID', function($ID) use ($app) {
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
                     . 'date, review, rating, firstName FROM ratingsreviews,'
                     . ' users WHERE ratingsreviews.customerID = users.ID'
@@ -199,7 +216,7 @@ $app->get('/rating/:ID', function($ID) use ($app, $lang, &$totalPages) {
         'ratingAverage' => $ratingAverage,
     ));
 });
-
+// Add a new review
 $app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
@@ -246,28 +263,41 @@ function isReviewPostValid($review, &$error) {
     }
     return TRUE;
 }
-$app->map('/cart', function() use ($app, $lang) {
+//Handling of the cart page
+//get and port /cart
+$app->map('/cart', function() use ($app) {
     // handle incoming post, if there is one
     // either add item to cart or change its quantity
     if ($app->request()->post()) {
         $productID = $app->request()->post('productID');
         $quantity = $app->request()->post('quantity');
+
         $item = DB::queryFirstRow("SELECT * FROM cartItems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
         if ($item) { // add quantity to existing item
             DB::update('cartItems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
         } else { // create new item in the cart
+                                echo session_id();
+
             DB::insert('cartItems', array(
+
                 'sessionID' => session_id(),
                 'productID' => $productID,
                 'quantity' => $quantity
             ));
         }
     }
+
+    //FIXME: SessionID
     // display cart's content
     $cartItems = DB::query(
+                    "SELECT cartItems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
+                    . "FROM cartItems, products, products_i18n "
+                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
+  /*  $cartItems = DB::query(
                     "SELECT cartItems.ID, name, price, quantity, picture "
                     . "FROM cartItems, products, products_i18n "
-                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $lang);
+                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", '7uuq04khqfo640go5ae6', $_COOKIE['lang']);
+*/
     $cartTotal = 0;
     foreach ($cartItems as &$item) {
         $item['picture'] = base64_encode($item['picture']);
@@ -275,22 +305,18 @@ $app->map('/cart', function() use ($app, $lang) {
         $cartTotal += $item['total'];
     }
     $cartTax = TAX * $cartTotal;
-    $cartTotalToPay = $cartTax + $cartTotal ;
-    
+    $cartTotalToPay = $cartTax + $cartTotal;
+
     $app->render('cart_view.html.twig', array(
         'cartItems' => $cartItems,
         'cartTotal' => $cartTotal,
         'cartTax' => $cartTax,
         'cartTotalToPay' => $cartTotalToPay,
-        ));
+    ));
 })->via('GET', 'POST');
 
-// custom API call - the easy way out
-$app->get('/updateCart/:ID/:quantity', function($ID, $quantity) {
-    
-});
 
-// RESTful
+// RESTful update cart when quantity changed
 $app->put('/cart/:ID', function($ID) use ($app) {
     $json = $app->request()->getBody();
     $data = json_decode($json, true);
@@ -311,9 +337,16 @@ $app->put('/cart/:ID', function($ID) use ($app) {
 });
 
 
-// FUTURE WORK
+// Delete an item from the cart
 $app->delete('/cartItems/:ID', function($ID) use ($app) {
-    
+    // only expect 
+    if(isset($ID)){
+    DB::delete('cartItems', "productID=%i AND sessionID=%s", $ID, session_id());
+    echo json_encode(DB::affectedRows() == 1);
+    } else {
+        echo FALSE;
+    }
+
 });
 
 

@@ -19,4 +19,8 @@ return array(
     'Tax' => 'Taxes',
     'Remove from cart'=> 'Enlever du panier',
     'Total to pay at delivery' => 'Total à payer lors de la livraison',
+         'Calories'=> 'Calories',
+        'No Products in the Cart Yet' => 'Pas de produits dans le panier',
+
+
 );

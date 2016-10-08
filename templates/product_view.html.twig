@@ -17,8 +17,9 @@
 
         <div class="container">
             <div class="row">
-
-                <span id="productID" hidden>{{product.ID}}</span>
+                   
+                
+                <span id="productID" hidden>{{product.productID}}</span>
                 <div class="col-md-9">
 
                     <div class="thumbnail"> 
@@ -41,6 +42,7 @@
 
                             Quantity: <input type="number" name="quantity" value="1" style="width: 30px;"><br><br>
                             <input type="submit" value="addToCart">
+                            </form>
                         </div>
                     </div>
 
@@ -67,23 +69,7 @@
 
                         </div>
                     </div>
-                    <ul class="pagination">
-                        <span id="totalPages" hidden>{{totalPages}}</span>
-                        <li><button id="previous">«</button></li>
-                        <!--    {% if  totalPages > 3 %}
-                                {% set t = 3 %}
-
-                        {% else %}
-                            {% set t = totalPages %}
-
-                        {% endif %} -->
-
-                        {% for i in 1..totalPages %}
-                            <li><button id="pageButton_{{i}}" class="pageButton">{{i}}</button></li>
-                            {% endfor %}
-                        <li><button id="next">»</button></li>
-                    </ul>
-
+                  
                 </div>
 
             </div>

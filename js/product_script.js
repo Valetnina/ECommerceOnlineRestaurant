@@ -1,32 +1,13 @@
-function refreshPageNum(newPageNum){
-    pageNum = newPageNum;
-     $('#reviewList').load('/reviews/product/' + productID + '/page/' + newPageNum);
-        $('.pageButton').removeClass('activePage');
-
-        $("#pageButton_" + newPageNum).addClass("activePage");
-        if(newPageNum != 1){
-          $('#previous').attr('disabled', false).removeClass('disabled');
-        }else {
-           $('#previous').attr('disabled', true).addClass('disabled');
+        function changePage(pageNum){
+             $('#reviewList').load('/reviews/product/' + productID + '/page/' + pageNum);
         }
-        if(newPageNum == maximumPage) {
-           $('#next').attr('disabled', true).addClass('disabled');
-        } else {
-           $('#next').attr('disabled', false).removeClass('disabled');
 
-        }
-}
 var pageNum = 1;
-var maximumPage = 1;
 
 $(document).ready(function () {
     productID = $('#productID').text();
-    maximumPage = $('#totalPages').text();
     $('#reviewList').load('/reviews/product/' + productID + '/page/' + 1);
     $('#ratingsProduct').load('/rating/' + productID);
-
-    $("#pageButton_1").addClass("activePage");
-    $('#previous').attr('disabled', true).addClass('disabled');
 
     var selectedRating = 0;
     $(".error").text("");
@@ -48,19 +29,6 @@ $(document).ready(function () {
         }
     });
     
-    $(".pageButton").bind("click", function () {
-        pageNum = $(this).attr('id').split('_')[1];
-        refreshPageNum(pageNum);
-    });
-     $('#previous').click(function() {
-       var newPageNum = parseInt(pageNum) - 1;
-       refreshPageNum(newPageNum);
-     });
-     $('#next').click(function() {
-       
-       var newPageNum = parseInt(pageNum)  + 1;
-       refreshPageNum(newPageNum);
-     });
     $("#postReview").click(function () {
         var review = $("textarea[name=reviewText]").val();
         var rating = selectedRating;
@@ -111,41 +79,6 @@ $(document).ready(function () {
             }
             $('#reviewList').load('/reviews/product/' + productID + '/page/' + 1);
             $('#ratingsProduct').load('/rating/' + productID);
-
-
-
-        });
-
-    });
-    $('#addToCart').click(function() {
-         $.ajax({
-            url: "/reviews/product/" + productID,
-            data: JSON.stringify({
-                productID: productID,
-                customerID: customerID,
-                date: date,
-                rating: rating,
-                review: review,
-            }),
-            type: "POST",
-            dataType: "json"
-        }).done(function () {
-            //Refresh fields  
-            var selectedRating = 0;
-            $("textarea[name=reviewText]").val("");
-            // var reviewCount = (int)($('#reviewCount').html())+1;
-            // $('#reviewCount').html(reviewCount);
-            // $('#reviewCount').val("");
-            $('#reviewForm').hide();
-            $('#leaveReview').show();
-            for (var i = 1; i <= 5; i++) {
-                $('#star' + i).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-            }
-            $('#reviewList').load('/reviews/product/' + productID + '/page/' + 1);
-            $('#ratingsProduct').load('/rating/' + productID);
-
-
-
         });
 
     });

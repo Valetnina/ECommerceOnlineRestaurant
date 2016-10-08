@@ -44,7 +44,7 @@ body{
     font-size: 35px;
 }
 ul.pagination {
-    display: inline-block;
+    width: 200px;
     margin: auto;
     padding: 0;
 }
@@ -61,4 +61,17 @@ ul.pagination li button {
     float: left;
     padding: 8px 16px;
 }
+#cartTable th, td{
+    width: 150px;
+}
+#cartTable tr {
+    height: 100px;
+}
+#cartItems {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+        background-color: white;
+        padding:20px;
 
+}
