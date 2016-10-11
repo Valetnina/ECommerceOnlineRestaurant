@@ -143,12 +143,9 @@ $app->get('/', function() use ($app, $lang, $log) {
         //FIXME: ask if I should validate user data before registration
         try{
             //FIXME add update too to fbUser
-        DB::insert('fbusers', array(
-           'ID' => $_SESSION['facebook_access_token']['ID'],
-           'firstName' => $_SESSION['facebook_access_token']['firstName'],
-           'lastName' => $_SESSION['facebook_access_token']['lastName'],
-           'gender' => $_SESSION['facebook_access_token']['gender'],
-           'email' => $_SESSION['facebook_access_token']['email'],
+        //DB::queryFirstRow('', )
+        DB::insert('users', array(
+           'fbID' => $_SESSION['facebook_access_token']['ID'],
        ));
         } catch(Exception $ex) {
            //FIXME: ask what should happen if a fb uSer could not be registered
