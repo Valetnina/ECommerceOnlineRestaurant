@@ -20,12 +20,13 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
 $totalPages = 1;
-DB::$dbName = 'cp4724_fastfood-online';
-DB::$user = 'cp4724_fastfood';
-DB::$password = '[^)EJ;Fw%402';
-//DB::$dbName = 'ecommerce';
-//DB::$user = 'root';
-//DB::$password = '';
+//DB::$dbName = 'cp4724_fastfood-online';
+//DB::$user = 'cp4724_fastfood';
+//DB::$password = '[^)EJ;Fw%402';
+
+DB::$dbName = 'ecommerce';
+DB::$user = 'root';
+DB::$password = '';
 //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
@@ -65,16 +66,16 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 //facebook login
 $fb = new Facebook\Facebook([
-  'app_id' => '881440665321233',
-  'app_secret' => '67f11e93f3dab0dd13e91f61d85e9f4a',
-  'default_graph_version' => 'v2.5',
-]);
+    'app_id' => '881440665321233',
+    'app_secret' => '67f11e93f3dab0dd13e91f61d85e9f4a',
+    'default_graph_version' => 'v2.5',
+        ]);
 
 //$lang = "en";
 //
 //if (isset($_GET['lang'])) {
 //    $lang = $_GET['lang'];
-//} 
+//}
 
 if (!isset($_GET['lang'])) {
     if (isset($_COOKIE['lang'])) {
@@ -120,7 +121,7 @@ $view->parserExtensions = array(
 
 
 //$app->response->headers->set('content-type', 'application/json');
- 
+
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
 }
@@ -141,7 +142,7 @@ $app->post('/register', function() use ($app, $log) {
     $email = $app->request->post('email');
     $pass1 = $app->request->post('pass1');
     $pass2 = $app->request->post('pass2');
-    $valueList = array ('name' => $name, 'email' => $email);
+    $valueList = array('name' => $name, 'email' => $email);
     // submission received - verify
     $errorList = array();
     if (strlen($name) < 4) {
@@ -152,7 +153,7 @@ $app->post('/register', function() use ($app, $log) {
         array_push($errorList, "Email does not look like a valid email");
         unset($valueList['email']);
     } else {
-        $user = DB::queryFirstRow("SELECT ID FROM users WHERE email=%s", $email);        
+        $user = DB::queryFirstRow("SELECT ID FROM users WHERE email=%s", $email);
         if ($user) {
             array_push($errorList, "Email already registered");
             unset($valueList['email']);
@@ -167,7 +168,7 @@ $app->post('/register', function() use ($app, $log) {
     }
     //
     if ($errorList) {
-        // STATE 3: submission failed        
+        // STATE 3: submission failed
         $app->render('register.html.twig', array(
             'errorList' => $errorList, 'v' => $valueList
         ));
@@ -176,7 +177,7 @@ $app->post('/register', function() use ($app, $log) {
         DB::insert('users', array(
             'name' => $name, 'email' => $email,
             'password' => password_hash($pass1, CRYPT_BLOWFISH)
-            // 'password' => hash('sha256', $pass1)
+                // 'password' => hash('sha256', $pass1)
         ));
         $id = DB::insertId();
         $log->debug(sprintf("User %s created", $id));
@@ -192,10 +193,9 @@ $app->get('/login', function() use ($app, $log) {
 $app->post('/login', function() use ($app, $log) {
     $email = $app->request->post('email');
     $pass = $app->request->post('pass');
-    $user = DB::queryFirstRow("SELECT * FROM users WHERE email=%s", $email);    
+    $user = DB::queryFirstRow("SELECT * FROM users WHERE email=%s", $email);
     if (!$user) {
-        $log->debug(sprintf("User failed for email %s from IP %s",
-                    $email, $_SERVER['REMOTE_ADDR']));
+        $log->debug(sprintf("User failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
         $app->render('login.html.twig', array('loginFailed' => TRUE));
     } else {
         // password MUST be compared in PHP because SQL is case-insenstive
@@ -204,13 +204,11 @@ $app->post('/login', function() use ($app, $log) {
             // LOGIN successful
             unset($user['password']);
             $_SESSION['user'] = $user;
-            $log->debug(sprintf("User %s logged in successfuly from IP %s",
-                    $user['ID'], $_SERVER['REMOTE_ADDR']));
+            $log->debug(sprintf("User %s logged in successfuly from IP %s", $user['ID'], $_SERVER['REMOTE_ADDR']));
             $app->render('login_success.html.twig');
         } else {
-            $log->debug(sprintf("User failed for email %s from IP %s",
-                    $email, $_SERVER['REMOTE_ADDR']));
-            $app->render('login.html.twig', array('loginFailed' => TRUE));            
+            $log->debug(sprintf("User failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
+            $app->render('login.html.twig', array('loginFailed' => TRUE));
         }
     }
 });
@@ -221,8 +219,10 @@ $app->get('/logout', function() use ($app, $log) {
 });
 
 //Handler for the home page
-
 //FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////OLGA/////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 $app->get('/', function() use ($app, $lang) {
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
 
@@ -242,6 +242,15 @@ $app->get('/category/:categoryID', function($categoryID) use ($app) {
     }
     $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
+
+
+
+
+//$fileUpload = $_FILES['fileToUpload'];
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////END  OLGA/////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // Handling the product_view page
 // First show of the product with static content
 $app->get('/product/:ID', function($ID) use ($app) {
@@ -367,6 +376,7 @@ function isReviewPostValid($review, &$error) {
     }
     return TRUE;
 }
+
 //Handling of the cart page
 //get and port /cart
 $app->map('/cart', function() use ($app) {
@@ -380,10 +390,9 @@ $app->map('/cart', function() use ($app) {
         if ($item) { // add quantity to existing item
             DB::update('cartItems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
         } else { // create new item in the cart
-                                echo session_id();
+            echo session_id();
 
             DB::insert('cartItems', array(
-
                 'sessionID' => session_id(),
                 'productID' => $productID,
                 'quantity' => $quantity
@@ -397,11 +406,11 @@ $app->map('/cart', function() use ($app) {
                     "SELECT cartItems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
                     . "FROM cartItems, products, products_i18n "
                     . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
-  /*  $cartItems = DB::query(
-                    "SELECT cartItems.ID, name, price, quantity, picture "
-                    . "FROM cartItems, products, products_i18n "
-                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", '7uuq04khqfo640go5ae6', $_COOKIE['lang']);
-*/
+    /*  $cartItems = DB::query(
+      "SELECT cartItems.ID, name, price, quantity, picture "
+      . "FROM cartItems, products, products_i18n "
+      . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", '7uuq04khqfo640go5ae6', $_COOKIE['lang']);
+     */
     $cartTotal = 0;
     foreach ($cartItems as &$item) {
         $item['picture'] = base64_encode($item['picture']);
@@ -447,7 +456,7 @@ $app->get('/cartUpdate', function() use ($app) {
 $app->put('/cart/:ID', function($ID) use ($app) {
     $json = $app->request()->getBody();
     $data = json_decode($json, true);
-    // only expect 
+    // only expect
     if ((count($data) != 1) || (!isset($data['quantity']))) {
         $app->response()->status(400);
         echo json_encode("400: data in body invalid");
@@ -466,10 +475,10 @@ $app->put('/cart/:ID', function($ID) use ($app) {
 
 // Delete an item from the cart
 $app->delete('/cartItems/:ID', function($ID) use ($app) {
-    // only expect 
-    if(isset($ID)){
-    DB::delete('cartItems', "productID=%i AND sessionID=%s", $ID, session_id());
-    echo json_encode(DB::affectedRows() == 1);
+    // only expect
+    if (isset($ID)) {
+        DB::delete('cartItems', "productID=%i AND sessionID=%s", $ID, session_id());
+        echo json_encode(DB::affectedRows() == 1);
     } else {
         echo FALSE;
     }
