@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> origin/master
 function removeItem(ID) {
     $.ajax({
         url: "/cartItems/" + ID,
@@ -14,15 +11,7 @@ function removeItem(ID) {
             if (!result) {
                 alert("Error removing product from cart ");
             }
-<<<<<<< HEAD
             getCartItems();
-=======
-             $.ajax({
-        url: "/cart",
-        type: "GET",
-        contentType: 'application/json'
-    });
->>>>>>> origin/master
         },
         error: function () {
             console.log("delete from cartItems FAILED");
@@ -34,7 +23,6 @@ function removeItem(ID) {
 }
 //FIXME validation for delete and update    
 $(document).ready(function () {
-<<<<<<< HEAD
    // $('#cartItems').load('/cart');
     /*
 geocoder.geocode( { 'address': address}, function(results, status) {
@@ -50,9 +38,6 @@ geocoder.geocode( { 'address': address}, function(results, status) {
         */
     $(".quanInput").bind('input', function () {
         getCartItems();
-=======
-    $(".quanInput").bind('input', function () {
->>>>>>> origin/master
         var quantity = $(this).val();
         var itemID = $(this).attr('itemID');
         console.log("quantity changed: " + quantity + " of item " + itemID);
@@ -67,21 +52,12 @@ geocoder.geocode( { 'address': address}, function(results, status) {
             contentType: 'application/json'
             
     }).done(function(){
-<<<<<<< HEAD
         getCartItems();
-=======
->>>>>>> origin/master
         }).fail(function(){
                 console.log("cartItems update FAILED");
                 alert("Error updating quantity of the product");
             });
-<<<<<<< HEAD
 
     });
      
 });
-=======
-        });
-
-    });
->>>>>>> origin/master

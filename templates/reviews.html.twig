@@ -21,20 +21,12 @@
                         </div>
                            {% endfor %}
                              <ul class="pagination">
-<<<<<<< HEAD
                                  {% if totalPages >0 %}
                         {% set k = page-1 %}
                         {% if k > 0 %}
                         <li><button id="previous" onclick="changePage({{k}})">«</button></li>
                         {% endif %}
                             
-=======
-                        {% set k = page-1 %}
-                        {% if k > 0 %}
-                        <li><button id="prev ious" onclick="changePage({{k}})">«</button></li>
-                        {% endif %}
-                       
->>>>>>> origin/master
                             <li><button onclick="changePage({{page}})" id="pageButton" class="pageButton">{{page}}</button></li>
                                                 
                                                   
@@ -43,9 +35,6 @@
                               {% if page < totalPages %}
                             <li><button id="next" onclick="changePage({{s}})">»</button></li>
                             {% endif %}
-<<<<<<< HEAD
                               {% endif %}
-=======
->>>>>>> origin/master
                     </ul>
 

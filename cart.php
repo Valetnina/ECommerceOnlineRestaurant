@@ -14,11 +14,11 @@ $app->post('/cart', function() use ($app, $log) {
     $productID = $app->request()->post('productID');
     $quantity = $app->request()->post('quantity');
 
-    $item = DB::queryFirstRow("SELECT * FROM cartItems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
+    $item = DB::queryFirstRow("SELECT * FROM cartitems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
     if ($item) { // add quantity to existing item
-        DB::update('cartItems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
+        DB::update('cartitems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
     } else { // create new item in the cart
-        DB::insert('cartItems', array(
+        DB::insert('cartitems', array(
             'sessionID' => session_id(),
             'productID' => $productID,
             'quantity' => $quantity
@@ -29,10 +29,10 @@ $app->post('/cart', function() use ($app, $log) {
 
 $app->get('/cart', function() use ($app) {
     // display cart's content
-    $cartItems = DB::query(
-                    "SELECT cartItems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
-                    . "FROM cartItems, products, products_i18n "
-                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
+    $cartItems= DB::query(
+                    "SELECT cartitems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
+                    . "FROM cartitems, products, products_i18n "
+                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartitems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
     $cartTotal = 0;
     foreach ($cartItems as &$item) {
         $item['picture'] = base64_encode($item['picture']);
@@ -66,7 +66,7 @@ $app->put('/cart/:ID', function($ID) use ($app) {
         echo json_encode("400: quantity invalid");
         return;
     }
-    DB::update('cartItems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
+    DB::update('cartitems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
     echo json_encode(DB::affectedRows() == 1);
 });
 
@@ -75,7 +75,7 @@ $app->put('/cart/:ID', function($ID) use ($app) {
 $app->delete('/cartItems/:ID', function($ID) use ($app) {
     // only expect 
     if (isset($ID)) {
-        DB::delete('cartItems', "productID=%i AND sessionID=%s", $ID, session_id());
+        DB::delete('cartitems', "productID=%i AND sessionID=%s", $ID, session_id());
         echo json_encode(DB::affectedRows() == 1);
     } else {
         echo FALSE;
@@ -187,7 +187,7 @@ $app->post('/oder', function() use ($app) {
             $order['customerID'] = $_SESSION['facebook_access_token']['ID'];
         }
         //GET cartItems
-        $cartItems = DB::query("SELECT products.ID as productID, price, quantity FROM cartItems, products WHERE products.ID = cartItems.productID AND sessionID=%s", session_id());
+        $cartItems = DB::query("SELECT products.ID as productID, price, quantity FROM cartitems, products WHERE products.ID = cartitems.productID AND sessionID=%s", session_id());
         $cartTotal = 0;
         foreach ($cartItems as &$item) {
         $item['total'] = ($item['quantity'] * $item['price']);

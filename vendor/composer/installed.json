@@ -545,8 +545,6 @@
             "facebook",
             "sdk"
         ]
-<<<<<<< HEAD
-=======
     },
     {
         "name": "psr/log",
@@ -596,6 +594,5 @@
             "psr",
             "psr-3"
         ]
->>>>>>> origin/master
     }
 ]

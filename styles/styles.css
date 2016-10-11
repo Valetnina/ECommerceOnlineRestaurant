@@ -74,12 +74,10 @@ ul.pagination li button {
     width: 80%;
     margin: auto;
     text-align: center;
-<<<<<<< HEAD
         background-color: white;
         padding:20px;
         margin-top: 50px;
         border-radius:8px;
-
 }
 #loginContainer {
     width: 70%;
@@ -92,25 +90,10 @@ ul.pagination li button {
     border-radius: 8px;
     
 }
-=======
-    background-color: white;
-    padding:20px;
-
-}
-#loginContainer {
-    width: 70%;
-    margin: auto;
-    background-color: white;
-    text-align: center;
-    margin-top: 50px;
-
-}
->>>>>>> origin/master
 .navbar-fixed-top {
     margin-bottom: 30px;
 }
 label {
-<<<<<<< HEAD
     width: 270px;
     text-align: right;
 }
@@ -171,9 +154,6 @@ label {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-=======
-    width: 200px;
-    text-align: right;
 }
 #container-addedit_product{
     /*border: 1px solid red;*/
@@ -325,5 +305,4 @@ table, th, td{
 }
 textarea{
     line-height: 250%;
->>>>>>> origin/master
 }

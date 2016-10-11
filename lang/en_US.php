@@ -19,7 +19,6 @@ return array(
     'Total Order' => 'Total Order',
     'Tax' => 'Tax',
     'Total to pay at delivery' => 'Total to pay at delivery',
-<<<<<<< HEAD
     'Remove from cart' => 'Remove from cart',
     'Calories' => 'Calories',
     'No Products in the Cart Yet' => 'No Products in the Cart yet',
@@ -66,13 +65,3 @@ return array(
     'Please register an account with us' => 'Please register an account with us',
 
 );
-=======
-    'Remove from cart'=> 'Remove from cart',
-     'Calories'=> 'Calories',
-    'No Products in the Cart Yet' => 'No Products in the Cart yet',
-    'Create Account' => 'Create Account',
-    'First Name' => 'First Name',
-        'Last Name' => 'Last Name',
-
-);
->>>>>>> origin/master

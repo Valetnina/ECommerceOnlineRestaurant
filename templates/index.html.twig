@@ -52,7 +52,7 @@
                 <p class="lead">Categories</p>
                 <div class="list-group" id="navCategory">
                     {% for category in categoryList %}
-                        <button class="list-group-item categoryIdClass" id="category_{{category.ID}}">{{ category.name }}</button>
+                        <button class="list-group-item categoryIdClass" onclick="changeCategory({{category.ID}})">{{ category.name }}</button>
                     {% endfor %}
                 </div>
             </div>

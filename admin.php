@@ -1,7 +1,6 @@
 <?php
 
 $app->get('/admin/product_addedit', function() use ($app, $log) {
-
     $prodTable = DB::query('SELECT '
                     . 'products.ID, '
                     . 'products.price, '
