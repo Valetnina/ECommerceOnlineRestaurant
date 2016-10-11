@@ -11,6 +11,24 @@
         <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="/bootstrap/js/bootstrap.min.js"></script>
+        
+        <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '881440665321233',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 
         <script>
 
@@ -64,6 +82,7 @@
                     <a href="?lang=fr">Français</a>
                     </span>
                     <ul class="nav navbar-nav log-register fontsize">
+<<<<<<< HEAD
                         {% if fbUser %}
                             <li>
                                 <img src="//graph.facebook.com/{{fbUser.ID}}/picture" ><span style="color:#9d9d9d;">{{fbUser.firstName}}</span>
@@ -92,6 +111,18 @@
                                 <a href="/register">{{"Sign Up"|trans}}</a>
                             </li>
                                                        {% endif %}
+=======
+                        <li>
+                            <a href="/login">Login</a>
+                        </li>
+                        <li>
+                            <a href="/register">Register</a>
+                        </li>
+                        <li>
+                            <a href="/cart"><img src="/images/cart.png" class="cart"></a>
+                        </li>
+                        <li></li>
+>>>>>>> origin/master
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->

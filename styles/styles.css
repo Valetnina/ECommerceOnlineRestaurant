@@ -2,7 +2,7 @@
     border: 1px solid red;  
 }*/
 body{
-   background-color: #5ab2d9; 
+    background-color: #5ab2d9; 
 }
 .productPageImage {
     width:200px !important;
@@ -20,16 +20,16 @@ body{
     margin-right: 30px;
 }
 .flag{
-   width: 45px; 
+    width: 45px; 
 }
 .flag-fr{
-   margin: 3px 10px 0 270px;
+    margin: 3px 10px 0 270px;
 }
 .flag-en{
-   margin-top: 3px;
+    margin-top: 3px;
 }
 .flag-fr > img:hover {
-   width: 50px; 
+    width: 50px; 
 }
 .cart{
     width: 30px;
@@ -74,6 +74,7 @@ ul.pagination li button {
     width: 80%;
     margin: auto;
     text-align: center;
+<<<<<<< HEAD
         background-color: white;
         padding:20px;
         margin-top: 50px;
@@ -91,10 +92,25 @@ ul.pagination li button {
     border-radius: 8px;
     
 }
+=======
+    background-color: white;
+    padding:20px;
+
+}
+#loginContainer {
+    width: 70%;
+    margin: auto;
+    background-color: white;
+    text-align: center;
+    margin-top: 50px;
+
+}
+>>>>>>> origin/master
 .navbar-fixed-top {
     margin-bottom: 30px;
 }
 label {
+<<<<<<< HEAD
     width: 270px;
     text-align: right;
 }
@@ -155,4 +171,159 @@ label {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+=======
+    width: 200px;
+    text-align: right;
+}
+#container-addedit_product{
+    /*border: 1px solid red;*/
+    width: 1200px;
+    margin: auto;
+    margin-top: 60px;
+}
+#top-side-addedit{
+    border: 2px solid #025274;
+    border-radius: 5px;
+    width: 1150px;
+    margin: auto;
+    height: 550px;
+}
+/*#bottom-side-addedit-transparent{
+    border: 1px solid #2680a6;
+    background-color: #025274;
+    opacity: 0.3;
+    width: 1150px;
+    margin: auto;
+    margin-top: 20px; 
+    height: 500px;
+    z-index: 0;
+}*/
+#bottom-side-addedit{
+    border: 2px solid #134053;
+    background-color: #025274;
+    width: 1150px;
+    margin: auto;
+    height: 620px;
+    margin-top: 20px;
+}
+#left-side-addedit{
+    /*border: 1px solid white;*/
+    width: 500px;
+    float: left; 
+    margin-top: 35px;
+}
+#right-side-addedit{
+    /*border: 1px solid white;*/
+    width: 480px;
+    float: right;
+}
+#bottom-side-addedit input{
+    /*border: 1px solid yellow;*/ 
+    float: right;
+    margin-bottom: 5px;
+    width: 300px;
+    height: 30px;
+}
+#bottom-side-addedit label{
+    /*border: 1px solid white;*/
+    width: 180px;
+    text-align: right;
+    height: 30px;
+    font-size: 15px;
+    padding-top: 5px;
+    color: white;
+}
+#dvPreview{
+    width: 250px;
+    height: 160px;
+    background-color: white;
+    float: right;
+    margin: 15px 130px 0 0;
+}
+#constrainer {            
+    width: 1000px; 
+}
+.scrolltable {
+    overflow-x: scroll;
+    height: 100%;   
+}
+.scrolltable > .body {
+    width: -webkit-fit-content;
+    overflow-y: scroll;
+}
+.scrolltable {
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+} 
+.scrolltable > .header { } 
+.scrolltable > .body {    
+    flex: 1;
+    -webkit-flex: 1;
+}
+th, td {
+   min-width: 150px;
+   text-align: center;
+} 
+.productHeight {
+  height: 150px; 
+}
+table, th, td{
+   border: 1px solid black; 
+}
+#tbProducts{
+   border: 1px solid #025274; 
+   background-color: white;
+}
+#headRow{
+   height: 40px;
+   background-color: #025274;
+   font-size: 18px;
+   color: white;
+}
+.categoryRow{
+   height: 35px;
+   font-size: 15px;
+   font-weight: bold;
+   align: right;
+}
+.btEdit{
+    width: 100px;
+}
+.descriptionRow{ 
+    min-width: 400px;
+}
+.labelDescription{
+    text-align: left;
+    width: 100px;
+}
+#btUpdateProduct{
+  
+}
+#btAddProduct{
+   
+}
+.buttonStyle{
+   width: 200px;
+   height: 40px;
+   border-radius: 8px; 
+   margin-left: 70px;
+}
+#divButtons{
+    /*border: 1px solid red;*/
+    margin-left: 300px;
+    margin-top: 540px;
+}
+#categoryName{
+    height:30px;
+    width: 300px;
+    margin-left: 15px;
+}
+#chooseImage{
+    margin-right: 80px;
+}
+textarea{
+    line-height: 250%;
+>>>>>>> origin/master
 }

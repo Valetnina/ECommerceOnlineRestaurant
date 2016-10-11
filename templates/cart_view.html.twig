@@ -13,12 +13,18 @@
 
 
 {% block content %}
+<<<<<<< HEAD
     <div class="container">
         
 <div class="row" id="cartItems">
     {% if  user or fbUser %}
     {% if cartItems %}
    <table>
+=======
+<div id="cartItems">
+    {% if cartItems %}
+   <table id="cartTable">
+>>>>>>> origin/master
     <tr><th>#</th><th>{{"Product"|trans}}</th><th>{{"Item name"|trans}}</th>
         <th>{{"Unit price"|trans}}</th><th>{{"Quantity"|trans}}</th>
         <th>{{"Total"|trans}}</th> <th>{{"Calories"|trans}}</th><th></th></tr>
@@ -48,6 +54,7 @@
         {% else %}
             <h4>No Products in the Cart Yet</h4>
             {% endif %}
+<<<<<<< HEAD
                  
                     
 {% else %}
@@ -56,4 +63,10 @@
 
     </div>
     </div>
+=======
+
+    </div>
+<a href="/" style="color:black;">{{"Ad more to cart"|trans}}==> </a>
+
+>>>>>>> origin/master
         {% endblock %}  

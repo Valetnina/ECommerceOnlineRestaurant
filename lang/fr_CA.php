@@ -19,6 +19,7 @@ return array(
     'Tax' => 'Taxes',
     'Remove from cart' => 'Enlever du panier',
     'Total to pay at delivery' => 'Total à payer lors de la livraison',
+<<<<<<< HEAD
     'Calories' => 'Calories',
     'No Products in the Cart Yet' => 'Pas de produits dans le panier',
     'Create Account' => 'Créer un compte',
@@ -63,3 +64,14 @@ return array(
     'Please register an account with us' => 'Veuillez ouvrir un compte avec nous',
 
     );
+=======
+         'Calories'=> 'Calories',
+        'No Products in the Cart Yet' => 'Pas de produits dans le panier',
+        'Create Account' => 'Créer un compte',
+'First Name' => 'Prénom',
+            'Last Name' => 'Nom de Famille',
+
+
+
+);
+>>>>>>> origin/master

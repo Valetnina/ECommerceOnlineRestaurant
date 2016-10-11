@@ -1,3 +1,4 @@
+<<<<<<< HEAD
     
 [2016-10-07 18:29:46] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'root'@'localhost' (using password: NO) [] []
 [2016-10-07 18:48:01] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []
@@ -74,3 +75,5 @@
 [2016-10-10 16:38:50] main.ERROR: Database error: Badly formatted SQL query: Expected scalar, got array instead! [] []
 [2016-10-10 17:56:39] main.ERROR: Database error: Badly formatted SQL query: Expected scalar, got array instead! [] []
 [2016-10-10 19:31:17] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []
+=======
+>>>>>>> origin/master

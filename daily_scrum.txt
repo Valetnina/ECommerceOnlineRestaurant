@@ -56,6 +56,7 @@ WeekEndScrum--
 1.Done: Populated the products table.
 2 TODO: Make products link to the products page. Implement slug on product research. Implement admin/addedditcategory, asdmin/addeditproduct, admin/pendingorders
 
+<<<<<<< HEAD
 Day05
         Tina
 1:Done: Implement login, registration, Facebook ApI, geolocation, ad partially order implementation
@@ -94,5 +95,7 @@ tHings to fix:
 -when I am logged in as fb, in cart if I want to add more the page says no products in the cart yet
 -order not implemented for a user that does not want to reset address
 -delete stores table and update foreignkey with locations
+=======
+>>>>>>> origin/master
 
 
