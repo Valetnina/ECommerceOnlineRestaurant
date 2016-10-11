@@ -90,36 +90,33 @@ $app->post('/admin/product_addedit/', function() use ($app, $log) {
     $body = $app->request->getBody();
     $product = json_decode($body, TRUE);
 
-    /* if (!isProductValid($product, $error, TRUE)) {
-      $app->response->setStatus(400);
-      $log->debug("POST / product verification failed: " . $error);
-      echo json_encode($error);
-      //echo json_encode("Bad request - data validation failed");
-      return;
-      } */
-    DB::startTransaction();
+    try {
+        DB::startTransaction();
 
-    //$categoryName = $product['categoryName'];
-    //$productCategoryID = DB::queryOneField('SELECT ID FROM productcategory WHERE name = %s', $categoryName);
+        $categoryName = $product['categoryName'];
+        $productCategoryID = DB::queryOneField('SELECT ID FROM productcategory WHERE name = %s', $categoryName);
 
-    DB::insert('products', array(
-        //'productCategoryID' => $productCategoryID,
-        'price' => $product['price'],
-        //'picture' => $product['picture'],
-        'nutritionalValue' => $product['nutritionalValue'],
-        'isVegetarian' => $product['isVegetarian']));
+        DB::insert('products', array(
+            'productCategoryID' => $productCategoryID,
+            'price' => $product['price'],
+            //'picture' => $product['picture'],
+            'nutritionalValue' => $product['nutritionalValue'],
+            'isVegetarian' => $product['isVegetarian']));
 
-    $productID = DB::insertId();
+        $productID = DB::insertId();
 
-    DB::insert('products_i18n', array(
-        //'ID' => $productID,
-        'lang' => $product['lang'],
-        'name' => $product['name'],
-        'description' => $product['description'],
-        'slugname' => $product['slugname']));
+        DB::insert('products_i18n', array(
+            'productID' => $productID,
+            'lang' => $product['lang'],
+            'name' => $product['name'],
+            'description' => $product['description'],
+            'slugname' => $product['slugname']));
 
-    DB::commit();
-    $app->response->setStatus(201);
+        DB::commit();
+    } catch (Exception $ex) {
+        DB::rollback();
+        $log->debug("Insert failed " . $ex);
+    }
 });
 
 $app->get('/admin/product_addedit/(:ID)', function($ID = "") use ($app) {
@@ -161,43 +158,40 @@ $app->put('/admin/product_addedit/:ID', function($ID) use ($app) {
     $body = $app->request->getBody();
     $product = json_decode($body, TRUE);
 
-    //DB::startTransaction();
+    try {
 
-    $product['ID'] = $ID;
+        DB::startTransaction();
 
-    DB::update('products', array(
-        'price' => $product['price'],
-        'nutritionalValue' => $product['nutritionalValue'],
-        'isVegetarian' => $product['isVegetarian']), "ID=%d", $ID);
+        $product['ID'] = $ID;
 
-    /*DB::update('products_i18n', array(
+        DB::update('products', array(
+            'price' => $product['price'],
+            'nutritionalValue' => $product['nutritionalValue'],
+            'isVegetarian' => $product['isVegetarian']), "ID=%d", $ID);
+
+        DB::update('products_i18n', array(
         'lang' => $product['lang'],
         'name' => $product['name'],
         'description' => $product['description'],
-        'slugname' => $product['slugname']), "productID = %d", $ID);*/
-    
- //DB::commit();
-
-   /* if (isProductValid($product, $error, TRUE)) {
+        'slugname' => $product['slugname']), "productID = %d", $ID);
+        
         DB::commit();
-    } else {
-        $app->response->setStatus(400);
-        //$log->debug("POST / product verification failed: " . $error);
-        echo json_encode($error);
+    } catch (Exception $ex) {
         DB::rollback();
-    }*/
+        $log->debug("Update failed " . $ex);
+    }
 });
 
 $app->post('/admin/category_addedit', function() use ($app, $log) {
     $categoryName = $app->request->post('categoryName');
-    
+
     if (!$categoryName) {
         $log->debug("Field must be fill.");
         $app->render('category_addedit.html.twig', array('categoryFailed' => TRUE));
     } else {
-       DB::insert('productcategory', $categoryName);
-       
-       $app->render('add_category_success.html.twig');
+        DB::insert('productcategory', $categoryName);
+
+        $app->render('add_category_success.html.twig');
     }
 });
 
