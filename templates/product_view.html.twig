@@ -17,7 +17,8 @@
 
         <div class="container">
             <div class="row">
-
+                   
+                
                 <span id="productID" hidden>{{product.ID}}</span>
                 <div class="col-md-9">
 
@@ -36,17 +37,20 @@
 
                         </div>
                         <div style="text-align: center; margin-bottom:20px;">
-                            <form method="POST" action="/cart">
+                            <form class="form-signin" method="POST" action="/cart">
                             <input type="hidden" name="productID" value="{{product.ID}}">
 
-                            Quantity: <input type="number" name="quantity" value="1" style="width: 30px;"><br><br>
-                            <input type="submit" value="addToCart">
+                            Quantity: <input type="number" name="quantity" value="1" style="width: 50px;"><br><br>
+                            <input class='btn btn-lg btn-primary btn-block' type="submit" value="addToCart" style=''>
+                            </form>
                         </div>
                     </div>
 
                     <div class="well">
 
-                        <div class="text-right">
+                       
+                        {% if user or fbUser %}
+                             <div class="text-right">
                             <button class="btn btn-success" id="leaveReview">{{"Leave a Review"|trans}}</button>
                         </div>
                         <div id ="reviewForm">
@@ -61,29 +65,16 @@
                             </div>        
                             <br><br> <button class="btn btn-success" id="postReview">{{"Leave a Review"|trans}}</button>
                         </div>
-
+                        {% else %}
+                            <h4> {{ "Please"|trans }}<a href="/login"> {{ "Sign In2"|trans }} </a> {{ "OR"|trans }} 
+                        <a href="/register"> {{ "Sign Up"|trans }} </a> {{ "to post a review"|trans }}
+                        {% endif %}
                         <hr>
                         <div id="reviewList">
 
                         </div>
                     </div>
-                    <ul class="pagination">
-                        <span id="totalPages" hidden>{{totalPages}}</span>
-                        <li><button id="previous">«</button></li>
-                        <!--    {% if  totalPages > 3 %}
-                                {% set t = 3 %}
-
-                        {% else %}
-                            {% set t = totalPages %}
-
-                        {% endif %} -->
-
-                        {% for i in 1..totalPages %}
-                            <li><button id="pageButton_{{i}}" class="pageButton">{{i}}</button></li>
-                            {% endfor %}
-                        <li><button id="next">»</button></li>
-                    </ul>
-
+                  
                 </div>
 
             </div>

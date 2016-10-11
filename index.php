@@ -3,6 +3,9 @@
 require_once 'vendor/autoload.php';
 session_start();
 
+
+require_once 'fbauth.php';
+
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 //Internationlization
@@ -19,13 +22,13 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 //Define Constants
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
-$totalPages = 1;
-//DB::$dbName = 'cp4724_fastfood-online';
-//DB::$user = 'cp4724_fastfood';
-//DB::$password = '[^)EJ;Fw%402';
-DB::$dbName = 'ecommerce';
-DB::$user = 'root';
-DB::$password = '';
+$totalPages = 0;
+DB::$dbName = 'cp4724_fastfood-online';
+DB::$user = 'cp4724_fastfood';
+DB::$password = '[^)EJ;Fw%402';
+//DB::$dbName = 'ecommerce';
+//DB::$user = 'root';
+//DB::$password = '';
 //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
@@ -41,12 +44,16 @@ function nonsql_error_handler($params) {
     die;
 }
 
+
+ 
+
+
 function sql_error_handler($params) {
     global $app, $log;
     $log->error("SQL error: " . $params['error']);
     $log->error(" in query: " . $params['query']);
     http_response_code(500);
-    header('content-type: application/json');
+    //header('content-type: application/json');
     echo json_encode("Internal server error");
     die; // don't want to keep going if a query broke
 }
@@ -64,15 +71,37 @@ $view->parserOptions = array(
 $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
+//sessions and Cookies
+$helper = $fb->getRedirectLoginHelper();
+$permissions = ['public_profile', 'email', 'user_location']; // optional
 
-$lang = "en";
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
+$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+
+if (!isset($_SESSION['user'])) {
+    $_SESSION['user'] = array();
+}
+if (!isset($_SESSION['facebook_access_token'])) {
+    $_SESSION['facebook_access_token'] = array();
 }
 
 
+if (!isset($_GET['lang'])) {
+    if (isset($_COOKIE['lang'])) {
+        $lang = $_COOKIE['lang'];
+    } else {
+        setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
+    }
+} else {
+    $lang = (string) $_GET['lang'];
+    if ($lang == 'en' || $lang == 'fr') {
+        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    } else {
+        setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
+    }
+}
 // First param is the "default language" to use.
-$translator = new Translator($lang, new MessageSelector());
+$translator = new Translator($_COOKIE['lang'], new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
 $translator->setFallbackLocales(['en']);
 // Add a loader that will get the php files we are going to store our translations in
@@ -86,7 +115,11 @@ $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
     new TranslationExtension($translator)
 );
-
+$twig = $app->view()->getEnvironment();
+//$view = new Twig_Environment($app);
+$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+$twig->addGlobal('user', $_SESSION['user']);
+$twig->addGlobal('loginUrl', $loginUrl);
 
 
 //////
@@ -96,21 +129,46 @@ $view->parserExtensions = array(
     'slug' => '[A-Za-z0-9-]+'
 ));
 
-
-
 //$app->response->headers->set('content-type', 'application/json');
 
-$app->get('/', function() use ($app, $lang) {
+
+
+//Handler for the home page
+//
+//
+//FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
+$app->get('/', function() use ($app, $lang, $log) {
+    //if a fb user than register information in fbUsers table
+    if($_SESSION['facebook_access_token']){
+        //FIXME: ask if I should validate user data before registration
+        try{
+            //FIXME add update too to fbUser
+        DB::insert('fbusers', array(
+           'ID' => $_SESSION['facebook_access_token']['ID'],
+           'firstName' => $_SESSION['facebook_access_token']['firstName'],
+           'lastName' => $_SESSION['facebook_access_token']['lastName'],
+           'gender' => $_SESSION['facebook_access_token']['gender'],
+           'email' => $_SESSION['facebook_access_token']['email'],
+       ));
+        } catch(Exception $ex) {
+           //FIXME: ask what should happen if a fb uSer could not be registered
+           $log->debug("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']);
+           $_SESSION['facebook_access_token'] = null;
+           $app->render('fblogin_failed.html.twig');
+       }
+    }
+    
+    //print_r($_COOKIE);
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
-   
+    //  echo "you are logged ing as:".$fbUser;
+
     $app->render('index.html.twig', array(
         'categoryList' => $categoryList));
 });
 
-
-
-$app->get('/category/:categoryID', function($categoryID) use ($app, $lang) {
-     $prodList = DB::query('SELECT * FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $lang);
+//Ajax -> refresh products by filter
+$app->get('/category/:categoryID', function($categoryID) use ($app) {
+    $prodList = DB::query('SELECT products.ID as productID, name, description, price, picture FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $_COOKIE['lang']);
     
     foreach ($prodList as &$product) {
         $ID = $product['productID'];
@@ -118,203 +176,13 @@ $app->get('/category/:categoryID', function($categoryID) use ($app, $lang) {
         $product['average'] = round($reviewsAverage['average']);
         $product['picture'] = base64_encode($product['picture']);
     }
-        $app->render('index-products.html.twig', array('prodList' => $prodList));
+    $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
-
-$app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($app) {
-    $start = ((int) $pageNum - 1) * ROWSPERPAGE;
-
-    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-                    . 'date, review, rating, firstName FROM ratingsreviews,'
-                    . ' users WHERE ratingsreviews.customerID = users.ID'
-                    . ' AND productID=%d ORDER BY ratingsreviews.ID DESC '
-                    . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE);
-    $reviewCount = DB::count();
-    $reviewCountUpdated = $reviewCount;
-
-    $ratingSum = 0;
-    foreach ($reviewList as &$value) {
-        $now = new DateTime('now');
-        $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a") - 1;
-        if ($value['rating'] == 0) {
-            $reviewCountUpdated --;
-            continue;
-        }
-        $ratingSum += $value['rating'];
-    }
-    $ratingAverage = round($ratingSum / $reviewCountUpdated);
-
-    $app->render('reviews.html.twig', array(
-        'reviewList' => $reviewList,
-        'reviewCount' => $reviewCount,
-        'ratingAverage' => $ratingAverage,
-    ));
-});
-
-
-$app->get('/product/:ID', function($ID) use ($app, $lang) {
-    global $totalPages;
-    $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
-                    . " nutritionalValue, name, description FROM products, "
-                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $lang, $ID);
-    $productRecord['picture'] = base64_encode($productRecord['picture']);
-
-
-    //FIXME: HOW TO UPDATE global variable from within callback function
-    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-                    . 'date, review, rating, firstName FROM ratingsreviews,'
-                    . ' users WHERE ratingsreviews.customerID = users.ID'
-                    . ' AND productID=%d', $ID);
-    $reviewCount = DB::count();
-    $totalPages = ceil($reviewCount / ROWSPERPAGE);
-
-    echo "Helo zasdasdas" . $totalPages;
-    $app->render('product_view.html.twig', array(
-        'product' => $productRecord,
-        'totalPages' => $totalPages
-    ));
-});
-
-$app->get('/rating/:ID', function($ID) use ($app, $lang, &$totalPages) {
-    //global $totalPages;
-    $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-                    . 'date, review, rating, firstName FROM ratingsreviews,'
-                    . ' users WHERE ratingsreviews.customerID = users.ID'
-                    . ' AND productID=%d', $ID);
-    $reviewCount = DB::count();
-    $reviewCountUpdated = $reviewCount;
-    $totalPages = ceil($reviewCount / ROWSPERPAGE);
-    $ratingSum = 0;
-    foreach ($reviewList as &$value) {
-        if ($value['rating'] == 0) {
-            $reviewCountUpdated --;
-            continue;
-        }
-        $ratingSum += $value['rating'];
-    }
-    $ratingAverage = round($ratingSum / $reviewCountUpdated);
-
-    $app->render('rating.html.twig', array(
-        'reviewCount' => $reviewCount,
-        'ratingAverage' => $ratingAverage,
-    ));
-});
-
-$app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
-    $body = $app->request->getBody();
-    $record = json_decode($body, TRUE);
-    if (!isReviewPostValid($record, $error)) {
-
-        $log->debug("Failed POST . Invalid data. " . $error);
-
-        $app->response->setStatus(400);
-        echo json_encode($error);
-        return;
-    }
-    DB::insert('ratingsreviews', $record);
-    echo DB::insertId();
-    // POST / INSERT is special - returns 201
-    $app->response->setStatus(201);
-});
-
-function isReviewPostValid($review, &$error) {
-
-    if (count($review) != 5) {
-        $error = 'Invalid number of fields in data provided';
-        return FALSE;
-    }
-    if (!isset($review['productID']) || (!is_numeric($review['productID']))) {
-        $error = 'Product ID is not provided or it is not numeric';
-        return FALSE;
-    }
-    if (!isset($review['customerID']) || (!is_numeric($review['customerID']))) {
-        $error = 'Customer ID is not provided or it is not numeric';
-        return FALSE;
-    }
-    if (strlen($review['review']) < 1 || strlen($review['review']) > 500) {
-        $error = 'Review text is not valid';
-        return FALSE;
-    }
-    if (!in_array($review['rating'], array("1", "2", "3", "4", "5", "0"), true)) {
-        $error = 'Rating number of stars is invalid';
-        return FALSE;
-    }
-    $date = DateTime::createFromFormat('Y-m-d H:i:s', $review['date']);
-    if (!$date) {
-        $error = 'Date is not in the correct format';
-        return FALSE;
-    }
-    return TRUE;
-}
-$app->map('/cart', function() use ($app, $lang) {
-    // handle incoming post, if there is one
-    // either add item to cart or change its quantity
-    if ($app->request()->post()) {
-        $productID = $app->request()->post('productID');
-        $quantity = $app->request()->post('quantity');
-        $item = DB::queryFirstRow("SELECT * FROM cartItems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
-        if ($item) { // add quantity to existing item
-            DB::update('cartItems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
-        } else { // create new item in the cart
-            DB::insert('cartItems', array(
-                'sessionID' => session_id(),
-                'productID' => $productID,
-                'quantity' => $quantity
-            ));
-        }
-    }
-    // display cart's content
-    $cartItems = DB::query(
-                    "SELECT cartItems.ID, name, price, quantity, picture "
-                    . "FROM cartItems, products, products_i18n "
-                    . "WHERE products.ID = products_i18n.productID AND products.ID = cartItems.productID AND sessionID=%s AND lang=%s", session_id(), $lang);
-    $cartTotal = 0;
-    foreach ($cartItems as &$item) {
-        $item['picture'] = base64_encode($item['picture']);
-        $item['total'] = ($item['quantity'] * $item['price']);
-        $cartTotal += $item['total'];
-    }
-    $cartTax = TAX * $cartTotal;
-    $cartTotalToPay = $cartTax + $cartTotal ;
-    
-    $app->render('cart_view.html.twig', array(
-        'cartItems' => $cartItems,
-        'cartTotal' => $cartTotal,
-        'cartTax' => $cartTax,
-        'cartTotalToPay' => $cartTotalToPay,
-        ));
-})->via('GET', 'POST');
-
-// custom API call - the easy way out
-$app->get('/updateCart/:ID/:quantity', function($ID, $quantity) {
-    
-});
-
-// RESTful
-$app->put('/cart/:ID', function($ID) use ($app) {
-    $json = $app->request()->getBody();
-    $data = json_decode($json, true);
-    // only expect 
-    if ((count($data) != 1) || (!isset($data['quantity']))) {
-        $app->response()->status(400);
-        echo json_encode("400: data in body invalid");
-        return;
-    }
-    $quantity = $data['quantity'];
-    if ($quantity < 0) {
-        $app->response()->status(400);
-        echo json_encode("400: quantity invalid");
-        return;
-    }
-    DB::update('cartItems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
-    echo json_encode(DB::affectedRows() == 1);
-});
-
-
-// FUTURE WORK
-$app->delete('/cartItems/:ID', function($ID) use ($app) {
-    
-});
+require_once 'product.php';
+require_once 'cart.php';
+require_once 'login.php';
+require_once 'register.php';
+require_once 'resetPassword.php';
 
 
 

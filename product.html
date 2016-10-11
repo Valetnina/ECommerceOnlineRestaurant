@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+            $(document).ajaxError(function () {
+                alert("AJAX request failed");
+            });
+            var username = "";
+            var password = "";
+            function getToDoList() {
+                $.ajax({
+                    url: "/api.php/todoitems",
+                    // data: {},
+                    username: username,
+                    password: password,
+                    statusCode: {
+                        401: function(xhr){
+                            $("#loginPane").show();
+                            $("#page").hide();
+                        }
+                    },
+                    type: "GET",
+                    dataType: "json"
+                }).done(function (data) {
+                    var result = '<tbody>';
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i];
+                        var checked = (item.isDone == 'true') ? 'checked' : "";
+                        result += "\
+                    <tr class='rows'>\n\
+                    <td>" + item.ID + "</td>\n\
+                    <td>" + item.title + "</td>\n\
+                    <td>" + item.dueDate + "</td>\n\
+                    <td><input type='checkbox' " + checked + "></td></tr>";
+
+                    }
+                    result += "</tbody>";
+                    $('#todoList tbody').html("");
+
+                    $('#todoList thead').after(result);
+                    $("#page").show();
+                });
+            }
+            /* function validateInput(title, dueDate) {
+             if(title.length <1 || title.length > 100){
+             alert('Title must be at leaat 1 and at most 100 characters long');
+             return false;     
+             }
+             var patt = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+             
+             if(!patt.test(dueDate) || !Date.parse(dueDate)){
+             alert("This doesn't look like a date in format YYYY-MM-DD");
+             return false;
+             } else {
+             if(Date.parse(dueDate) < Date.parse("2000-01-01") 
+             || Date.parse(dueDate) > Date.parse("2099-01-01")  ){
+             alert("Date must be between 2000-01-01 and 2099-01-01");
+             return false;
+             }
+             }
+             return true;
+             }
+             */
+            $(document).ready(function () {
+
+                //  getToDoList();
+                $("#page").hide();
+                $('#loginButton').click(function () {
+                    username = $("input[name=username]").val();
+                    password = $("input[name=password]").val();
+                    $("#loginPane").hide();
+                    getToDoList();
+                });
+                    
+                
+                $("#addTodo").click(function () {
+                    var title = $("input[name=title]").val();
+                    var dueDate = $("input[name=dueDate]").val();
+                    /*if(!validateInput(title, dueDate)){
+                     return;
+                     }*/
+                    $.ajax({
+                        url: "/api.php/todoitems",
+                        statusCode: {
+                            400: function (xhr) {
+                                alert("400 recived:" + xhr.responseText);
+                            }
+                        },
+                        data: JSON.stringify({
+                            title: title,
+                            dueDate: dueDate,
+                            isDone: 'false',
+                        }),
+                        type: "POST",
+                        dataType: "json"
+                    }).done(function () {
+                        getToDoList();
+                        alert("addedd successfully");
+                    });
+                });
+                $('#todoList').on("click", ".rows", function (e) {
+                    //Change color of the clicked row to make it look like it's selected
+                    $(this).closest('tr').css({backgroundColor: 'grey'});
+                    $(this).closest('tr').siblings().css({backgroundColor: 'white'});
+                    //Get the seleceted Item ID
+                    var todoID = $(this).closest('tr').children('td:first').text();
+                    $.ajax({
+                        url: "/api.php/todoitems/" + todoID,
+                        // data: {},
+                        type: "GET",
+                        dataType: "json"
+                    }).done(function (data) {
+                        $("input[name=itemId]").val(data.ID);
+                        $("input[name=titleToEdit]").val(data.title);
+                        $("input[name=dueDateToEdit]").val(data.dueDate);
+                        if (data.isDone == 'true') {
+                            $('input[name=isDoneToEdit]').prop('checked', true);
+                        } else {
+                            $('input[name=isDoneToEdit]').removeProp('checked');
+                        }
+
+                    });
+                });
+                $("#cancelTodo").click(function () {
+                    $("input[name=itemId]").val("");
+                    $("input[name=titleToEdit]").val("");
+                    $("input[name=dueDateToEdit]").val("");
+                    $('input[name=isDoneToEdit]').prop('checked', false);
+                });
+                $("#deleteTodo").click(function () {
+                    //get current selected item
+                    var ID = $("input[name=itemId]").val();
+                    if (ID == "") {
+                        alert("There is currently no item to delete");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/api.php/todoitems/" + ID,
+                        type: "DELETE",
+                        dataType: "json"
+                    }).done(function () {
+                        //Refresh the table
+                        getToDoList();
+                        alert("The record " + ID + " was deleted");
+                    });
+                });
+                $("#saveTodo").click(function () {
+                    //get current selected item
+                    var ID = $("input[name=itemId]").val();
+                    if (ID == "") {
+                        alert("There is currently no item to save");
+                        return;
+                    }
+                    var title = $("input[name=titleToEdit]").val();
+                    var dueDate = $("input[name=dueDateToEdit]").val();
+                    /*if(!validateInput(title, dueDate)){
+                     return;
+                     }*/
+
+                    var isChecked = $('input[name=isDoneToEdit]').prop('checked') ? "true" : "false";
+                    $.ajax({
+                        url: "/api.php/todoitems/" + ID,
+                        data: JSON.stringify({
+                            title: title,
+                            dueDate: dueDate,
+                            isDone: isChecked
+                        }),
+                        type: "PUT",
+                        dataType: "json"
+                    }).done(function () {
+                        getToDoList();
+                        alert("updated successfully");
+                    });
+                });
+            });
+        </script>
+        <style>
+            table, td, th {
+                border: 1px solid black;
+            }
+            #page > div {
+                display: inline-table;
+                margin:0;
+                padding:0;
+            }
+            #page > div > div {
+                border: 1px solid grey;
+                margin: 20px;
+                padding: 20px;
+            }
+            label {
+                display: inline-block;
+                width: 75px;
+            }
+            h3 {
+                text-align: center;
+            }
+            #loginPane {
+                display:block;
+                margin:15px; 
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loginPane">
+            Username: <input type="text" name="username"><br><br>
+            Password: <input type="password" name="password"><br><br>
+            <button id="loginButton">Login</button>
+        </div>
+        <div id="page">
+        <div>
+            <h3>ToDo List</h3>
+            <table id="todoList">
+                <thead>
+                    <tr>
+                        <th>#</th><th>Title</th><th>Due Date</th><th>Is Done</th>   
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div>
+            <div>
+                <h3>Create todo item:</h3>
+                <label>Title:</label> <input type="text" name="title"><br><br>
+                <label>Due Date: </label> <input type="date" name="dueDate"><br><br>            
+                <button id="addTodo">Add todo</button>
+            </div>
+            <div>
+                <h3>Edit todo item:</h3>
+                <label>ID: </label> <input type="text" name="itemId" readonly><br><br>
+                <label>Title:</label> <input type="text" name="titleToEdit"><br><br>
+                <label>Due Date:</label> <input type="text" name="dueDateToEdit"><br><br>   
+                <label for="isDoneToEdit">Is Done</label> <input type='checkbox' name='isDoneToEdit' id='isDoneToEdit'><br><br>
+                <button id="saveTodo">Save</button>
+                <button id="cancelTodo">Cancel</button>
+                <button id="deleteTodo">Delete</button>
+
+            </div>
+            
+        </div>
+        </div>
+    </body>
+</html>

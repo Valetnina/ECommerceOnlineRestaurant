@@ -12,6 +12,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="/bootstrap/js/bootstrap.min.js"></script>
 
+        <script>
+
+        </script>
+
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -44,27 +48,50 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav fontsize">
                         <li>
-                            <a href="#">About</a>
+                            <a href="/">{{"home"|trans}}</a>
                         </li>
                         <li>
                             <a href="#">Services</a>
                         </li>
                         <li>
-                            <a href="#">Contact</a>
+                            <a href="/locations">{{"locations"|trans}}</a>
                         </li>
                     </ul>
-                    <a href="?lang=en"><img src="/images/eng.png" width="70" class="flag flag-fr" id="lang-fr"></a>
-                    <a href="?lang=fr"><img src="/images/french.png" width="70" class="flag flag-en" id="lang-en"></a> 
+                    <!-- <a href="?lang=en"><img src="/images/eng.png" width="70" class="flag flag-fr" id="lang-fr"></a> 
+                    <a href="?lang=fr"><img src="/images/french.png" width="70" class="flag flag-en" id="lang-en"></a> -->
+                    <span style="color:#9d9d9d; font-size: 20px;">
+                    <a href="?lang=en">English</a>
+                    <a href="?lang=fr">Français</a>
+                    </span>
                     <ul class="nav navbar-nav log-register fontsize">
-                        <li>
-                            <a href="#">Login</a>
-                        </li>
-                        <li>
-                            <a href="#">Register</a>
-                        </li>
-                        <li>
-                            <a href="/cart"><img src="/images/cart.png" class="cart"></a>
-                        </li>
+                        {% if fbUser %}
+                            <li>
+                                <img src="//graph.facebook.com/{{fbUser.ID}}/picture" ><span style="color:#9d9d9d;">{{fbUser.firstName}}</span>
+                            </li>
+                             <li>
+                                <a href="/cart"><img src="/images/cart.png" class="cart"></a>
+                            </li>
+
+                            <li><a href="/logout">{{"Logout"|trans}}</a></li>
+                        {% else %}
+                            {% if user %}
+                                <li>
+                                    <span style="color:#9d9d9d;">{{user.firstName}}</span>
+                                </li>
+                                 <li>
+                                <a href="/cart"><img src="/images/cart.png" class="cart"></a>
+                            </li>
+
+                                <li><a href="/logout">{{"Logout"|trans}}</a></li>
+                            {% endif %}
+                            
+                            <li>
+                                <a href="/login">{{"Sign In"|trans}}</a>
+                            </li>
+                            <li>
+                                <a href="/register">{{"Sign Up"|trans}}</a>
+                            </li>
+                                                       {% endif %}
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -83,6 +110,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <p>Copyright &copy; IPD8 2016</p>
+                            <p>This website it's intended as a class project for the PHP course and has no commercial purpose.</p>
                         </div>
                     </div>
                 </footer>
@@ -95,6 +123,5 @@
         <script src="/bootstrap/js/jquery.js"></script>
         <!-- Bootstrap Core JavaScript -->
         <script src="/bootstrap/js/bootstrap.min.js"></script>
-            </body>
-                    </html>
-    
+    </body>
+</html>
