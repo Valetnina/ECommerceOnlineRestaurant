@@ -19,16 +19,13 @@ body{
     float: right;
 }
 .flag{
-    width: 45px; 
+    width: 35px; 
 }
 .flag-fr{
-    margin: 3px 10px 0 600px;
+    margin: 10px 10px 0 600px;
 }
 .flag-en{
-    margin-top: 3px;
-}
-.flag-fr > img:hover {
-    width: 50px; 
+    margin-top: 10px;
 }
 .cart{
     width: 30px;
@@ -263,12 +260,16 @@ table, th, td{
 }
 .categoryRow{
     height: 35px;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: bold;
     align: right;
+    color: #025274;
 }
 .btEdit{
     width: 100px;
+    background-color: #025274;
+    color: white;
+    border-radius: 5px;
 }
 .descriptionRow{ 
     min-width: 400px;
