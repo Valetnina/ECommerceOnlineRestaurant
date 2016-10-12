@@ -3,8 +3,7 @@
 require_once 'vendor/autoload.php';
 session_start();
 
-
-require_once 'fbauth.php';
+//require_once 'fbauth.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -23,12 +22,13 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
 $totalPages = 0;
-DB::$dbName = 'cp4724_fastfood-online';
-DB::$user = 'cp4724_fastfood';
-DB::$password = '[^)EJ;Fw%402';
-//DB::$dbName = 'ecommerce';
-//DB::$user = 'root';
-//DB::$password = '';
+//DB::$dbName = 'cp4724_fastfood-online';
+//DB::$user = 'cp4724_fastfood';
+//DB::$password = '[^)EJ;Fw%402';
+
+DB::$dbName = 'ecommerce';
+DB::$user = 'root';
+DB::$password = '';
 //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
@@ -68,11 +68,10 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
 //sessions and Cookies
-$helper = $fb->getRedirectLoginHelper();
+//$helper = $fb->getRedirectLoginHelper();
 $permissions = ['public_profile', 'email', 'user_location']; // optional
-
-$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
-$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+//$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+//$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
 
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
@@ -110,10 +109,10 @@ $view->parserExtensions = array(
     new TranslationExtension($translator)
 );
 $twig = $app->view()->getEnvironment();
-$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
-$twig->addGlobal('user', $_SESSION['user']);
-$twig->addGlobal('loginUrl', $loginUrl);
-
+/* $twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+  $twig->addGlobal('user', $_SESSION['user']);
+  $twig->addGlobal('loginUrl', $loginUrl);
+ */
 
 //////
 //FIXME: VAlidate all parameters
@@ -132,23 +131,22 @@ $app->get('/', function() use ($app, $lang, $log) {
     if ($_SESSION['facebook_access_token']) {
         $userID = DB::queryFirstField('SELECT fbID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);
         if (!$userID) {
-            $result= DB::insert('users', array(
-                'fbID' => $_SESSION['facebook_access_token']['ID'],
+            $result = DB::insert('users', array(
+                        'fbID' => $_SESSION['facebook_access_token']['ID'],
             ));
-            if($result){
-            $userID = DB::insertId();
-            $log->debug(sprintf("Regisetred fbUsere %s with id %s", $_SESSION['facebook_access_token']['ID'], $userID));
-            $_SESSION['facebook_access_token']['userID'] = $userID;
+            if ($result) {
+                $userID = DB::insertId();
+                $log->debug(sprintf("Regisetred fbUsere %s with id %s", $_SESSION['facebook_access_token']['ID'], $userID));
+                $_SESSION['facebook_access_token']['userID'] = $userID;
+            } else {
+                //add the userId to the fbUser session for convenience
+                $log->debug(sprintf("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']));
+                $_SESSION['facebook_access_token'] = null;
+                $app->render('fblogin_failed.html.twig');
+            }
         } else {
-        //add the userId to the fbUser session for convenience
-        $log->debug(sprintf("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']));
-        $_SESSION['facebook_access_token'] = null;
-        $app->render('fblogin_failed.html.twig');
+            $_SESSION['facebook_access_token']['userID'] = $userID;
         }
-        
-    } else {
-        $_SESSION['facebook_access_token']['userID'] = $userID;
-    }
     }
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $_COOKIE['lang']);
     //  echo "you are logged ing as:".$fbUser;
@@ -159,28 +157,55 @@ $app->get('/', function() use ($app, $lang, $log) {
 
 //Ajax -> refresh products by filter
 $app->get('/category/:categoryID/:isVeget', function($categoryID, $isVeget) use ($app) {
-    if($isVeget == 1){
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
-            . 'FROM products, products_i18n '
-            . 'WHERE products.ID = products_i18n.productID AND '
-            . 'lang=%s AND '
-            . 'isVegetarian = %d AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
-}else{
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
-            . 'FROM products, products_i18n '
-            . 'WHERE products.ID = products_i18n.productID AND '
-            . 'lang=%s AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
-}
+    if ($isVeget == 1) {
+        $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+                        . 'FROM products, products_i18n '
+                        . 'WHERE products.ID = products_i18n.productID AND '
+                        . 'lang=%s AND '
+                        . 'isVegetarian = %d AND '
+                        . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
+    } else {
+        $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+                        . 'FROM products, products_i18n '
+                        . 'WHERE products.ID = products_i18n.productID AND '
+                        . 'lang=%s AND '
+                        . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
+    }
+
     foreach ($prodList as &$product) {
+        $product['picture'] = base64_encode($product['picture']);
         $ID = $product['ID'];
-        //$reviewsAverage = DB::queryFirstColumn('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-        //$product['average'] = round($reviewsAverage['average']);
+        $stars = 0;
+        $reviewsList = DB::queryFirstRow('SELECT sum(rating) as sumRating, count(rating) as nrRaiting, count(review) as totalReviews FROM ratingsreviews WHERE productID=%d ORDER BY productID', $ID);
+
+        $totalReviews = $reviewsList['totalReviews'];
+        $product['totalReviews'] = $totalReviews;
+
+        $nrRaiting = $reviewsList['nrRaiting'];
+        $product['nrRaiting'] = $nrRaiting;
+
+        if ($nrRaiting != 0) {
+            $stars = round($reviewsList['sumRating'] / $nrRaiting);
+        }
+
+        $product['stars'] = $stars;
+    }
+
+    //print_r($prodList);
+    $app->render('index-products.html.twig', array('prodList' => $prodList));
+});
+
+$app->get('/category/:isVeget', function($isVeget) use ($app) {
+    if ($isVeget == 1) {
+        $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+                        . 'FROM products, products_i18n '
+                        . 'WHERE products.ID = products_i18n.productID AND '
+                        . 'lang=%s AND '
+                        . 'isVegetarian = %d', $_COOKIE['lang'], $isVeget);
+    }
+    foreach ($prodList as &$product) {
         $product['picture'] = base64_encode($product['picture']);
     }
-    
-    //print_r($prodList);
     $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
 
