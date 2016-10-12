@@ -17,13 +17,12 @@ body{
 }
 .log-register{
     float: right;
-    margin-right: 30px;
 }
 .flag{
     width: 45px; 
 }
 .flag-fr{
-    margin: 3px 10px 0 270px;
+    margin: 3px 10px 0 180px;
 }
 .flag-en{
     margin-top: 3px;
@@ -305,4 +304,23 @@ table, th, td{
 }
 textarea{
     line-height: 250%;
+}
+#lbVegetarian{
+    max-width: 70px;
+    font-size: 20px;
+}
+#cbVegetarian{
+    min-width: 90px;
+}
+#imgCart{
+    width: 50px;
+    margin-top: -190px;
+    margin-left: 300px;
+}
+.caption{
+    margin-top: 140px;
+    margin-bottom: 10px;
+}
+.vegetarian input{
+    width: 50px;
 }

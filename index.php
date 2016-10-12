@@ -164,17 +164,34 @@ $app->get('/', function() use ($app, $lang, $log) {
 });
 
 //Ajax -> refresh products by filter
-$app->get('/category/:categoryID', function($categoryID) use ($app) {
-    $prodList = DB::query('SELECT products.ID as productID, name, description, price, picture FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $_COOKIE['lang']);
+$app->get('/category/:categoryID/:isVeget', function($categoryID, $isVeget) use ($app) {
+    if($isVeget == 1){
+    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+            . 'FROM products, products_i18n '
+            . 'WHERE products.ID = products_i18n.productID AND '
+            . 'lang=%s AND '
+            . 'isVegetarian = %d AND '
+            . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
+}else{
+    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+            . 'FROM products, products_i18n '
+            . 'WHERE products.ID = products_i18n.productID AND '
+            . 'lang=%s AND '
+            . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
+}
+    
     
     foreach ($prodList as &$product) {
-        $ID = $product['productID'];
-        $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-        $product['average'] = round($reviewsAverage['average']);
+        $ID = $product['ID'];
+        //$reviewsAverage = DB::queryFirstColumn('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
+        //$product['average'] = round($reviewsAverage['average']);
         $product['picture'] = base64_encode($product['picture']);
     }
+    
+    //print_r($prodList);
     $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
+
 require_once 'product.php';
 require_once 'cart.php';
 require_once 'login.php';

@@ -60,38 +60,40 @@
                     <!-- <a href="?lang=en"><img src="/images/eng.png" width="70" class="flag flag-fr" id="lang-fr"></a> 
                     <a href="?lang=fr"><img src="/images/french.png" width="70" class="flag flag-en" id="lang-en"></a> -->
                     <span style="color:#9d9d9d; font-size: 20px;">
-                    <a href="?lang=en">English</a>
-                    <a href="?lang=fr">Français</a>
+                        <a href="?lang=en"><img src="/images/eng.png" width="70" class="flag flag-fr" id="lang-fr"></a>
+                        <a href="?lang=fr"><img src="/images/french.png" width="70" class="flag flag-en" id="lang-en"></a>        
+                        <!--<a href="?lang=en">English</a>
+                        <a href="?lang=fr">Français</a>-->
                     </span>
                     <ul class="nav navbar-nav log-register fontsize">
                         {% if fbUser %}
                             <li>
                                 <img src="//graph.facebook.com/{{fbUser.ID}}/picture" ><span style="color:#9d9d9d;">{{fbUser.firstName}}</span>
                             </li>
-                             <li>
+                            <li>
                                 <a href="/cart"><img src="/images/cart.png" class="cart"></a>
                             </li>
 
                             <li><a href="/logout">{{"Logout"|trans}}</a></li>
-                        {% else %}
-                            {% if user %}
+                            {% else %}
+                                {% if user %}
                                 <li>
                                     <span style="color:#9d9d9d;">{{user.firstName}}</span>
                                 </li>
-                                 <li>
-                                <a href="/cart"><img src="/images/cart.png" class="cart"></a>
-                            </li>
+                                <li>
+                                    <a href="/cart"><img src="/images/cart.png" class="cart"></a>
+                                </li>
 
                                 <li><a href="/logout">{{"Logout"|trans}}</a></li>
-                            {% else %}
-                            <li>
-                                <a href="/login">{{"Sign In"|trans}}</a>
-                            </li>
-                            <li>
-                                <a href="/register">{{"Sign Up"|trans}}</a>
-                            </li>
-                                                       {% endif %}
-                                                        {% endif %}
+                                {% else %}
+                                <li>
+                                    <a href="/login">{{"Sign In"|trans}}</a>
+                                </li>
+                                <li>
+                                    <a href="/register">{{"Sign Up"|trans}}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
