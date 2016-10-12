@@ -4,7 +4,7 @@ require_once 'vendor/autoload.php';
 session_start();
 
 
-//require_once 'fbauth.php';
+require_once 'fbauth.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -23,12 +23,12 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
 $totalPages = 0;
-//DB::$dbName = 'cp4724_fastfood-online';
-//DB::$user = 'cp4724_fastfood';
-//DB::$password = '[^)EJ;Fw%402';
-DB::$dbName = 'ecommerce';
-DB::$user = 'root';
-DB::$password = '';
+DB::$dbName = 'cp4724_fastfood-online';
+DB::$user = 'cp4724_fastfood';
+DB::$password = '[^)EJ;Fw%402';
+//DB::$dbName = 'ecommerce';
+//DB::$user = 'root';
+//DB::$password = '';
 //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
@@ -43,10 +43,6 @@ function nonsql_error_handler($params) {
     echo json_encode("Internal server error");
     die;
 }
-
-
- 
-
 
 function sql_error_handler($params) {
     global $app, $log;
@@ -72,11 +68,11 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
 //sessions and Cookies
-//$helper = $fb->getRedirectLoginHelper();
-//$permissions = ['public_profile', 'email', 'user_location']; // optional
-//
-//$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
-//$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+$helper = $fb->getRedirectLoginHelper();
+$permissions = ['public_profile', 'email', 'user_location']; // optional
+
+$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
 
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
@@ -85,12 +81,10 @@ if (!isset($_SESSION['facebook_access_token'])) {
     $_SESSION['facebook_access_token'] = array();
 }
 
-
+$lang = 'en';
 if (!isset($_GET['lang'])) {
     if (isset($_COOKIE['lang'])) {
         $lang = $_COOKIE['lang'];
-    } else {
-        $lang = 'en';
     }
 } else {
     $lang = (string) $_GET['lang'];
@@ -116,10 +110,9 @@ $view->parserExtensions = array(
     new TranslationExtension($translator)
 );
 $twig = $app->view()->getEnvironment();
-//$view = new Twig_Environment($app);
-//$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
 $twig->addGlobal('user', $_SESSION['user']);
-//$twig->addGlobal('loginUrl', $loginUrl);
+$twig->addGlobal('loginUrl', $loginUrl);
 
 
 //////
@@ -130,32 +123,33 @@ $twig->addGlobal('user', $_SESSION['user']);
 ));
 
 //$app->response->headers->set('content-type', 'application/json');
-
-
-
 //Handler for the home page
 //
 //
 //FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
 $app->get('/', function() use ($app, $lang, $log) {
-    //if a fb user than register information in fbUsers table
-    if($_SESSION['facebook_access_token']){
-        //FIXME: ask if I should validate user data before registration
-        try{
-            //FIXME add update too to fbUser
-        //DB::queryFirstRow('', )
-        DB::insert('users', array(
-           'fbID' => $_SESSION['facebook_access_token']['ID'],
-       ));
-        } catch(Exception $ex) {
-           //FIXME: ask what should happen if a fb uSer could not be registered
-           $log->debug("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']);
-           $_SESSION['facebook_access_token'] = null;
-           $app->render('fblogin_failed.html.twig');
-       }
+    //if a fb user than check id does already have a record in the users table, 
+    if ($_SESSION['facebook_access_token']) {
+        $userID = DB::queryFirstField('SELECT fbID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);
+        if (!$userID) {
+            $result= DB::insert('users', array(
+                'fbID' => $_SESSION['facebook_access_token']['ID'],
+            ));
+            if($result){
+            $userID = DB::insertId();
+            $log->debug(sprintf("Regisetred fbUsere %s with id %s", $_SESSION['facebook_access_token']['ID'], $userID));
+            $_SESSION['facebook_access_token']['userID'] = $userID;
+        } else {
+        //add the userId to the fbUser session for convenience
+        $log->debug(sprintf("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']));
+        $_SESSION['facebook_access_token'] = null;
+        $app->render('fblogin_failed.html.twig');
+        }
+        
+    } else {
+        $_SESSION['facebook_access_token']['userID'] = $userID;
     }
-    
-    //print_r($_COOKIE);
+    }
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $_COOKIE['lang']);
     //  echo "you are logged ing as:".$fbUser;
 
@@ -166,7 +160,7 @@ $app->get('/', function() use ($app, $lang, $log) {
 //Ajax -> refresh products by filter
 $app->get('/category/:categoryID', function($categoryID) use ($app) {
     $prodList = DB::query('SELECT products.ID as productID, name, description, price, picture FROM products, products_i18n WHERE lang=%s AND products.ID = products_i18n.productID', $_COOKIE['lang']);
-    
+
     foreach ($prodList as &$product) {
         $ID = $product['productID'];
         $reviewsAverage = DB::queryFirstRow('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);

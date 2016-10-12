@@ -55,11 +55,15 @@ return array(
     'Place Order' => 'Placer une Commande',
     'Your facebook account doesn\'t provide your address, or it might be incomplete' => 'Votre compte facebook n\'indique votre adresse, ou elle pourrait être incomplète',
     'Delivery Address' => 'Adresse de livraison',
-    'Provide Delivery Adress' => 'Fournir l\'adresse de livraison',
+    'Verify the delivery address and contact information' => 'Verifier l\'adresse de livraison et les renseignements personels',
     'Submit Order' => 'Placer la commande',
     'Delivery Address' => 'Adresse de livraison',
     'Facebook Login Failed' => 'Ouverture de session Facebook',
     'Login with your facebook account is denied due to missing or invalid data' => 'Pas d\'ouverture de session avec votre compte Facebook en raison de données incompletes ou invalides',
     'Please register an account with us' => 'Veuillez ouvrir un compte avec nous',
+        'Only loggedin users can access the cart'=> 'Seuls les utilisateurs enregistrés peuvent accéder au panier',
+        'Submit Order' => 'Placer la Commande',
+
+
 
     );

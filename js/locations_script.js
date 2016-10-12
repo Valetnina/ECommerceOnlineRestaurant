@@ -17,7 +17,7 @@ function initMap() {
     }
     var map;
 $(document).ready(function () {
-       $.ajax({
+      /* $.ajax({
         url: '/markers',
         type: "GET",
         contentType: 'application/json',
@@ -25,7 +25,7 @@ $(document).ready(function () {
         for(var i=0; i< data.length; i++){
             console.log(data['address']);
         }
-    });        //initMap();
+    });        //initMap();*/
 
     
 });

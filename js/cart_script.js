@@ -18,8 +18,6 @@ function removeItem(ID) {
             alert("Error removing product from cart ");
         }
     });
-
-
 }
 //FIXME validation for delete and update    
 $(document).ready(function () {

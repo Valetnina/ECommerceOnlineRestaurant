@@ -1,33 +1,32 @@
-function searchAddress(address) {
-    geocoder.geocode({'address': address}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-            var latlng = results[0].geometry.location;
-            searchStores(latlng.lat(), latlng.lng());
-
-        } else {
-            alert('Geocode failed: ' + status);
-        }
-    });
+/*function ajaxCallBack(retString, firstName, lastName, email, address, street, city, country, postalCode, phone){
+    alert("nearestStore is" + retString);
+     $.ajax({
+            url: "/order",
+            data: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                address: address,
+                street: street,
+                city: city,
+                country: country,
+                postalCode: postalCode,
+                phone: phone,
+                storeID: retString
+            }),
+            type: "POST",
+            dataType: "json"
+        }).done(function () {
+            console.log("order was susuccessfully registered");
+        });
 }
-
-function searchStores(lat, lng) {
-    //var parameter = { lat: lat, lng: lng };
-    var nearestStore = 0;
-    jQuery.ajax({
-        url: '/nearestStore/' + lat + '/' + lng,
-        type: "GET",
-        dataType: 'json',
-    }).done(function (data) {
-        nearestStore = data['ID'];
-        alert('Nearest store ' + nearestStore);
-    }).fail(function () {
-        alert('Could not find the nearest store');
-    });
-    return nearestStore;
+*/
+var nearestStore = "";
+function ajaxCallBack(retString){
+    alert("nearestStore is" + retString);
+     nearestStore = retString;
 }
-
-
-var geocoder = ""
+//var geocoder = "";
 $(document).ready(function () {
     /*
      function jsonCallback(json){
@@ -41,8 +40,8 @@ $(document).ready(function () {
      // cache: false,
      });*/
     geocoder = new google.maps.Geocoder();
-    $('#submitAddressChange').click(function () {
 
+    $('#submitAddressChange').click(function () {
         $('#errorList').html("");
         var firstName = $('input[name=firstName]').val();
         var lastName = $('input[name=lastName]').val();
@@ -101,9 +100,17 @@ $(document).ready(function () {
           if(!isValid) {
               $('#errorList').html(ulList);
           } else {
-                //var nearestStore = searchAddress(postalCode);
-
-        $.ajax({
+               geocoder.geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            var latlng = results[0].geometry.location;
+           // nearestStore = searchStores(latlng.lat(), latlng.lng());
+            jQuery.ajax({
+                url: '/nearestStore/' + latlng.lat() + '/' + latlng.lng(),
+                type: "GET",
+                dataType: 'json',
+            }).done(function (data) {
+                ajaxCallBack(data['ID']);
+                $.ajax({
             url: "/order",
             data: JSON.stringify({
                 firstName: firstName,
@@ -115,16 +122,32 @@ $(document).ready(function () {
                 country: country,
                 postalCode: postalCode,
                 phone: phone,
-                storeID: 15043
+                storeID: nearestStore
             }),
             type: "POST",
             dataType: "json"
         }).done(function () {
-                        $('#orderSubmitted').load('/ordersuccess');
-            
             console.log("order was susuccessfully registered");
         });
-    }
+            }).fail(function () {
+                alert('Could not find the nearest store');
+            });
+        } else {
+            alert('Geocode failed: ' + status);
+        }
+    });
+          }
+    
+       // searchAddress(postalCode);
+        //FIXME: Validate inputs
+        //
+        //
+        //get the nearest store
+       
+       
     });
 
 });
+
+
+

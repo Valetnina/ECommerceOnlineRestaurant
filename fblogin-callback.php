@@ -3,12 +3,7 @@
 require_once 'vendor/autoload.php';
 session_start();
 
-//facebook login
-$fb = new Facebook\Facebook([
-  'app_id' => '881440665321233',
-  'app_secret' => '67f11e93f3dab0dd13e91f61d85e9f4a',
-  'default_graph_version' => 'v2.5',
-]);
+require_once 'fbauth.php';
 
 $helper = $fb->getRedirectLoginHelper();
 
@@ -39,16 +34,14 @@ if (! isset($accessToken)) {
 }
 
 // Logged in
-echo '<h3>Access Token</h3>';
-var_dump($accessToken->getValue());
 
 // The OAuth 2.0 client handler helps us manage access tokens
 $oAuth2Client = $fb->getOAuth2Client();
 
 // Get the access token metadata from /debug_token
 $tokenMetadata = $oAuth2Client->debugToken($accessToken);
-echo '<h3>Metadata</h3>';
-var_dump($tokenMetadata);
+//echo '<h3>Metadata</h3>';
+//var_dump($tokenMetadata);
 
 // Validation (these will throw FacebookSDKException's when they fail)
 $tokenMetadata->validateAppId('881440665321233'); // Replace {app-id} with your app id
@@ -56,17 +49,11 @@ $tokenMetadata->validateAppId('881440665321233'); // Replace {app-id} with your 
 //$tokenMetadata->validateUserId('123');
 $tokenMetadata->validateExpiration();
 
-try {
     $tokenMetadata->validateAppId('881440665321233'); // Replace {app-id} with your app id
 // If you know the user ID this access token belongs to, you can validate it here
 //$tokenMetadata->validateUserId('123');
 $tokenMetadata->validateExpiration();
-       echo "Hello";
-  } catch (Facebook\Exceptions\FacebookSDKException $e) {
-    echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
-    
-  }
-
+  
 
 
 if (! $accessToken->isLongLived()) {
@@ -79,19 +66,19 @@ if (! $accessToken->isLongLived()) {
   }
 
   echo '<h3>Long-lived</h3>';
-  var_dump($accessToken->getValue());
+ // var_dump($accessToken->getValue());
 } 
 
-$_SESSION['fb_access_token'] = (string) $accessToken;
+
 
 // User is logged in with a long-lived access token.
 // You can redirect them to a members-only page.
-header('Location: https://fastfood-online.ipd8/');
+//header('Location: https://fastfood-online.ipd8/');
 // Sets the default fallback access token so we don't have to pass it to each request
 	$fb->setDefaultAccessToken($accessToken);
 
 	try {
-	  $response = $fb->get('/me');
+	  $response = $fb->get('/me?locale=en_US&fields=id,name,email,gender,first_name,last_name,location');
 	  $userNode = $response->getGraphUser();
 	} catch(Facebook\Exceptions\FacebookResponseException $e) {
 	  // When Graph returns an error
@@ -103,5 +90,21 @@ header('Location: https://fastfood-online.ipd8/');
 	  exit;
 	}
 
-	echo 'Logged in as ' . $userNode->getName();
+	//echo 'Logged in as ' . $userNode->getName();
+        $fbUser = array(
+            'firstName' => $userNode->getFirstName(),
+            'lastName' => $userNode->getLastName(),
+            'email'=> $userNode->getEmail(),
+            'gender' => $userNode->getGender(),
+            'ID' => $userNode->getId(),
+            'location' => $userNode->getLocation(),
+            );
+
+        $_SESSION['facebook_access_token'] = $fbUser;
+        $_SESSION['user'] = $fbUser;
+        
+        header("Location: /");  
+         
+         
+         
 	
