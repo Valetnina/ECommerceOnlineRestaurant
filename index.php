@@ -3,7 +3,6 @@
 require_once 'vendor/autoload.php';
 session_start();
 
-
 //require_once 'fbauth.php';
 
 use Monolog\Logger;
@@ -43,10 +42,6 @@ function nonsql_error_handler($params) {
     echo json_encode("Internal server error");
     die;
 }
-
-
- 
-
 
 function sql_error_handler($params) {
     global $app, $log;
@@ -120,8 +115,6 @@ $twig = $app->view()->getEnvironment();
 //$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
 $twig->addGlobal('user', $_SESSION['user']);
 //$twig->addGlobal('loginUrl', $loginUrl);
-
-
 //////
 //FIXME: VAlidate all parameters
 \Slim\Route::setDefaultConditions(array(
@@ -130,31 +123,28 @@ $twig->addGlobal('user', $_SESSION['user']);
 ));
 
 //$app->response->headers->set('content-type', 'application/json');
-
-
-
 //Handler for the home page
 //
 //
 //FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
 $app->get('/', function() use ($app, $lang, $log) {
     //if a fb user than register information in fbUsers table
-    if($_SESSION['facebook_access_token']){
+    if ($_SESSION['facebook_access_token']) {
         //FIXME: ask if I should validate user data before registration
-        try{
+        try {
             //FIXME add update too to fbUser
-        //DB::queryFirstRow('', )
-        DB::insert('users', array(
-           'fbID' => $_SESSION['facebook_access_token']['ID'],
-       ));
-        } catch(Exception $ex) {
-           //FIXME: ask what should happen if a fb uSer could not be registered
-           $log->debug("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']);
-           $_SESSION['facebook_access_token'] = null;
-           $app->render('fblogin_failed.html.twig');
-       }
+            //DB::queryFirstRow('', )
+            DB::insert('users', array(
+                'fbID' => $_SESSION['facebook_access_token']['ID'],
+            ));
+        } catch (Exception $ex) {
+            //FIXME: ask what should happen if a fb uSer could not be registered
+            $log->debug("Failed to register fbUsere %d", $_SESSION['facebook_access_token']['ID']);
+            $_SESSION['facebook_access_token'] = null;
+            $app->render('fblogin_failed.html.twig');
+        }
     }
-    
+
     //print_r($_COOKIE);
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $_COOKIE['lang']);
     //  echo "you are logged ing as:".$fbUser;
@@ -165,29 +155,36 @@ $app->get('/', function() use ($app, $lang, $log) {
 
 //Ajax -> refresh products by filter
 $app->get('/category/:categoryID/:isVeget', function($categoryID, $isVeget) use ($app) {
-    if($isVeget == 1){
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
-            . 'FROM products, products_i18n '
-            . 'WHERE products.ID = products_i18n.productID AND '
-            . 'lang=%s AND '
-            . 'isVegetarian = %d AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
-}else{
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
-            . 'FROM products, products_i18n '
-            . 'WHERE products.ID = products_i18n.productID AND '
-            . 'lang=%s AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
-}
-    
-    
-    foreach ($prodList as &$product) {
-        $ID = $product['ID'];
-        //$reviewsAverage = DB::queryFirstColumn('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
-        //$product['average'] = round($reviewsAverage['average']);
-        $product['picture'] = base64_encode($product['picture']);
+    if ($isVeget == 1) {
+        $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+                        . 'FROM products, products_i18n '
+                        . 'WHERE products.ID = products_i18n.productID AND '
+                        . 'lang=%s AND '
+                        . 'isVegetarian = %d AND '
+                        . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
+    } else {
+        $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+                        . 'FROM products, products_i18n '
+                        . 'WHERE products.ID = products_i18n.productID AND '
+                        . 'lang=%s AND '
+                        . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
     }
-    
+
+
+    foreach ($prodList as &$product) {
+        $product['picture'] = base64_encode($product['picture']);
+        $ID = $product['ID'];
+
+       /* $reviewsList = DB::queryFirstRow('SELECT sum(rating) as sumRating, count(review) as totalReviews FROM ratingsreviews WHERE productID=%d ORDER BY productID', $ID);
+        foreach ($reviewsList as $revProduct) {
+            $totalReviews = $revProduct['totalReviews'];
+            $stars = round($revProduct['sumRating'] / $totalReviews);
+        }*/
+    }
+
+
+
+
     //print_r($prodList);
     $app->render('index-products.html.twig', array('prodList' => $prodList));
 });
