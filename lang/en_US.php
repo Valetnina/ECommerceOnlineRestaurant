@@ -56,12 +56,13 @@ return array(
     'Place Order'=> 'Place Order',
     'Your facebook account doesn\'t provide your address, or it might be incomplete' => 'Your facebook account doesn\'t provide you address, or it might be incomplete',
     'Delivery Address' => 'Delivery Address',
-    'Provide Delivery Adress' => 'Provide Delivery Adress',
+    'Verify the delivery address and contact information' => 'Verify the delivery address and contact information',
     'Submit Order'=> 'Submit Order',
     'Delivery Address' => 'Delivery Address',
     'Facebook Login Failed' => 'Facebook Login Failed',
     'Login with your facebook account is denied' => 'Facebook Login Failed',
     'Login with your facebook account is denied due to missing or invalid data' => 'Login with your facebook account is denied due to missing or invalid data',
     'Please register an account with us' => 'Please register an account with us',
-
+    'Only loggedin users can access the cart'=> 'Only loggedin users can access the cart',
+    'Submit Order' => 'Submit Order',
 );

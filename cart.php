@@ -24,7 +24,7 @@ $app->post('/cart', function() use ($app, $log) {
             'quantity' => $quantity
         ));
     }
-    $app->render('cart_view.html.twig');
+    $app->render('cart_container.html.twig');
 });
 
 $app->get('/cart', function() use ($app) {
@@ -83,12 +83,25 @@ $app->delete('/cartItems/:ID', function($ID) use ($app) {
 });
 $app->get('/deliveryAddress', function() use ($app) {
     // display cart's content
-    if ($_SESSION['user']) {
-        $shippingAddress = DB::queryFirstRow("SELECT address, street, city, country, postalCode, phone FROM users WHERE ID = %d", $_SESSION['user']['ID']);
-    }
-    $app->render('shippingaddress.html.twig', array(
-        'shippingAddress' => $shippingAddress,
+    
+    if($_SESSION['facebook_access_token']){
+        $shippingAddress = array(
+        'firstName' => $_SESSION['facebook_access_token']['firstName'],
+        'lastName' => $_SESSION['facebook_access_token']['lastName'],
+        'email' => $_SESSION['facebook_access_token']['email'],
+        'city' => $_SESSION['facebook_access_token']['location'],
+    ); 
+       $app->render('shippingaddress.html.twig', array(
+        'v' => $shippingAddress,
     ));
+    } 
+     if($_SESSION['user']){
+    $shippingAddress = DB::queryFirstRow("SELECT firstName, lastName, email, address, street, city, country, postalCode, phone FROM users WHERE ID = %s", $_SESSION['user']['ID']);
+    $app->render('shippingaddress.html.twig', array(
+        'v' => $shippingAddress,
+    ));
+
+    }
 });
 /*
 $app->get('/differentAddress', function() use ($app) {
@@ -98,94 +111,100 @@ $app->get('/differentAddress', function() use ($app) {
     ));
 });
 */
-$app->post('/differentAddress', function() use ($app, $log) {
-    $address = $app->request->post('address');
-    $street = $app->request->post('street');
-    $city = $app->request->post('city');
-    $country = $app->request->post('country');
-    $postalCode = $app->request->post('postalCode');
-
-    $valueList = array(
-        'address' => $address,
-        'street' => $street,
-        'city' => $city,
-        'country' => $country,
-        'postalCode' => $postalCode,
-    );
-    print_r($valueList);
-    // submission received - verify
-    $errorList = array("en" => array(), "fr" => array());
+function isAddressValid($address) {
+    /* TODO: validate the following:
+     * 1. All fields ID, title, dueDate, isDone are present and none other
+     * 2. ID is valid numercial value 1 or graeter
+     * 3. title is 1-100 characters long
+     * 4. dueDate is a valid date between 2000-01-01 and 2099-01-01
+     * 5. isDone is either 'true' or 'false'
+     * In case of failed validation requirement $log->debug() the reason.
+     */
+    
+    if (count($address) != 10) {
+            $error = 'Should receive 10 and only ten values';
+            return FALSE;
+    }
+    if (!isset($address['firstName']) || !isset($address['lastName'])
+            || !isset($address['email']) || !isset($address['address']) 
+            || !isset($address['street']) || !isset($address['city']) 
+            || !isset($address['country']) || !isset($address['postalCode'])
+                    ||!isset($address['phone']) || !isset($address['storeID'])) {
+        $error = 'The passed values do not correspond to the expected values';
+        return FALSE;
+    }
+    if (strlen($firstName) < 2 || strlen($firstName) > 50) {
+        $error = "FirstName must be at least 2 and at most 50 characters long";
+        return FALSE;
+    }
+    if (strlen($lastName) < 2 || strlen($lastName) > 50) {
+        $error = "LastName must be at least 2 and at most 50 characters long";
+        return FALSE;
+    }
+if (filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
+        $error = "Email does not look like a valid email";
+        return FALSE;
+    } 
+   
     if (strlen($address) < 1 || strlen($address) > 50) {
-        array_push($errorList["en"], "Address cannot be empty and cannot contain more than 50 characters");
-        array_push($errorList["fr"], "Adresse ne peut pas être vide et ne peut pas contenir plus de 50 caractères");
-
-        unset($valueList['address']);
+        $error = "Address cannot be empty and cannot contain more than 50 characters";
+        return FALSE;
     }
     if (strlen($street) < 1 || strlen($street) > 50) {
-        array_push($errorList["en"], "Street cannot be empty and cannot contain more than 50 characters");
-        array_push($errorList["fr"], "Rue ne peut être vide et ne peut pas contenir plus de 50 caractères");
-        unset($valueList['street']);
+        $error ="Street cannot be empty and cannot contain more than 50 characters";
+        return FALSE;
     }
     if (strlen($city) < 2 || $city > 100) {
-        array_push($errorList["en"], "City between 2 and 100 characters");
-        array_push($errorList["fr"], "La ville entre 2 et 100 caractères");
-        unset($valueList['city']);
+        $error ="City between 2 and 100 characters";
+        return FALSE;
     }
     if (strlen($country) < 2 || $country > 50) {
-        array_push($errorList["en"], "Country between 2 and 50 characters");
-        array_push($errorList["fr"], "Le pays entre 2 et 50 caractères");
-        unset($valueList['country']);
+        $error ="Country between 2 and 50 characters";
+        return FALSE;
     }
     if (!preg_match('/^([A-Za-z][0-9]){3}$/', $postalCode)) {
-        echo "PostalCode " . $postalCode;
-        array_push($errorList["en"], "Phone not valid");
-        array_push($errorList["fr"], "Le tel est pas valide");
-        unset($valueList['postalCode']);
+        $error ="Phone not valid";
+        return FALSE;
     }
-    //
-    if ($errorList["en"] || $errorList["fr"]) {
-        // STATE 3: submission failed        
-        $app->render('shippingaddress.html.twig', array(
-            'errorList' => $errorList[$_COOKIE['lang']], 'v' => $valueList
-        ));
-    } else {
-        // STATE 2: submission successful
-        $app->render('shippingaddress.html.twig', array(
-        'shippingAddress' => $shippingAddress,
-    ));
+    if (!preg_match('/^(\d{3}\s?){2}\d{4}$/', $phone)) {
+       $error ="Canadian Postal code not valid";
+        return FALSE;
     }
-});
-$app->post('/oder', function() use ($app) {
-    $addressBody = $app->request->getBody();
-    $record = json_decode($addressBody, TRUE);
-    if (!isAddressValid($record, $error)) {
+    return TRUE;
+}
+$app->post('/order', function() use ($app) {
+    $body = $app->request->getBody();
+    $addressBody = json_decode($body, TRUE);
+    /*
+    if (!isAddressValid($addressBody)) {
 
-        $log->debug("Failed POST . Invalid data. ".$error);
+        $log->debug("Failed POST . Invalid data. ");
 
         $app->response->setStatus(400);
         echo json_encode("Bad request - data validation failed");
         return;
-    }
-    
+    }*/
+     //get the customerID
+        if($_SESSION['user']) {
+            $customerID = $_SESSION['user']['ID'];
+        }
+        if($_SESSION['facebook_access_token']){
+            $customerID = $_SESSION['facebook_access_token']['userID'];
+        }
         //Gathering the rest of the information
         $order = array(
-        'orderDate' => date('Y-m-d H:i:s'),
+        'orderDate' => DB::sqleval("NOW()"),
+        'storeID' => $addressBody['storeID'],
+        'customerID' => $customerID,
+        'contactFirstName' => $addressBody['firstName'],
+        'contactLastName' => $addressBody['lastName'],
         'deliveryAddress' => $addressBody['address'],
         'deliveryStreet' => $addressBody['street'],
         'deliveryCity' => $addressBody['city'],
         'deliveryCountry' => $addressBody['country'],
-        'postalCode' => $addressBody['postalCode'],
+        'deliveryPostalCode' => $addressBody['postalCode'],
+        'contactPhone' => $addressBody['phone'],
     );
-            
-        //FIXME: get the nearest store
-        $order['storeID'] = "1";
-        //get the customerID
-        if($_SESSION['user']) {
-            $order['customerID'] = $_SESSION['user']['ID'];
-        }
-        if($_SESSION['facebook_access_token']){
-            $order['customerID'] = $_SESSION['facebook_access_token']['ID'];
-        }
         //GET cartItems
         $cartItems = DB::query("SELECT products.ID as productID, price, quantity FROM cartitems, products WHERE products.ID = cartitems.productID AND sessionID=%s", session_id());
         $cartTotal = 0;
@@ -196,36 +215,38 @@ $app->post('/oder', function() use ($app) {
         $order['TAX'] = TAX * $order['orderAmount'];
     
         ///Attempt insert order
-        try{
-        DB::beginTransaction();
+      // DB::startTransaction();
         DB::insert('orders', $order);
         $orderID = DB::insertId();
-        $log->debug(sprintf("Inserted order No %s", $orderID));
-        
-        foreach ($cartItems as &$item) {
-        DB::insert('orderItems', array(
+        if($orderID) {
+            foreach ($cartItems as &$item) {
+            DB::insert('orderitems', array(
             'orderID' => $orderID,
             'productID' => $item['productID'],
             'quantity' => $item['quantity'],
             'orderItemsAmount' => $item['price'] * $item['quantity'],
             'tax' => ($item['price'] * $item['quantity']) * TAX
         ));
-        $insertedOrderItems += DB::count();
+        }
+        DB::delete('cartitems', 'sessionID=%s', session_id());
+       // $insertedOrderItems += DB::count();
     }
-        DB::commit();
-        $log->debug(sprintf("Inserted  %d orderItems for order No %d", $insertedOrderItems, $orderID));
-
-    } catch(Exception $ex){
-        DB::rollback();
-        $log->error(sprintf("Transaction failed %s", $ex));
-    }
-     DB::insert('todoitems', $record);
-    echo DB::insertId();
+    //FIXME; implement delete items from the cart
+    //
+    //
+    //  DB::DBcommit();
+     //DB::insert('todoitems', $record);
+     
+   // echo DB::insertId();
     // POST / INSERT is special - returns 201
+    echo json_encode("Order placed succesfully");
     $app->response->setStatus(201);
    
 });
+$app->get('/ordersuccess', function() use ($app) {
 
+    $app->render('order_submitted.html.twig');
+});
 $app->get('/locations', function() use ($app) {
 
     $app->render('locations.html.twig');
@@ -242,7 +263,7 @@ $app->get('/markers', function() use ($app) {
 
 $app->get('/store-ajax/:lat/:long', function($lat, $lng) use ($app, $log) {
 
-    $storeList = DB::query("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `locations`
+    $storeList = DB::query("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `stores`
         ORDER BY distance LIMIT 30 ", $lng, $lat, $lng);
     $log->debug(DB::count());
     if (!$storeList) {
@@ -254,14 +275,13 @@ $app->get('/store-ajax/:lat/:long', function($lat, $lng) use ($app, $log) {
 });
 
 $app->get('/nearestStore/:lat/:long', function($lat, $lng) use ($app, $log) {
-
-    $storeList = DB::queryFirstRow("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `locations`
-        ORDER BY distance LIMIT 1 ", $lng, $lat, $lng);
+    $store = DB::queryFirstRow("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `stores`
+        ORDER BY distance ASC LIMIT 1 ", $lng, $lat, $lng);
     $log->debug(DB::count());
-    if (!$storeList) {
+    if (!$store) {
         $app->response->setStatus(404);
         echo json_encode("Records not found");
         return;
     }
-    echo json_encode($storeList, JSON_PRETTY_PRINT);
+    echo json_encode($store, JSON_PRETTY_PRINT);
 });

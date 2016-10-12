@@ -47,11 +47,12 @@
         </div>
         {% else %}
             <h4>No Products in the Cart Yet</h4>
+            <a href="/" style="width: 250px; margin:auto; " class="btn btn-lg btn-primary btn-block ">{{"Continue"|trans}} </a>
             {% endif %}
                  
                     
 {% else %}
-    <h1>You are not authorized to see the contents of this page</h1>
+    <h4>{{"Only logged users can access the cart"|trans}}</h4>
 {% endif %}
 
     </div>

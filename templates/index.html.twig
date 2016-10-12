@@ -52,9 +52,11 @@
                 <p class="lead">Categories</p>
                 <div class="list-group" id="navCategory">
                     {% for category in categoryList %}
-                        <button class="list-group-item categoryIdClass" onclick="changeCategory({{category.ID}})">{{ category.name }}</button>
+                        <button class="list-group-item categoryIdClass" id="{{category.ID}}">{{ category.name }}</button>
                     {% endfor %}
                 </div>
+                <label id="lbVegetarian" for="cbVegetarian" width="50">Vegetarian</label><br>
+                <input id="cbVegetarian" type="checkbox">
             </div>
 
             <div class="row" id="index-products">

@@ -6,8 +6,7 @@
 
 
     <!-- jQuery -->
-            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBGdAE-nd01tQ-SGkwgc0bTDnd4jXa-UM"></script>
-
+          <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBGdAE-nd01tQ-SGkwgc0bTDnd4jXa-UM"></script>
     <script src="/js/address_script.js"></script>
 
 {% endblock %}
@@ -18,30 +17,40 @@
         
 <div class="row">
     {% if  user or fbUser %}
+        {% if registerSuccess %}
+                <h1>{{ "Registration Succesful"|trans }}</h1>
+                <a class="btn btn-lg btn-primary btn-block" style="width:150px;margin:auto;" href="/login">{{"Continue"|trans}}</a>
+            {% else %}
+       
+        <ul class="errors" id="errorList">
+            {% for error in errorList %}
+                <li>{{ error }}</li>
+                {% endfor %}
+        </ul>
+        {% endif %}
+        <div id="orderSubmitted"></div>
         <div id="address">
-        {{"Delivery Address"|trans}}: <span>{{shippingAddress.address}} </span>
+       <!-- {{"Delivery Address"|trans}}: <span>{{shippingAddress.address}} </span>
         <span>{{shippingAddress.street}}, </span>
         <span>{{shippingAddress.city}}, </span><span>{{shippingAddress.country}}, </span> <span>{{shippingAddress.postalCode}}, </span><br><br><br>
-         <!--<a href='/differentAddress' style="width: 200px; margin:auto; " id="differentAddress">{{"Do you want to make an order do a different address?"|trans}}</a>-->
         <button style="width: 200px; margin:auto; " class="btn btn-lg btn-primary btn-block" id="changeAddressBtn">{{"Do you want to make an order do a different address?"|trans}}</button>
 
         <button style="width: 200px; margin:auto; " class="btn btn-lg btn-primary btn-block" id="correctAddress">{{"Submit Order"|trans}}</button>
 
         </div>
-            <div id="changeAddressForm">
-            {% if fbUser %} 
-            <h4>{{"Your facebook account doesn\'t provide your address, or it might be incomplete" |trans}}</h4>
-            {% else %}
-        <h2 class="form-signin-heading">{{"Provide Delivery Adress"|trans}}</h2>
+            <div id="changeAddressForm">-->
+        <h2 class="form-signin-heading">{{"Verify the delivery address and contact information"|trans}}</h2>
+        <label>{{"First Name"|trans}}: </label> <input type="text" name="firstName" value="{{v.firstName}}"><br><br>
+        <label>{{"Last Name"|trans}}: </label> <input type="text" name="lastName" value="{{v.lastName}}"><br><br>
+        <label>{{"Email"|trans}}: </label> <input type="text" name="email" value="{{v.email}}"><br><br>
         <label>{{"Address"|trans}}: </label> <input type="text" name="address" value="{{v.address}}"><br><br>
         <label>{{"Street"|trans}}: </label> <input type="text" name="street" value="{{v.street}}"><br><br>
         <label>{{"City"|trans}}: </label> <input type="text" name="city" value="{{v.city}}"><br><br>
         <label>{{"Country"|trans}}: </label> <input type="text" name="country" value="{{v.country}}"><br><br>
         <label>{{"Postal Code"|trans}}: </label> <input type="text" name="postalCode" value="{{v.postalCode}}"><br><br>
-        
-        <button class="btn btn-lg btn-primary btn-block" id="submitAddressChange" style="width:300px; margin:auto;">{{"Register address"|trans}}</button>
+        <label>{{"Phone"|trans}}: </label> <input type="text" name="phone" value="{{v.phone}}"><br><br>
+        <button class="btn btn-lg btn-primary btn-block" id="submitAddressChange" style="width:300px; margin:auto;">{{"Submit Order"|trans}}</button>
              </div>
-   {% endif %}
                  
                     
 {% else %}

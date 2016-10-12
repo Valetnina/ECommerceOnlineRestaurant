@@ -217,3 +217,5 @@
 [2016-10-11 21:20:33] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
 [2016-10-11 21:21:17] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
 [2016-10-11 21:21:51] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
+[2016-10-11 23:38:46] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []
+[2016-10-11 23:38:49] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []

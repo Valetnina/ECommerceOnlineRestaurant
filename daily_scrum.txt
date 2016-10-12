@@ -87,14 +87,10 @@ tHings to fix:
 -Ask if a user gives an review, should we delete foreign key from ratings? Do  we need an aditional table
 -What should I do with the session after the order was completed?
 -make sure all the products are properly entered in both tables
--ask if we should register the fb address from order
--FIXME: ask if I should validate user data before registration
--FIXME: ask what should happen if a fb uSer could not be registered, do we deny access?
--if fb user already exists, please update not insert
+-Important: Need to ask teacher of how to catch if a db error ocurred, when fbUser could not be registered
 -send order by email
 -when I am logged in as fb, in cart if I want to add more the page says no products in the cart yet
--order not implemented for a user that does not want to reset address
--delete stores table and update foreignkey with locations
+-order not implemented for a user that does not want to reset addr
 =======
 >>>>>>> origin/master
 

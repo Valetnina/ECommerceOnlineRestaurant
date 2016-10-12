@@ -93,7 +93,7 @@ $app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
        $record['customerFirstName'] = $_SESSION['user']['firstName'];
 
     } elseif($_SESSION['facebook_access_token'] ){
-        $record['customerID'] = $_SESSION['facebook_access_token']['ID'];
+       $record['customerID'] = $_SESSION['facebook_access_token']['userID'];
        $record['customerFirstName'] = $_SESSION['facebook_access_token']['firstName'];
          
     } else {
