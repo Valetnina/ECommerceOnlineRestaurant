@@ -7,22 +7,6 @@ $(document).ready(function () {
 
     $('#bottom-side-addedit').load('/admin/product_addedit/');
 
-    function reading(file) {
-        if (file.files && file.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $('#uploadImage').attr('src', e.target.result);
-            }
-            reader.readAsDataURL(file.files[0]);
-        }
-    }
-
-    $("#chooseImage").change(function () {
-        //alert("test");
-        reading(this);
-    });
-
     $("#btAddPutProduct").click(function () {
 
         alert("AddPutProduct button reaction");
@@ -128,6 +112,3 @@ $(document).ready(function () {
 
 
 });
-
-
-
