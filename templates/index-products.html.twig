@@ -2,6 +2,7 @@
     <div class="col-sm-4 col-lg-4 col-md-4 div-products">                          
         <div class="thumbnail product-thumbnail">
             <img src="data:image/png;base64,{{product.picture}}" alt="product image" width="100px">
+            <a href="/cart"><img src="/images/cart.png" id="imgCart" class="cart" placeholder="Add to cart"></a>
             <div class="caption">
                 <h4 class="pull-right">$ {{ product.price }}</h4>
                 <h4><a href="/product/{{product.productID}}">{{ product.name }}</a>
