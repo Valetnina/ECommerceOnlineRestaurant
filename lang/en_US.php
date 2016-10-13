@@ -65,4 +65,6 @@ return array(
     'Please register an account with us' => 'Please register an account with us',
     'Only loggedin users can access the cart'=> 'Only loggedin users can access the cart',
     'Submit Order' => 'Submit Order',
+    'Email sent successfully' => 'Email sent successfully',
+    'Check your password and try to login again' => 'Check your password and try to login again',
 );

@@ -5,7 +5,8 @@ body{
     background-color: #5ab2d9; 
 }
 .productPageImage {
-    width:200px !important;
+    width:600px !important;
+    padding:20px;
 }
 #logo{
     margin-top: -15px;
@@ -74,6 +75,11 @@ ul.pagination li button {
     padding:20px;
     margin-top: 50px;
     border-radius:8px;
+}
+#cartItems table {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 40px;
 }
 #loginContainer {
     width: 70%;
@@ -245,8 +251,11 @@ th, td {
 .productHeight {
     height: 150px; 
 }
-table, th, td{
-    border: 1px solid black; 
+#cartItems table th, tr {
+    border-bottom: 1px solid blue;
+}
+#cartItems table tr {
+  line-height: 100px;
 }
 #tbProducts{
     border: 1px solid #025274; 
@@ -368,3 +377,17 @@ textarea{
     border-bottom: 1px solid #1f5065; 
 }
 .navbar li ul li a:hover{color: white;}
+.input-group-addon{
+    height: 10px;
+}
+input[type='checkbox'] {
+    -webkit-appearance:none;
+    width:30px;
+    height:30px;
+    background:white;
+    border-radius:5px;
+    border:2px solid #555;
+}
+input[type='checkbox']:checked {
+    background: #abd;
+}

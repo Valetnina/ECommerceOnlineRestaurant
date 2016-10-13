@@ -42,13 +42,13 @@ $app->post('/forgotPassword', function() use ($app, $log) {
             DB::startTransaction();
             //FIXME: update or insert
             //check if an use has already a reset token
-            $result = DB::queryOneField('userID', "SELECT * FROM resetTokens WHERE userID=%d", $user['ID']);
+            $result = DB::queryOneField('userID', "SELECT * FROM resettokens WHERE userID=%d", $user['ID']);
             if (!empty($result)) {
-                DB::update('resetTokens', array(
+                DB::update('resettokens', array(
                     'resetToken' => $token), 'userID', $user['ID']);
             } else {
-                DB::insert('resetTokens', array(
-                    'resetToken' => $token,
+                DB::insert('resettokens', array(
+                    'resettoken' => $token,
                     'userID' => $user['ID']
                 ));
             }

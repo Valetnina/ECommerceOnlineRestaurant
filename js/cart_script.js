@@ -1,6 +1,3 @@
-
-
-
 function removeItem(ID) {
     $.ajax({
         url: "/cartItems/" + ID,
@@ -11,7 +8,7 @@ function removeItem(ID) {
             if (!result) {
                 alert("Error removing product from cart ");
             }
-            getCartItems();
+            $('#cartContainer').load('/cart');
         },
         error: function () {
             console.log("delete from cartItems FAILED");
@@ -19,9 +16,56 @@ function removeItem(ID) {
         }
     });
 }
+function changedQuantity(itemID) {
+        
+        var quantity = $('#'+itemID).val();
+        if (quantity === "") return;
+        var data = {quantity: quantity};
+        $.ajax({
+            url: "/cart/update/" + itemID,
+            type: "PUT",
+            data: JSON.stringify(data),
+            contentType: 'application/json'
+    }).done(function(){
+        console.log("quantity upates " + quantity + " of item " + itemID);
+        $('#cartContainer').load('/cart');
+        }).fail(function(){
+                console.log("cartItems update FAILED");
+                alert("Error updating quantity of the product");
+            });
+    }
 //FIXME validation for delete and update    
 $(document).ready(function () {
-   // $('#cartItems').load('/cart');
+    $('#cartContainer').load('/cart');
+    
+    
+    /*
+    $(".quanInput").bind('input', function () {
+        alert("hello");
+            var quantity = $(this).val();
+            var itemID = $(this).attr('itemID');
+            console.log("quantity changed: " + quantity + " of item " + itemID);
+            if (quantity === "") return;
+            
+            var data = {quantity: quantity};
+            $.ajax({
+                url: "/ipd7/justcart/api.php/cartItems/" + itemID,
+                type: "PUT",
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log("cartItems update returned: " + result);
+                    if (!result) {
+                        alert("Error updaing quantity of the product");
+                    }
+                },
+                error: function() {
+                    console.log("cartItems update FAILED");
+                    alert("Error updaing quantity of the product");
+                }
+            });
+
+        });
     /*
 geocoder.geocode( { 'address': address}, function(results, status) {
 		if (status === google.maps.GeocoderStatus.OK) {
@@ -34,28 +78,6 @@ geocoder.geocode( { 'address': address}, function(results, status) {
 		}
 	});
         */
-    $(".quanInput").bind('input', function () {
-        getCartItems();
-        var quantity = $(this).val();
-        var itemID = $(this).attr('itemID');
-        console.log("quantity changed: " + quantity + " of item " + itemID);
-        if (quantity === "")
-            return;
-
-        var data = {quantity: quantity};
-        $.ajax({
-            url: "/cart/" + itemID,
-            type: "PUT",
-            data: JSON.stringify(data),
-            contentType: 'application/json'
-            
-    }).done(function(){
-        getCartItems();
-        }).fail(function(){
-                console.log("cartItems update FAILED");
-                alert("Error updating quantity of the product");
-            });
-
-    });
-     
+       
+        
 });

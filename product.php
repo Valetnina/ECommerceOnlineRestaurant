@@ -2,10 +2,10 @@
 
 // Handling the product_view page
 // First show of the product with static content
-$app->get('/product/:ID', function($ID) use ($app) {
+$app->get('/product/:slug', function($slug) use ($app) {
     $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
                     . " nutritionalValue, name, description FROM products, "
-                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products.ID=%d", $_COOKIE['lang'], $ID);
+                    . "products_i18n WHERE  products_i18n.productID = products.ID AND lang=%s AND products_i18n.slugname=%s", $_COOKIE['lang'], $slug);
     $productRecord['picture'] = base64_encode($productRecord['picture']);
 
 

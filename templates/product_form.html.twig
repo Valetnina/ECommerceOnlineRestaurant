@@ -1,7 +1,28 @@
-{% block javascripts %}
-    
-    
-{% endblock %}
+<script>
+    $("#chooseImage").change(function () {
+        //alert("test");
+        reading(this);
+
+        var picture = $('#uploadImage').propr("files")[0];
+        alert("Read picture");
+
+        var form_data = new FormData();
+
+        form_data.append('picture', picture);
+    });
+
+    function reading(file) {
+        if (file.files && file.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#uploadImage').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file.files[0]);
+        }
+    }
+
+</script>
 
 <div id="left-side-addedit">
     <label>ID: </label>
@@ -35,6 +56,6 @@
     </div><br><br>
 </div>
     <div id = "divButtons">
-        <button id = "btAddPutProduct" class = "buttonStyle"> Add / Edit product </button>
+        <button  id = "btAddPutProduct" class = "buttonStyle"> Add / Edit product </button>
         <button id = "btCancelProduct" class = "buttonStyle"> Cancel </button>
     </div>

@@ -219,3 +219,8 @@
 [2016-10-11 21:21:51] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
 [2016-10-11 23:38:46] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []
 [2016-10-11 23:38:49] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' (using password: YES) [] []
+[2016-10-13 20:14:06] main.ERROR: Database error: Unable to connect to MySQL server! Error: Unknown database 'ecommerce' [] []
+[2016-10-13 20:14:20] main.ERROR: Database error: Unable to connect to MySQL server! Error: Unknown database 'ecommerce' [] []
+[2016-10-13 20:14:27] main.ERROR: Database error: Unable to connect to MySQL server! Error: Unknown database 'ecommerce' [] []
+[2016-10-13 20:14:50] main.ERROR: Database error: Unable to connect to MySQL server! Error: Unknown database 'ecommerce' [] []
+[2016-10-13 21:10:46] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
