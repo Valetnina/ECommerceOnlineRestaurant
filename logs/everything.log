@@ -631,3 +631,7 @@
 [2016-10-12 21:17:56] main.DEBUG: User failed for email migalatii@gmail.com from IP 207.162.58.3 [] []
 [2016-10-12 21:38:02] main.DEBUG: 30 [] []
 [2016-10-13 19:56:02] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'root'@'localhost' (using password: NO) [] []
+[2016-10-13 17:23:56] main.ERROR: SQL error: Table 'ecommerce.productcategory' doesn't exist [] []
+[2016-10-13 17:23:56] main.ERROR:  in query: SELECT * FROM productcategory WHERE lang='fr' [] []
+[2016-10-13 17:23:56] main.ERROR: SQL error: Table 'ecommerce.productcategory' doesn't exist [] []
+[2016-10-13 17:23:56] main.ERROR:  in query: SELECT * FROM productcategory WHERE lang='fr' [] []

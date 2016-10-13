@@ -256,3 +256,7 @@
 [2016-10-12 21:09:27] main.ERROR: SQL error: Table 'cp4724_fastfood-online.resetTokens' doesn't exist [] []
 [2016-10-12 21:09:27] main.ERROR:  in query: SELECT * FROM resetTokens WHERE userID=4 [] []
 [2016-10-13 19:56:02] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'root'@'localhost' (using password: NO) [] []
+[2016-10-13 17:23:56] main.ERROR: SQL error: Table 'ecommerce.productcategory' doesn't exist [] []
+[2016-10-13 17:23:56] main.ERROR:  in query: SELECT * FROM productcategory WHERE lang='fr' [] []
+[2016-10-13 17:23:56] main.ERROR: SQL error: Table 'ecommerce.productcategory' doesn't exist [] []
+[2016-10-13 17:23:56] main.ERROR:  in query: SELECT * FROM productcategory WHERE lang='fr' [] []

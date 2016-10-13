@@ -23,13 +23,13 @@ $log->pushHandler(new StreamHandler('logs/errors.log', Logger::ERROR));
 define("ROWSPERPAGE", 5);
 define("TAX", 0.15);
 $totalPages = 0;
-DB::$dbName = 'cp4724_fastfood-online';
-DB::$user = 'cp4724_fastfood';
-DB::$password = '[^)EJ;Fw%402';
-//DB::$dbName = 'ecommerce';
-//DB::$user = 'root';
-//DB::$password = '';
-//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$dbName = 'cp4724_fastfood-online';
+//DB::$user = 'cp4724_fastfood';
+//DB::$password = '[^)EJ;Fw%402';
+DB::$dbName = 'ecommerce';
+DB::$user = 'root';
+DB::$password = '';
+DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
