@@ -26,10 +26,14 @@ $app->post('/cart', function() use ($app, $log) {
     }
     $app->render('cart_container.html.twig');
 });
-
+$app->get('/cartItems', function() use ($app) {
+    
+    $app->render('cart_container.html.twig', array(
+    ));
+});
 $app->get('/cart', function() use ($app) {
     // display cart's content
-    $cartItems= DB::query(
+    $cartItems = DB::query(
                     "SELECT cartitems.ID, products.ID as productID, name, price, quantity, picture, nutritionalValue "
                     . "FROM cartitems, products, products_i18n "
                     . "WHERE products.ID = products_i18n.productID AND products.ID = cartitems.productID AND sessionID=%s AND lang=%s", session_id(), $_COOKIE['lang']);
@@ -50,8 +54,9 @@ $app->get('/cart', function() use ($app) {
 });
 
 
+
 // RESTful update cart when quantity changed
-$app->put('/cart/:ID', function($ID) use ($app) {
+$app->put('/cart/update/:ID', function($ID) use ($app) {
     $json = $app->request()->getBody();
     $data = json_decode($json, true);
     // only expect 
@@ -66,7 +71,13 @@ $app->put('/cart/:ID', function($ID) use ($app) {
         echo json_encode("400: quantity invalid");
         return;
     }
-    DB::update('cartitems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
+     if ($quantity == 0) {
+        DB::delete('cartitems', 'cartitems.ID=%d AND cartitems.sessionID=%s',
+                $ID, session_id());
+    } else {
+        DB::update('cartitems', array('quantity' => $quantity), "ID=%i AND sessionID=%s", $ID, session_id());
+    }
+    
     echo json_encode(DB::affectedRows() == 1);
 });
 

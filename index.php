@@ -158,20 +158,22 @@ $app->get('/', function() use ($app, $lang, $log) {
 });
 
 //Ajax -> refresh products by filter
-$app->get('/category/:categoryID/:isVeget', function($categoryID, $isVeget) use ($app) {
+$app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, $isVeget, $pageNum) use ($app) {
+    $start = ((int) $pageNum - 1) * ROWSPERPAGE;
     if($isVeget == 1){
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+    $prodList = DB::query('SELECT products.ID, name, description, price, picture, products_i18n.slugname '
             . 'FROM products, products_i18n '
             . 'WHERE products.ID = products_i18n.productID AND '
             . 'lang=%s AND '
             . 'isVegetarian = %d AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $isVeget, $categoryID);
+            . 'productCategoryID = %d ORDER BY products.ID DESC LIMIT %d, %d', $_COOKIE['lang'], $isVeget, $categoryID, $start, ROWSPERPAGE);
+    
 }else{
-    $prodList = DB::query('SELECT products.ID, name, description, price, picture '
+    $prodList = DB::query('SELECT products.ID, name, description, price, picture, products_i18n.slugname '
             . 'FROM products, products_i18n '
             . 'WHERE products.ID = products_i18n.productID AND '
             . 'lang=%s AND '
-            . 'productCategoryID = %d', $_COOKIE['lang'], $categoryID);
+            . 'productCategoryID = %d ORDER BY products.ID DESC LIMIT %d, %d', $_COOKIE['lang'], $categoryID, $start, ROWSPERPAGE);
 }
     foreach ($prodList as &$product) {
         $ID = $product['ID'];
@@ -179,9 +181,10 @@ $app->get('/category/:categoryID/:isVeget', function($categoryID, $isVeget) use 
         //$product['average'] = round($reviewsAverage['average']);
         $product['picture'] = base64_encode($product['picture']);
     }
-    
-    //print_r($prodList);
-    $app->render('index-products.html.twig', array('prodList' => $prodList));
+    $totalPages = 5;
+  //  print_r($prodList);
+    $app->render('index-products.html.twig', array('prodList' => $prodList,'page' => $pageNum,
+    'totalPages' => $totalPages));
 });
 
 require_once 'product.php';

@@ -1,48 +1,33 @@
-{% extends "master.html.twig" %}
 
-{% block title %} {{ "home"|trans }} {% endblock %}
-{% block head %}   
-    <!-- Bootstrap Core CSS -->
-    <link href="/bootstrap/css/shop-item.css" rel="stylesheet">
-
-
-    <!-- jQuery -->
-    <script src="/js/cart_script.js"></script>
-
-{% endblock %}
-
-
-{% block content %}
-    <div class="container">
-        
-<div class="row" id="cartItems">
+<div class="row" id="cartItems" style="overflow-x:auto;">
     {% if  user or fbUser %}
     {% if cartItems %}
    <table>
+       
     <tr><th>#</th><th>{{"Product"|trans}}</th><th>{{"Item name"|trans}}</th>
         <th>{{"Unit price"|trans}}</th><th>{{"Quantity"|trans}}</th>
         <th>{{"Total"|trans}}</th> <th>{{"Calories"|trans}}</th><th></th></tr>
             {% for item in cartItems %}
         <tr><td>{{loop.index}}</td>
-            <td><img class="img-responsive cartImage" src="data:image/png;base64,{{item.picture}}" alt="product image" width="75px !important"></td>
-            <td>{{item.name}}</td>
+            <td><img class="img-responsive cartImage" src="data:image/png;base64,{{item.picture}}" alt="product image" ></td>
+            <td><span>{{item.name}}</span></td>
             <td>{{item.price}}</td>
-            <td><input class="quanInput" type="number" value="{{item.quantity}}" style="width: 40px;"
-                       itemPrice="{{item.price}}" itemID="{{item.ID}}" ></td>
-            <td><span id="total">{{item.total}}</span></td>
-            <td><span id="total">{{item.nutritionalValue}}</span></td>
-            <td><button onclick="removeItem({{item.productID}})">{{"Remove from cart"|trans}}</button></td>
+            <td><input class="quanInput" type="number" value="{{item.quantity}}" style="width: 40px; height:30px;"
+                      oninput="changedQuantity({{item.ID}})" id="{{item.ID}}"></td>
+            <td><span>{{item.total}}</span></td>
+            <td><span>{{item.nutritionalValue}}</span></td>
+            <td><button class="btn btn-success" onclick="removeItem({{item.productID}})">{{"Remove from cart"|trans}}</button></td>
         </tr>
         
     {% endfor %}
 </table>
- <a href="/" style="width: 250px; margin:auto; " class="btn btn-lg btn-primary btn-block ">{{"Ad more to cart"|trans}} </a>
+ <a href="/" style=" " class="btn btn-success ">{{"Ad more to cart"|trans}} </a>
 <hr>
         <div id="totals">
         {{"Total Order"|trans}}: <span id="total">{{cartTotal}}</span><br><br><br>
         {{"Tax"|trans}}: <span id="tax">{{cartTax}}</span><br><br><br>
         {{"Total to pay at delivery"|trans}}: <span id="totalToPay">{{cartTotalToPay}}</span><br><br><br>
-        <a href="/deliveryAddress" style="width: 200px; margin:auto;" class="btn btn-lg btn-primary btn-block" id="placeOrder">{{"Place Order"|trans}}</a>
+        <a href="/deliveryAddress" style="" class="btn btn-lg btn-primary btn-block" id="placeOrder">{{"Place Order"|trans}}</a>
 
         </div>
         {% else %}
@@ -56,5 +41,3 @@
 {% endif %}
 
     </div>
-    </div>
-        {% endblock %}  

@@ -63,6 +63,10 @@ return array(
     'Please register an account with us' => 'Veuillez ouvrir un compte avec nous',
         'Only loggedin users can access the cart'=> 'Seuls les utilisateurs enregistrés peuvent accéder au panier',
         'Submit Order' => 'Placer la Commande',
+       'Email sent successfully' => 'Courriel envoyé',
+        'Check your password and try to login again' => 'Vérifiez votre mot de passe et essayez de vous connecter à nouveau',
+
+
 
 
 
