@@ -182,17 +182,58 @@ $app->put('/admin/product_addedit/:ID', function($ID) use ($app) {
     }
 });
 
-$app->post('/admin/category_addedit', function() use ($app, $log) {
-    $categoryName = $app->request->post('categoryName');
-
-    if (!$categoryName) {
-        $log->debug("Field must be fill.");
-        $app->render('category_addedit.html.twig', array('categoryFailed' => TRUE));
-    } else {
-        DB::insert('productcategory', $categoryName);
-
-        $app->render('add_category_success.html.twig');
-    }
+$app->get('/admin/category_addedit', function() use ($app) {
+$categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $_COOKIE['lang']);
+    
+    $app->render('category_addedit.html.twig', array(
+        'categoryList' => $categoryList));
 });
 
+
+$app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
+$category = DB::queryFirstRow('SELECT * FROM productcategory WHERE lang=%s AND ID=%d', $_COOKIE['lang'], $ID);
+    
+if (!$category) {
+        $app->response->setStatus(404);
+        echo json_encode("Record not found");
+        return;
+    }
+    
+    //print_r($category);
+    echo json_encode($category, JSON_PRETTY_PRINT);
+});
+
+$app->post('/admin/category_addedit/', function() use ($app, $log) {
+   
+    $lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
+    
+    $body = $app->request->getBody();
+    $record = json_decode($body, TRUE);
+    $record['ID'] = $lastID;
+    
+    DB::insert('productcategory', $record);
+    if($record['lang'] == 'en'){
+        $record['lang'] = 'fr';
+        $record['name'] = 'N/A';
+        $record['slugname'] = '';
+    DB::insert('productcategory', $record);
+    }
+    else{
+        $record['lang'] = 'en';
+        $record['name'] = 'N/A';
+        $record['slugname'] = '';
+    }
+    //echo DB::insertId();
+});
+
+$app->put('/admin/category_addedit/:ID', function($ID) use ($app){
+    
+    $body = $app->request->getBody();
+    $record = json_decode($body, TRUE);
+    //$record['ID'] = $ID;
+    $lang = $record['lang'];
+    //print_r($record);
+    DB::update('productcategory', $record, "lang=%s AND ID=%d" , $lang, $ID);
+    //echo json_encode(TRUE); // same as: echo 'true';
+});
 

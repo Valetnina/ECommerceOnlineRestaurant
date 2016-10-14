@@ -3,36 +3,41 @@
         }
 
 var pageNum = 1;
-$(document).ready(function () {
-    $('#index-products').load('/category/' + 1 + '/' + 0 + '/page/1' );
-    
-    
-    var isVeget = 0;
-    if ($("input[type='checkbox']").prop('checked')) {
-        isVeget = 1;
-    }
-    alert(isVeget);
 
-    $("#cbVegetarian").click(function () {
-        alert("isVeget was clicked");
-        isVeget = 1;
-            $('#index-products').load('/category/' + isVeget+ '/page/1' );
-        
+
+$(document).ready(function () {
+
+    //alert(categoryID);
+    $('#index-products').load('/category/1/0/page/1');
+    var categoryID = 1;
+    var isVeget = 0;
+
+    $("#cbVegetarian").on('change', function () {
+
+        //alert('test');
+
+        if ($("input[type='checkbox']").prop('checked')) {
+            isVeget = 1;
+        }
+        else{
+            isVeget = 0;
+        }
+
+        $('#index-products').load('/category/' + categoryID + '/' + isVeget + '/page/1');
     });
 
 
     $("#navCategory").on("click", "button", function () {
 
-        var categoryID = $(this).attr('id');
+        categoryID = $(this).attr('id');
+        spanValue = categoryID;
+        //var isVeget = 0;
+        if ($("input[type='checkbox']").prop('checked')) {
+            isVeget = 1;
+        }
         //alert(categoryID + isVeget);
-        
-        if (isVeget == 1)
-            $('#index-products').load('/category/' + categoryID + '/' + isVeget+ '/page/1' );
-else{
-    $('#index-products').load('/category/' + 1 + '/' + 0+ '/page/1' );
-}
+
+        $('#index-products').load('/category/' + categoryID + '/' + isVeget + '/page/1');
     });
 
 });
-
-

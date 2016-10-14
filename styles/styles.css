@@ -170,16 +170,6 @@ label {
     margin: auto;
     height: 550px;
 }
-/*#bottom-side-addedit-transparent{
-    border: 1px solid #2680a6;
-    background-color: #025274;
-    opacity: 0.3;
-    width: 1150px;
-    margin: auto;
-    margin-top: 20px; 
-    height: 500px;
-    z-index: 0;
-}*/
 #bottom-side-addedit{
     border: 2px solid #134053;
     background-color: #025274;
@@ -320,7 +310,7 @@ textarea{
     font-size: 20px;
 }
 #cbVegetarian{
-    min-width: 90px;
+    min-width: 50px;
 }
 #imgCart{
     width: 50px;
@@ -381,7 +371,7 @@ textarea{
     height: 10px;
 }
 input[type='checkbox'] {
-    -webkit-appearance:none;
+/*    -webkit-appearance:none;*/
     width:30px;
     height:30px;
     background:white;
@@ -390,4 +380,55 @@ input[type='checkbox'] {
 }
 input[type='checkbox']:checked {
     background: #abd;
+}
+#container_category_form{
+    border: 1px solid #025274;;
+    width: 700px;
+    margin: auto;
+    margin-top: 200px;
+    margin-bottom: 200px;
+    vertical-align: center;
+    background-color: white;
+    border-radius: 10px;
+}
+#container_category_form label{
+/*    border: 1px solid black;*/
+    height: 35px;
+    width: 150px;
+    padding-top: 5px; 
+    color: #025274;
+    font-size: 16px;
+}
+.category_style{
+    width: 650px;
+    height: 260px;
+/*    border: 1px solid orange;*/
+    padding-top: 15px;
+    padding-left: 50px;
+}
+.input_category_addedit{
+    width: 300px;
+    height: 35px;
+    margin-left: 20px;
+}
+.buttonCategory{
+    margin-right: 50px;
+    width: 150px;
+    background-color: #025274;
+    border-radius: 10px;
+    height: 40px;
+    color: white;
+}
+#buttonAddedit{
+    margin-left: 140px;
+}
+#oldCategory{
+    height: 90px;
+    margin-top: 30px;
+}
+#newCategory{
+    margin-bottom: 10px;
+}
+#tbProducts table th, tr {
+    border-bottom: 1px solid #025274;
 }

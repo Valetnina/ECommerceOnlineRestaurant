@@ -8,3 +8,4 @@ uploads/
 /fbauth.php
 /fblogin-callback.php
 /nbproject/private/
+logs/everything.log

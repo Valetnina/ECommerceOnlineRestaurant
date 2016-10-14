@@ -1,12 +1,37 @@
 {% extends "master.html.twig" %}
 
+
 {% block title %} Page add/edit product{% endblock %}
+{% block head %} <script src="/js/category_script.js"></script>{% endblock %}
+
 
 {% block content %}
-    <div id = "category_form" method="POST">
-        <form >
-            <label>Category name: </label><input type="Text" name="categoryName"> 
-            <input type="submit" value="Add new category">
-        </form>
+    <div id="container_category_form">
+        {% if categoryFailed %}
+            <h4 style="color:red; font-size: 12px;">{{"Insert category Failed"|trans}}</h4>
+        {% endif %}
+        <div id = "category_form">
+            <div class="category_style" id="oldCategory">
+                <label>Category </label>
+                <select id="categoryName" class="input_category_addedit" style="height: 35px;">
+                    <option selected="true" disabled="disabled">--select category--</option>
+                    {% for cat in categoryList %}
+                        <option id ={{cat.ID}}>{{cat.name}}</option>
+                    {% endfor %}
+                </select><br><br>
+            </div>
+            <div class="category_style" id="newCategory">
+                <label>New category </label>
+                <input type="text" name="name" class="input_category_addedit"><br><br>
+                <label>Lang </label>
+                <input type="text" name="lang" class="input_category_addedit"><br><br>
+                <label>Slugname </label>
+                <input type="text"  name="slugname" class="input_category_addedit"><br><br>
+                <button id="buttonAddedit" class="buttonCategory">Add / Edit category</button> 
+                <button id="buttonCancel" class="buttonCategory">Cancel</button>
+            </div>
+        </div>
     </div>
+
+    <script src="/js/category_script.js"></script>
 {% endblock %}
