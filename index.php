@@ -29,7 +29,7 @@ $totalPages = 0;
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -82,9 +82,26 @@ if (!isset($_SESSION['facebook_access_token'])) {
 }
 
 $lang = 'en';
+if(!isset($_COOKIE['lang'])){
+    if (!isset($_GET['lang'])) {
+    setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    } else {
+       $lang = (string) $_GET['lang'];
+       setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    }
+} else {
+    if(isset($_GET['lang'])){
+       $lang = (string) $_GET['lang'];
+       setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    }
+}
+
+/*
 if (!isset($_GET['lang'])) {
     if (isset($_COOKIE['lang'])) {
         $lang = $_COOKIE['lang'];
+    } else {
+        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
     }
 } else {
     $lang = (string) $_GET['lang'];
@@ -93,7 +110,8 @@ if (!isset($_GET['lang'])) {
     } else {
         setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
     }
-}
+}*/
+echo "aafaf".$_COOKIE['lang'];
 // First param is the "default language" to use.
 $translator = new Translator($_COOKIE['lang'], new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
@@ -127,7 +145,7 @@ $twig->addGlobal('loginUrl', $loginUrl);
 //
 //
 //FIXME the change of the COOKIe doesn't reflect on the same page, so for the root I pass the lang direclty. Ask teacher if it's OK
-$app->get('/', function() use ($app, $lang, $log) {
+$app->get('/', function() use ($app, $log) {
     //if a fb user than check id does already have a record in the users table, 
     if ($_SESSION['facebook_access_token']) {
         $userID = DB::queryFirstField('SELECT fbID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);

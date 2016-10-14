@@ -80,6 +80,14 @@ TODo: Order Submition finish
 3.Finish admin part of the site
 
 
+Day09
+        Tina
+1:Done: Finished oder submition
+TODo: Make locatins work, detect delivery time finisih the design problms, fix the DB transactions and error handling, email when order submitted 
+       Olga
+1.Done: Added filter by isVegetarian to index page. Added admin support on the master template. Finished populating table products with data
+3.Finish admin part of the site
+
 email vm!0%.&7i{K;
 
 tHings to fix:
@@ -87,8 +95,6 @@ tHings to fix:
 -server time;
 -total pages issue global variable
 -make sure the user is logged out when trying to reset password
--user profile
--find nearest store (populate table with canadian adresses)
 -predict delivery time
 -reviews, cart, order - only logged in users
 -validate html
@@ -97,8 +103,7 @@ tHings to fix:
 -Ask if a user gives an review, should we delete foreign key from ratings? Do  we need an aditional table
 -Important: Need to ask teacher of how to catch if a db error ocurred, when fbUser could not be registered
 -send order by email
--error-twig
--Important: total pages, query or allow request for ynexisting page?
+-Important: total pages, query or allow request for unexisting page?
 -put conditions in index php for parameters, is veget, pagenum
 
 
