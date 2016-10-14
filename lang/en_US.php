@@ -67,4 +67,12 @@ return array(
     'Submit Order' => 'Submit Order',
     'Email sent successfully' => 'Email sent successfully',
     'Check your password and try to login again' => 'Check your password and try to login again',
+    'Store Not Found'=> 'Store Not Found',
+    'We are so sorry, but we don\'t have a store near your address yet. We are expanding so please return to our web site and try to make an order. 
+Thank you for your understanding' => 'We are so sorry, but we don\'t have a store near your address yet. We are expanding so please return to our web site and try to make an order. 
+Thank you for your understanding',
+    'We\'re very sorry, we failed to fulfill your request. Our team has already been notified of your trouble.' => 'We\'re very sorry, we failed to fulfill your request.
+        Our team has already
+        been notified of your trouble.',
+    'Internal Error'=> 'Internal Error',
 );

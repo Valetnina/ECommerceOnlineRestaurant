@@ -39,8 +39,8 @@ function nonsql_error_handler($params) {
     global $app, $log;
     $log->error("Database error: " . $params['error']);
     http_response_code(500);
-    header('content-type: application/json');
-    echo json_encode("Internal server error");
+    //header('content-type: application/json');
+    $app->render('error_internal.html.twig');
     die;
 }
 
@@ -50,7 +50,7 @@ function sql_error_handler($params) {
     $log->error(" in query: " . $params['query']);
     http_response_code(500);
     //header('content-type: application/json');
-    echo json_encode("Internal server error");
+    $app->render('error_internal.html.twig');
     die; // don't want to keep going if a query broke
 }
 

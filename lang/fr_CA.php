@@ -65,6 +65,12 @@ return array(
         'Submit Order' => 'Placer la Commande',
        'Email sent successfully' => 'Courriel envoyé',
         'Check your password and try to login again' => 'Vérifiez votre mot de passe et essayez de vous connecter à nouveau',
+    'Store Not Found' => 'Filiale introuvable',
+    'We are so sorry, but we don\'t have a store near your address yet. We are expanding so please return to our web site and try to make an order. Thank you for your understanding'=> 'Nous sommes désolé, mais nous n\'avons pas un magasin à proximité de votre adresse. Nous élargissons, donc s\'il vous plaît veuillez revenir à notre site Web et essayer de faire une commande. Merci de votre compréhension',
+     'We\'re very sorry, we failed to fulfill your request. Our team has already been notified of your trouble.' => 'Nous sommes désolés, nous avons échoué à répondre à votre demande. Notre équipe a déjà été avisé de votre probleme.',
+        'Internal Error'=> 'Erreure interne',
+
+
 
 
 

@@ -101,7 +101,7 @@ if (! $accessToken->isLongLived()) {
             );
 
         $_SESSION['facebook_access_token'] = $fbUser;
-        $_SESSION['user'] = $fbUser;
+        $_SESSION['user'] = array();
         
         header("Location: /");  
          

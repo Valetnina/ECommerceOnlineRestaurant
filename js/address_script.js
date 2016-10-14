@@ -1,46 +1,4 @@
-function searchAddress(address) {
-    geocoder.geocode({'address': address}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-            var latlng = results[0].geometry.location;
-            searchStores(latlng.lat(), latlng.lng());
-
-        } else {
-            alert('Geocode failed: ' + status);
-        }
-    });
-}
-
-function searchStores(lat, lng) {
-    //var parameter = { lat: lat, lng: lng };
-    var nearestStore = 0;
-    jQuery.ajax({
-        url: '/nearestStore/' + lat + '/' + lng,
-        type: "GET",
-        dataType: 'json',
-    }).done(function (data) {
-        nearestStore = data['ID'];
-        alert('Nearest store ' + nearestStore);
-    }).fail(function () {
-        alert('Could not find the nearest store');
-    });
-    return nearestStore;
-}
-
-
-var geocoder = ""
-$(document).ready(function () {
-    /*
-     function jsonCallback(json){
-     console.log(json);
-     }
-     $.ajax({
-     url:  'https://maps.googleapis.com/maps/api/distancematrix/json?origins=Vancouver+BC|Seattle&destinations=San+Francisco|Victoria+BC&key=AIzaSyA8PKmcKFKvYs2Eni_HTVGNTCEeE5FAfh4',
-     dataType: 'jsonp',
-     // jasonpCallback: "logResults",
-     //type: 'GET',
-     // cache: false,
-     });*/
-    geocoder = new google.maps.Geocoder();
+/*$(document).ready(function () {
     $('#submitAddressChange').click(function () {
 
         $('#errorList').html("");
@@ -128,3 +86,4 @@ $(document).ready(function () {
     });
 
 });
+*/
