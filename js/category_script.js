@@ -3,37 +3,39 @@ $(document).ready(function () {
     var currentID = 0;
 
     $("#categoryName").change(function () {
-
         currentID = ($('option:selected', $(this)).attr('id'));
-        //alert(currentID);
+        alert(currentID + " id from 'change' event");
 
         $.ajax({
             url: '/admin/category_addedit/' + currentID,
             type: 'GET',
             dataType: 'json'
         }).done(function (data) {
-            $("input[name=name]").val(data.name);
-            $("input[name=lang]").val(data.lang);
-            $("input[name=slugname]").val(data.slugname);
+            //alert(data.name);
+            $('input[name=name]').val(data.name);
+            $('input[name=lang]').val(data.lang);
+            $('input[name=slugname]').val(data.slugname);
+        }).fail(function () {
+            alert('Failed');
         });
 
-        $('#newCategory').load('/admin/category_addedit/');
+        //$('#newCategory').load('/admin/category_addedit');
 
     });
-   
-    $('#buttonCategory').click(function () {
-        alert("Button works");
-        alert(currentID);
+
+    $('#buttonAddedit').click(function () {
         
-        var categoryName = $("input[name=name]").val();
-        var lang = $("input[name=lang]").val();
-        var slugname = $("input[name=slugname]").val();
+        alert(currentID + " id from 'click' button event");
+
+        var categoryName = $('input[name=name]').val();
+        var lang = $('input[name=lang]').val();
+        var slugname = $('input[name=slugname]').val();
 
         if (currentID == 0) {
             // INSERT
             alert("Insert begin");
             $.ajax({
-                url: "/admin/category_addedit/",
+                url: '/admin/category_addedit/',
                 data: JSON.stringify({
                     ID: currentID,
                     name: categoryName,
@@ -48,8 +50,8 @@ $(document).ready(function () {
             });
         } else {
             // UPDATE
-           alert("PUT begin");
-            //alert(slugname);
+            alert("PUT begin");
+            //alert(currentID);
             $.ajax({
                 url: '/admin/category_addedit/' + currentID,
                 data: JSON.stringify({
