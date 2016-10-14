@@ -192,6 +192,8 @@ $app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, 
             . 'lang=%s AND '
             . 'productCategoryID = %d ORDER BY products.ID DESC LIMIT %d, %d', $_COOKIE['lang'], $categoryID, $start, ROWSPERPAGE);
 }
+
+
     foreach ($prodList as &$product) {
         $ID = $product['ID'];
         //$reviewsAverage = DB::queryFirstColumn('SELECT AVG(rating) as average FROM ratingsreviews WHERE productID=%d', $ID);
