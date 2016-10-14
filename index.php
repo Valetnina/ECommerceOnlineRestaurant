@@ -4,7 +4,7 @@ require_once 'vendor/autoload.php';
 session_start();
 
 
-require_once 'fbauth.php';
+//require_once 'fbauth.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -29,7 +29,7 @@ $totalPages = 0;
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -68,11 +68,11 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 
 //sessions and Cookies
-$helper = $fb->getRedirectLoginHelper();
+//$helper = $fb->getRedirectLoginHelper();
 $permissions = ['public_profile', 'email', 'user_location']; // optional
 
-$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
-$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+//$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+//$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
 
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
@@ -109,10 +109,10 @@ $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
     new TranslationExtension($translator)
 );
-$twig = $app->view()->getEnvironment();
-$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
-$twig->addGlobal('user', $_SESSION['user']);
-$twig->addGlobal('loginUrl', $loginUrl);
+//$twig = $app->view()->getEnvironment();
+//$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+//$twig->addGlobal('user', $_SESSION['user']);
+//$twig->addGlobal('loginUrl', $loginUrl);
 
 
 //////
