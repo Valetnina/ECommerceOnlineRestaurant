@@ -1,0 +1,48 @@
+{% for product in prodList %}    
+    <div class="col-sm-4 col-lg-4 col-md-4 div-products">                          
+        <div class="thumbnail product-thumbnail">
+            <img src="data:image/png;base64,{{product.picture}}" alt="product image" width="100px">
+            <a href="/cartItems"><img src="/images/cart.png" id="imgCart" class="cart" placeholder="Add to cart"></a>
+            <div class="caption">
+                <h4 class="pull-right">$ {{ product.price }}</h4>
+                <h4><a href="/product/{{product.slugname}}">{{ product.name }}</a>
+                </h4>
+                <p>{{ product.description }}</p>
+            </div>
+            <div class="ratings">
+                <p class="pull-right">{{product.totalReviews}} reviews</p>
+                <p>
+                    {% if product.stars > 0 %}
+                        {% for i in range(1, product.stars ) %}
+                            <span class="glyphicon glyphicon-star" id="star-full"></span>
+                        {% endfor %}
+                    {% endif %}
+                    {% set t = (5 - product.stars) %}
+                    {% if t > 0 %}
+                        {% for s in range(1, t) %}
+                            <span class="glyphicon glyphicon-star-empty" id="star-empty"></span>
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+                    
+    </div>
+{% endfor %}
+<ul class="pagination">
+                                 {% if totalPages >0 %}
+                        {% set k = page-1 %}
+                        {% if k > 0 %}
+                        <li><button id="previous" onclick="changePage({{k}})">«</button></li>
+                        {% endif %}
+                            
+                            <li><button onclick="changePage({{page}})" id="pageButton" class="pageButton">{{page}}</button></li>
+                                                
+                                                  
+
+                            {% set s = page+1 %}
+                              {% if page < totalPages %}
+                            <li><button id="next" onclick="changePage({{s}})">»</button></li>
+                            {% endif %}
+                              {% endif %}
+                    </ul>

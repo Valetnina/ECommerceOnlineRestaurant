@@ -1,0 +1,61 @@
+<script>
+    $("#chooseImage").change(function () {
+        //alert("test");
+        reading(this);
+
+        var picture = $('#uploadImage').propr("files")[0];
+        alert("Read picture");
+
+        var form_data = new FormData();
+
+        form_data.append('picture', picture);
+    });
+
+    function reading(file) {
+        if (file.files && file.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#uploadImage').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file.files[0]);
+        }
+    }
+
+</script>
+
+<div id="left-side-addedit">
+    <label>ID: </label>
+    <input type="number" name="productID" id="productID" value="{{product_form.ID}}"><br><br>
+    <label>Language: </label>
+    <input type="text" name="lang" value="{{product_form.lang}}"><br><br>
+    <label>Product name: </label>
+    <input type="text" name="name" value="{{product_form.name}}"><br><br>
+    <label>Category: </label>
+    <select id="categoryName">
+        {% for category in categoryList %}   
+            <option>{{category.name}}</option>
+        {% endfor %}
+    </select><br><br>
+    <label>Price: </label>
+    <input type="text" name="price" value="{{product_form.price}}"><br><br>
+    <label>Nutritional value: </label>
+    <input type="text" name="nutritionalValue" value="{{product_form.nutritionalValue}}"><br><br>
+    <label>Is vegetarian: </label>
+    <input type="checkbox" name="isVegetarian" value="{{product_form.isVegetarian}}"><br><br>
+    <label>Slug name: </label>
+    <input type="text" name="slugname" value="{{product_form.slugname}}"><br><br>
+</div>
+<div id="right-side-addedit">
+    <label  name="description" style="text-align: left; width:100px;">Description: </label><br>
+    <textarea  name="description" cols="62" rows="6">{{product_form.description}}</textarea><br><br>
+    <label style="text-align: left; width:100px;">Image: </label>
+    <input id="chooseImage" type="file" name="fileToUpload">
+    <div id="dvPreview">
+        <img id="uploadImage" src="data:image/png;base64,{{product_form.picture}}"  alt="product image" width="160px">
+    </div><br><br>
+</div>
+    <div id = "divButtons">
+        <button  id = "btAddPutProduct" class = "buttonStyle"> Add / Edit product </button>
+        <button id = "btCancelProduct" class = "buttonStyle"> Cancel </button>
+    </div>
