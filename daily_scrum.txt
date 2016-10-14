@@ -76,17 +76,14 @@ Day08
 TODo: Order Submition finish
 
        Olga
-1.Done: Added filter by isVegetarian to index page. Added admin support on the master template. Finished populating table products with data
-3.Finish admin part of the site
+
 
 
 Day09
         Tina
 1:Done: Finished oder submition
-TODo: Make locatins work, detect delivery time finisih the design problms, fix the DB transactions and error handling, email when order submitted 
+TODo: Make locations work, detect delivery time finisih the design problms, fix the DB transactions and error handling, email when order submitted 
        Olga
-1.Done: Added filter by isVegetarian to index page. Added admin support on the master template. Finished populating table products with data
-3.Finish admin part of the site
 
 email vm!0%.&7i{K;
 

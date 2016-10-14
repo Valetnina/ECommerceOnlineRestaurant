@@ -45,3 +45,8 @@
 [2016-10-14 17:02:31] main.ERROR: Database error: Unable to connect to MySQL server! Error: No connection could be made because the target machine actively refused it.  [] []
 [2016-10-14 17:02:34] main.ERROR: Database error: Unable to connect to MySQL server! Error: No connection could be made because the target machine actively refused it.  [] []
 [2016-10-14 17:09:01] main.ERROR: Database error: Unable to connect to MySQL server! Error: No connection could be made because the target machine actively refused it.  [] []
+[2016-10-14 21:44:12] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' to database 'cp4724_fastfood-online' [] []
+[2016-10-14 22:02:25] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' to database 'cp4724_fastfood-online' [] []
+[2016-10-14 22:02:26] main.ERROR: Database error: Unable to connect to MySQL server! Error: Access denied for user 'cp4724_fastfood'@'localhost' to database 'cp4724_fastfood-online' [] []
+[2016-10-14 23:33:31] main.ERROR: SQL error: Unknown column 'email' in 'field list' [] []
+[2016-10-14 23:33:31] main.ERROR:  in query: INSERT INTO `orders` (`orderDate`,`storeID`,`customerID`,`contactFirstName`,`contactLastName`,`email`,`deliveryAddress`,`deliveryStreet`,`deliveryCity`,`deliveryCountry`,`deliveryPostalCode`,`contactPhone`,`orderAmount`,`tax`) VALUES (NOW(), '15039', '4', 'Iurie', 'Migalatii', 'migalatii@gmail.com', '52, 8th Avenue', '52, 8th Avenue', 'Lachine', 'Canada', 'H8S3A7', '4389855642', '17.5', 2.625) [] []
