@@ -93,3 +93,5 @@
 [2016-10-13 22:52:28] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
 [2016-10-13 22:52:31] main.DEBUG: Inserted order no 129 [] []
 [2016-10-13 22:52:59] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
+[2016-10-13 23:03:06] main.DEBUG: Attempt to see the cart contents for un unauthorized user from the IP: ::1 [] []
+[2016-10-13 23:03:09] main.DEBUG: Inserted order no 130 [] []
