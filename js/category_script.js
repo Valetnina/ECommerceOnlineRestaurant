@@ -8,11 +8,10 @@ $(document).ready(function () {
         //alert(currentID);
 
         $.ajax({
-            url: "/admin/category_addedit/" + currentID,
-            type: "GET",
-            dataType: "json"
+            url: '/admin/category_addedit/' + currentID,
+            type: 'GET',
+            dataType: 'json'
         }).done(function (data) {
-            $("input[name=categoryID]").val(data.ID);
             $("input[name=name]").val(data.name);
             $("input[name=lang]").val(data.lang);
             $("input[name=slugname]").val(data.slugname);
@@ -21,7 +20,7 @@ $(document).ready(function () {
         $('#newCategory').load('/admin/category_addedit/');
 
     });
-//    
+   
     $('#buttonCategory').click(function () {
         alert("Button works");
         alert(currentID);
@@ -41,25 +40,25 @@ $(document).ready(function () {
                     lang: lang,
                     slugname: slugname
                 }),
-                type: "POST",
-                dataType: "json"
+                type: 'POST',
+                dataType: 'json'
             }).done(function () {
                 alert("Addedd successfully");
 
             });
         } else {
             // UPDATE
-           // alert("PUT begin");
+           alert("PUT begin");
             //alert(slugname);
             $.ajax({
-                url: "/admin/category_addedit/" + currentID,
+                url: '/admin/category_addedit/' + currentID,
                 data: JSON.stringify({
                     name: categoryName,
                     lang: lang,
                     slugname: slugname
                 }),
-                type: "PUT",
-                dataType: "json"
+                type: 'PUT',
+                dataType: 'json'
             }).done(function () {
                 alert("Updated successfully");
             });

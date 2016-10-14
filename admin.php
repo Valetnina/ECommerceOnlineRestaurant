@@ -1,4 +1,7 @@
 <?php
+////////////////////////////////////////////////////////////
+/////////////////////Product Add/Edit//////////////////////
+//////////////////////////////////////////////////////////
 
 $app->get('/admin/product_addedit', function() use ($app, $log) {
     $prodTable = DB::query('SELECT '
@@ -182,6 +185,10 @@ $app->put('/admin/product_addedit/:ID', function($ID) use ($app) {
     }
 });
 
+
+////////////////////////////////////////////////////////////
+/////////////////////Category//////////////////////////////
+//////////////////////////////////////////////////////////
 $app->get('/admin/category_addedit', function() use ($app) {
 $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $_COOKIE['lang']);
     
@@ -205,11 +212,11 @@ if (!$category) {
 
 $app->post('/admin/category_addedit/', function() use ($app, $log) {
    
-    $lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
+    //$lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
     
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-    $record['ID'] = $lastID;
+    //$record['ID'] = $lastID;
     
     DB::insert('productcategory', $record);
     if($record['lang'] == 'en'){
@@ -236,4 +243,8 @@ $app->put('/admin/category_addedit/:ID', function($ID) use ($app){
     DB::update('productcategory', $record, "lang=%s AND ID=%d" , $lang, $ID);
     //echo json_encode(TRUE); // same as: echo 'true';
 });
+
+////////////////////////////////////////////////////////////
+/////////////////////END Category//////////////////////////////
+//////////////////////////////////////////////////////////
 
