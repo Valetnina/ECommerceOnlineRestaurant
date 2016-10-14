@@ -1,3 +1,4 @@
+{% if prodList %}
 {% for product in prodList %}    
     <div class="col-sm-4 col-lg-4 col-md-4 div-products">                          
         <div class="thumbnail product-thumbnail">
@@ -46,3 +47,6 @@
                             {% endif %}
                               {% endif %}
                     </ul>
+                              {% else %}
+                                  <p> {{"There are no products in this category yet"|trans}}</p>
+{% endif %}

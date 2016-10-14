@@ -111,7 +111,6 @@ if (!isset($_GET['lang'])) {
         setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
     }
 }*/
-echo "aafaf".$_COOKIE['lang'];
 // First param is the "default language" to use.
 $translator = new Translator($_COOKIE['lang'], new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language

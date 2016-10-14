@@ -73,4 +73,5 @@ return array(
         Our team has already
         been notified of your trouble.',
     'Internal Error'=> 'Internal Error',
+    'There are no products in this category yet' => 'There are no products in this category yet',
 );
