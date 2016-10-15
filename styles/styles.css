@@ -175,24 +175,25 @@ label {
     background-color: #025274;
     width: 1150px;
     margin: auto;
-    height: 620px;
+/*    height: 620px;*/
     margin-top: 20px;
 }
 #left-side-addedit{
-    /*border: 1px solid white;*/
+    border: 1px solid white;
     width: 500px;
-    float: left; 
-    margin-top: 35px;
+/*    float: left; */
+    margin-top: 20px;
 }
 #right-side-addedit{
-    /*border: 1px solid white;*/
+    border: 1px solid white;
     width: 480px;
     float: right;
+    margin-top: -500px;
 }
 #bottom-side-addedit input{
     /*border: 1px solid yellow;*/ 
     float: right;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
     width: 300px;
     height: 30px;
 }
@@ -204,13 +205,63 @@ label {
     font-size: 15px;
     padding-top: 5px;
     color: white;
+    margin-bottom: 20px;
+    
 }
 #dvPreview{
-    width: 250px;
-    height: 160px;
+    border: 1px solid red;
+    width: 350px;
+    height: 140px;
     background-color: white;
-    float: right;
-    margin: 15px 130px 0 0;
+    float: left;
+    margin-top: 20px;
+/*    margin: 15px 130px 20px 0;*/
+}
+.btEdit{
+    width: 100px;
+    background-color: #025274;
+    color: white;
+    border-radius: 5px;
+}
+.descriptionRow{ 
+    min-width: 400px;
+    padding: 0 10px;
+}
+.labelDescription{
+    text-align: left;
+    width: 100px;
+}
+.buttonStyle{
+    width: 200px;
+    height: 40px;
+    border-radius: 8px; 
+    color: #025274;
+    font-weight: bold;
+    font-size: 16px;
+}
+#btAddPutProduct{
+    width: 200px;
+    height: 40px;
+    border-radius: 8px; 
+    color: #025274;
+    font-weight: bold;
+    font-size: 16px;
+}
+#divButtons{
+    border: 1px solid red;
+    margin: auto;
+    margin-top: 40px;
+    width: 650px;
+}
+#categoryName{
+    height:30px;
+    width: 299px;
+    margin-left: 15px;
+}
+#chooseImage{
+/*    margin-right: 80px;*/
+border: 1px solid blue;
+width: 100px;
 }
 #constrainer {            
     width: 1000px; 
@@ -264,46 +315,8 @@ th, td {
     align: right;
     color: #025274;
 }
-.btEdit{
-    width: 100px;
-    background-color: #025274;
-    color: white;
-    border-radius: 5px;
-}
-.descriptionRow{ 
-    min-width: 400px;
-}
-.labelDescription{
-    text-align: left;
-    width: 100px;
-}
-#btUpdateProduct{
-
-}
-#btAddProduct{
-
-}
-.buttonStyle{
-    width: 200px;
-    height: 40px;
-    border-radius: 8px; 
-    margin-left: 70px;
-}
-#divButtons{
-    /*border: 1px solid red;*/
-    margin-left: 300px;
-    margin-top: 540px;
-}
-#categoryName{
-    height:30px;
-    width: 300px;
-    margin-left: 15px;
-}
-#chooseImage{
-    margin-right: 80px;
-}
-textarea{
-    line-height: 250%;
+.nameRow{
+    min-width: 300px;
 }
 #lbVegetarian{
     max-width: 70px;

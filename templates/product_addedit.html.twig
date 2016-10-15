@@ -11,96 +11,36 @@
                     <tr id = "headRow">
                         <th> Image </th>
                         <th> ID </th>
-                        <th> Name </th>
-                        <th> Category </th>
+                        <th class="nameRow"> Name </th>
                         <th> Price </th>
                         <th> Nutr_Value </th>
                         <th> IsVeget </th>
-                        <th> Slugname </th>
-                        <th class = "descriptionRow"> Description </th>
+                        <th class = "descriptionRow"> Description_en </th>
+                        <th class = "descriptionRow"> Description_fr </th>
                     </tr>
                 </table>
                 <div class = "body">
                     <table id = "tbProducts">
-                        {% set catName = prodTable[0].categoryName %} 
-                        <tr class = "categoryRow">
-                            <td colspan = "10">{{catName}} </td>
-                        </tr> 
                         {% for product in prodTable %} 
-                            {% if(catName == product.categoryName)%}
                                 <tr class = "productHeight">
                                     <td> <img src = "data:image/png;base64,{{product.picture}}" alt = "product image" width = "100px"> <br> <br>
-                                        <button <button id = "{{product.ID}}" class = "btEdit"> Edit </button></td>
-                                    <td id = "{{product.ID}}" class = "tdID">{{product.ID}} </td>
-                                    <td>{{product.name}} </td>
-                                    <td>{{product.categoryName}} </td>
+                                        <button <button id = "{{product.productID}}" class = "btEdit"> Edit </button></td>
+                                    <td id = "{{product.productID}}" class = "tdID">{{product.productID}} </td>
+                                    <td class="nameRow">{{product.productname}} </td>
                                     <td>{{product.price}} </td>
                                     <td>{{product.nutritionalValue}} </td>
                                     <td>{{product.isVegetarian}} </td>
-                                    <td>{{product.slugname}} </td>
-                                    <td class = "descriptionRow">{{product.description}} </td>
-                                </tr>
-                            {% else %}
-                                {% set catName = product.categoryName %} 
-                                <tr class = "categoryRow">
-                                    <td colspan = "10">{{catName}} </td>
-                                </tr>
-                                <tr class = "productHeight">
-                                    <td> <img src = "data:image/png;base64,{{product.picture}}" alt = "product image" width = "100px"> <br> <br>
-                                        <button id = "{{product.ID}}" class = "btEdit"> Edit </button></td>
-                                    <td class = "tdID">{{product.ID}} </td>
-                                    <td>{{product.name}} </td>
-                                    <td>{{product.categoryName}} </td>
-                                    <td>{{product.price}} </td>
-                                    <td>{{product.nutritionalValue}} </td>
-                                    <td>{{product.isVegetarian}} </td>
-                                    <td>{{product.slugname}} </td>
-                                    <td class = "descriptionRow">{{product.description}} </td>
-                                </tr>
-                            {% endif %}                            
+                                    <td class = "descriptionRow">{{product.description_en}} </td>
+                                    <td class = "descriptionRow">{{product.description_fr}} </td>
+                                </tr>                         
                         {% endfor %} 
                     </table>
                 </div> 
             </div>
         </div>
+                    
         <div id = "bottom-side-addedit">
-            <form method="POST" action="admin/product_addedit">
-                <div id="left-side-addedit">
-                    <label>ID: </label>
-                    <input type="number" name="productID" id="productID" value="{{product_form.ID}}"><br><br>
-                    <label>Language: </label>
-                    <input type="text" name="lang" value="{{product_form.lang}}"><br><br>
-                    <label>Product name: </label>
-                    <input type="text" name="name" value="{{product_form.name}}"><br><br>
-                    <label>Category: </label>
-                    <select id="categoryName">
-                        {% for category in categoryList %}   
-                            <option>{{category.name}}</option>
-                        {% endfor %}
-                    </select><br><br>
-                    <label>Price: </label>
-                    <input type="text" name="price" value="{{product_form.price}}"><br><br>
-                    <label>Nutritional value: </label>
-                    <input type="text" name="nutritionalValue" value="{{product_form.nutritionalValue}}"><br><br>
-                    <label>Is vegetarian: </label>
-                    <input type="checkbox" name="isVegetarian" value="{{product_form.isVegetarian}}"><br><br>
-                    <label>Slug name: </label>
-                    <input type="text" name="slugname" value="{{product_form.slugname}}"><br><br>
-                </div>
-                <div id="right-side-addedit">
-                    <label  name="description" style="text-align: left; width:100px;">Description: </label><br>
-                    <textarea  name="description" cols="62" rows="6">{{product_form.description}}</textarea><br><br>
-                    <label style="text-align: left; width:100px;">Image: </label>
-                    <input id="chooseImage" type="file" name="fileToUpload">
-                    <div id="dvPreview">
-                        <img id="uploadImage" src="data:image/png;base64,{{product_form.picture}}"  alt="product image" width="160px">
-                    </div><br><br>
-                </div>
-                <div id = "divButtons">
-                    <input  type="submit" id = "btAddPutProduct" class = "buttonStyle" value="Add / Edit product">                   
-                    <button id = "btCancelProduct" class = "buttonStyle"> Cancel </button>
-                </div>
-            </form>
+            
         </div>  
     </div> 
 {% endblock %}
