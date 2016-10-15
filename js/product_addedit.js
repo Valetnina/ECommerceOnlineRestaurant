@@ -9,7 +9,7 @@ $(document).ready(function () {
     $(".btEdit").click(function () {
         //alert("Edit button reaction");
         currentID = (this.id);
-        $('#bottom-side-addedit').load('/admin/product_addedit/form' + currentID);
+        $('#bottom-side-addedit').load('/admin/product_addedit/form/' + currentID);
 
     });
     

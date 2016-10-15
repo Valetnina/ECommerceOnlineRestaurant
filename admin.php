@@ -57,7 +57,7 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
     $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
 });
 
-$app->get('/admin/product_addedit/form/(:ID)', function($ID = "") use ($app) {
+$app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
 
     if (!isset($ID)) {
         $app->render('form_addedit.html.twig');
