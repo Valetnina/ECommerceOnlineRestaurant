@@ -1,4 +1,4 @@
-/**{
+/*{
     border: 1px solid red;  
 }*/
 body{
@@ -116,12 +116,17 @@ label {
     color: white;
 
 }
-.errors{
+.errors, .error{
     color: red;
 
 }
 .errors{
     list-style-type: none;
+}
+.error {
+    padding:10px;
+    position:relative;
+    top: -60px;
 }
 .form-signin {
     max-width: 330px;
@@ -431,4 +436,29 @@ input[type='checkbox']:checked {
 }
 #tbProducts table th, tr {
     border-bottom: 1px solid #025274;
+}
+.generalButton {
+    background-color:#b3ccff;
+}
+.generalButton:hover, .generalButton:hover, .generalButton:hover{
+    color: black !important;
+}
+.div-products {
+    min-height: 400px;
+   
+}
+#index-products {
+    min-height: 600px;
+}
+.thumbnail {
+    padding: 30px !important;
+}
+#reviewPage {
+    min-height: 400px;
+}
+.linkButtons {
+    background-color: #025274;
+    width: 250px;
+    color:white;
+    margin:auto;
 }

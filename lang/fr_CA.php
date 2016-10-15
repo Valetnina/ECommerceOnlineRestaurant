@@ -61,21 +61,29 @@ return array(
     'Facebook Login Failed' => 'Ouverture de session Facebook',
     'Login with your facebook account is denied due to missing or invalid data' => 'Pas d\'ouverture de session avec votre compte Facebook en raison de données incompletes ou invalides',
     'Please register an account with us' => 'Veuillez ouvrir un compte avec nous',
-        'Only loggedin users can access the cart'=> 'Seuls les utilisateurs enregistrés peuvent accéder au panier',
-        'Submit Order' => 'Placer la Commande',
-       'Email sent successfully' => 'Courriel envoyé',
-        'Check your password and try to login again' => 'Vérifiez votre mot de passe et essayez de vous connecter à nouveau',
+    'Only loggedin users can access the cart' => 'Seuls les utilisateurs enregistrés peuvent accéder au panier',
+    'Submit Order' => 'Placer la Commande',
+    'Email sent successfully' => 'Courriel envoyé',
+    'Check your password and try to login again' => 'Vérifiez votre mot de passe et essayez de vous connecter à nouveau',
     'Store Not Found' => 'Filiale introuvable',
-    'We are so sorry, but we don\'t have a store near your address yet. We are expanding so please return to our web site and try to make an order. Thank you for your understanding'=> 'Nous sommes désolé, mais nous n\'avons pas un magasin à proximité de votre adresse. Nous élargissons, donc s\'il vous plaît veuillez revenir à notre site Web et essayer de faire une commande. Merci de votre compréhension',
-     'We\'re very sorry, we failed to fulfill your request. Our team has already been notified of your trouble.' => 'Nous sommes désolés, nous avons échoué à répondre à votre demande. Notre équipe a déjà été avisé de votre probleme.',
-        'Internal Error'=> 'Erreure interne',
-        'There are no products in this category yet' => 'Il n\'y a pas de produits dans cette catégorie pour le moment',
-
-
-
-
-
-
-
-
-    );
+    'We are so sorry, but we don\'t have a store near your address yet. We are expanding so please return to our web site and try to make an order. Thank you for your understanding' => 'Nous sommes désolé, mais nous n\'avons pas un magasin à proximité de votre adresse. Nous élargissons, donc s\'il vous plaît veuillez revenir à notre site Web et essayer de faire une commande. Merci de votre compréhension',
+    'We\'re very sorry, we failed to fulfill your request. Our team has already been notified of your trouble.' => 'Nous sommes désolés, nous avons échoué à répondre à votre demande. Notre équipe a déjà été avisé de votre probleme.',
+    'Internal Error' => 'Erreure interne',
+    'There are no products in this category yet' => 'Il n\'y a pas de produits dans cette catégorie pour le moment',
+    'Quantity' => 'Quantité',
+    'Add to Cart' => 'Ajouter au panier',
+    'Vegetarian' => 'Végétarien',
+    'Categories' => 'Catégories',
+    'Order Submitted' => 'Commande soumise',
+    'Thank You for your order. The delivery will be made from the nearest store' => 'Nous vous remercions de votre commande. La livraison sera effectuée à partir du magasin le plus proche',
+    '15 minutes for order preparation and' => '15 minutes pour la préparation des commandes et',
+    'for delivery' => 'pour livraison',
+    'in aproximate' => 'à environ',
+    'Contact Person' => 'Personne de Contact',
+    'Contact Phone' => 'Numéro du contact',
+    'A confirmation email was sent to' => 'Un courriel de confirmation a été envoyé à',
+    'Order Summary' => 'Sommaire de la commande',
+    'Total value before tax' => 'Valeur totale avant les taxes',
+    'Final total to be paid at delivery' => 'Total final à payer à la livraison',
+    'No review yet for this product' => 'Pas encore d\'évaluations pour ce produit',
+);

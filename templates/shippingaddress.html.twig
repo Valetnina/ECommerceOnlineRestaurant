@@ -6,7 +6,6 @@
 
 
     <!-- jQuery -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBGdAE-nd01tQ-SGkwgc0bTDnd4jXa-UM"></script>
     <script src="/js/address_script.js"></script>
 
 {% endblock %}
@@ -40,7 +39,7 @@
                         <label>{{"Country"|trans}}: </label> <input type="text" name="country" value="{{v.country}}"><br><br>
                         <label>{{"Postal Code"|trans}}: </label> <input type="text" name="postalCode" value="{{v.postalCode}}"><br><br>
                         <label>{{"Phone"|trans}}: </label> <input type="text" name="phone" value="{{v.phone}}"><br><br>
-                        <button class="btn btn-lg btn-primary btn-block" id="submitAddressChange" style="width:300px; margin:auto;" type="submit">{{"Submit Order"|trans}}</button>
+                        <button class="btn btn-lg btn-primary btn-block linkButtons" id="submitAddressChange" type="submit">{{"Submit Order"|trans}}</button>
                     </form>   </div>
 
 

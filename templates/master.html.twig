@@ -47,12 +47,11 @@
                         <li>
                             <a href="/">{{"home"|trans}}</a>
                         </li>
-                        <li>
-                            <a href="#">Services</a>
-                        </li>
+                        
                         <li>
                             <a href="/locations">{{"locations"|trans}}</a>
                         </li>
+                        {% if user.isManager %}
                         <li>
                             <a href="#">Admin</a>
                             <ul>
@@ -61,6 +60,7 @@
                                 <li><a href="#">View orders</a></li>
                             </ul>
                         </li>
+                        {% endif %}
                     </ul>
                     <a href="?lang=en"><img src="/images/eng.png" class="flag flag-fr" id="lang-fr"></a> 
                     <a href="?lang=fr"><img src="/images/french.png" class="flag flag-en" id="lang-en"></a> 

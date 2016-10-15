@@ -49,13 +49,13 @@
         </div>
         <div class="row" style="background-color: white; border-radius:8px;">
             <div class="col-md-3 category">
-                <p class="lead">Categories</p>
+                <p class="lead">{{"Categories"|trans}}</p>
                 <div class="list-group" id="navCategory">
                     {% for category in categoryList %}
-                        <button class="list-group-item categoryIdClass" id="{{category.ID}}">{{ category.name }}</button>
+                        <button  class="list-group-item generalButton" id="{{category.ID}}">{{ category.name }} </button>
                     {% endfor %}
                 </div>
-                <label id="lbVegetarian" for="cbVegetarian" width="50">Vegetarian</label><br>
+                <label id="lbVegetarian" for="cbVegetarian" width="50">{{"Vegetarian"|trans}}</label><br>
                 <input id="cbVegetarian" type="checkbox">
             </div>
 
