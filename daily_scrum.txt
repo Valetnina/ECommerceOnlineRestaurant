@@ -101,7 +101,8 @@ nutritional value
 to fix:
 -index page when french name of the product overlaps with the price
 -cart doesn't work
--product: do not display in french inner
+-product: do not display in french inner, and if change language doesn't apper either
+
 
 
 
