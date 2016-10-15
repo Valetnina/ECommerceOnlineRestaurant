@@ -59,7 +59,7 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
 
 $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
 
-    if (!isset($ID)) {
+    if (empty($ID)) {
         $app->render('form_addedit.html.twig');
     } else {
         $prodForm = DB::queryFirstRow('SELECT '
@@ -124,13 +124,13 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
                         . 'WHERE '
                         . 'en.ID = fr.ID');
 
-        $app->render('form_addedit.html.twig', array('prodForm' => $prodForm, 'categoryList' => $categoryList));
+        $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
     }
 
     //print_r($prodTable);
 });
 
-$app->post('/register', function() use ($app, $log) {
+$app->post('/admin/product_addedit', function() use ($app, $log) {
     $firstName = $app->request->post('firstName');
     $lastName = $app->request->post('lastName');
     $email = $app->request->post('email');

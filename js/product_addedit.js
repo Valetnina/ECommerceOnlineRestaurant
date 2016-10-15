@@ -7,7 +7,7 @@ $(document).ready(function () {
     $(".btEdit").click(function () {
         
         currentID = (this.id);
-        //alert(currentID);
+        alert(currentID);
         $('#bottom-side-addedit').load('/admin/product_addedit/form/' + currentID);
 
     });
