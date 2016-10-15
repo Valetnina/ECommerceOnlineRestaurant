@@ -50,151 +50,88 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
                     . 'en.productID = fr.productID');
 
     foreach ($prodTable as &$product) {
-       // print_r('test');
+        // print_r('test');
         $product['picture'] = base64_encode($product['picture']);
     }
 
     $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
 });
 
-$app->get('/admin/product_addedit/(:ID)', function($ID = "") use ($app) {
+$app->get('/admin/product_addedit/form/(:ID)', function($ID = "") use ($app) {
 
-    if ($id === '') {
-    $app->render('form_addedit.html.twig');}
-//    } else {
-//        $prodForm = DB::query('SELECT '
-//                        . 'en.productID, '
-//                        . 'en.name_en, '
-//                        . 'fr.name_fr, '
-//                        . 'en.description_en, '
-//                        . 'fr.description_fr, '
-//                        . 'concat(en.pg_name," / ",fr.pg_name) as categoryname, '
-//                        . 'isVegetarian, '
-//                        . 'nutritionalValue, '
-//                        . 'picture, '
-//                        . 'price '
-//                        . 'FROM '
-//                        . '(SELECT '
-//                        . 'productID, '
-//                        . 'pi.name as name_en, '
-//                        . 'description as description_en, '
-//                        . 'pg.name as pg_name, '
-//                        . 'p.isVegetarian, '
-//                        . 'p.nutritionalValue, '
-//                        . 'p.picture, '
-//                        . 'p.price '
-//                        . 'FROM '
-//                        . 'products_i18n pi, products p, productcategory pg '
-//                        . 'WHERE '
-//                        . 'pi.productID = %d AND '
-//                        . 'pi.lang = "en" AND '
-//                        . 'pg.ID = p.productCategoryID AND '
-//                        . 'p.ID = pi.productID AND '
-//                        . 'pg.lang = pi.lang) as en, '
-//                        . '(SELECT '
-//                        . 'pi.name as name_fr, '
-//                        . 'description as description_fr, '
-//                        . 'pg.name as pg_name '
-//                        . 'FROM '
-//                        . 'products_i18n pi, products p, productcategory pg '
-//                        . 'WHERE '
-//                        . 'pi.productID = %d AND '
-//                        . 'pi.lang = "fr" AND '
-//                        . 'pg.ID = p.productCategoryID AND '
-//                        . 'p.ID = pi.productID AND '
-//                        . 'pg.lang = pi.lang) as fr', $ID, $ID);
-//
-//        //     $prodForm['picture'] = base64_encode($prodForm['picture']);
-//        
-//        $categoryList = DB::query('SELECT '
-//                    . 'concat(en.name," / ",fr.name) as categoryname '
-//                    . 'FROM '
-//                    . '(SELECT '
-//                    . 'ID, '
-//                    . 'name '
-//                    . 'FROM productcategory '
-//                    . 'WHERE '
-//                    . 'lang = "en") as en, '
-//                    . '(SELECT '
-//                    . 'ID, '
-//                    . 'name '
-//                    . 'FROM productcategory '
-//                    . 'WHERE '
-//                    . 'lang = "fr") as fr '
-//                    . 'WHERE '
-//                    . 'en.ID = fr.ID');
-//
-//    $app->render('form_addedit.html.twig', array('prodForm' => $prodForm, 'categoryList' => $categoryList));
-//    }
+    if (!isset($ID)) {
+        $app->render('form_addedit.html.twig');
+    } else {
+        $prodForm = DB::query('SELECT '
+                        . 'en.productID, '
+                        . 'en.name_en, '
+                        . 'fr.name_fr, '
+                        . 'en.description_en, '
+                        . 'fr.description_fr, '
+                        . 'concat(en.pg_name," / ",fr.pg_name) as categoryname, '
+                        . 'isVegetarian, '
+                        . 'nutritionalValue, '
+                        . 'picture, '
+                        . 'price '
+                        . 'FROM '
+                        . '(SELECT '
+                        . 'productID, '
+                        . 'pi.name as name_en, '
+                        . 'description as description_en, '
+                        . 'pg.name as pg_name, '
+                        . 'p.isVegetarian, '
+                        . 'p.nutritionalValue, '
+                        . 'p.picture, '
+                        . 'p.price '
+                        . 'FROM '
+                        . 'products_i18n pi, products p, productcategory pg '
+                        . 'WHERE '
+                        . 'pi.productID = %d AND '
+                        . 'pi.lang = "en" AND '
+                        . 'pg.ID = p.productCategoryID AND '
+                        . 'p.ID = pi.productID AND '
+                        . 'pg.lang = pi.lang) as en, '
+                        . '(SELECT '
+                        . 'pi.name as name_fr, '
+                        . 'description as description_fr, '
+                        . 'pg.name as pg_name '
+                        . 'FROM '
+                        . 'products_i18n pi, products p, productcategory pg '
+                        . 'WHERE '
+                        . 'pi.productID = %d AND '
+                        . 'pi.lang = "fr" AND '
+                        . 'pg.ID = p.productCategoryID AND '
+                        . 'p.ID = pi.productID AND '
+                        . 'pg.lang = pi.lang) as fr', $ID, $ID);
+
+        //     $prodForm['picture'] = base64_encode($prodForm['picture']);
+
+        $categoryList = DB::query('SELECT '
+                        . 'concat(en.name," / ",fr.name) as categoryname '
+                        . 'FROM '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "en") as en, '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "fr") as fr '
+                        . 'WHERE '
+                        . 'en.ID = fr.ID');
+
+        $app->render('form_addedit.html.twig', array('prodForm' => $prodForm, 'categoryList' => $categoryList));
+    }
 
     //print_r($prodTable);
-    
 });
 
 
 
-$app->post('/admin/product_addedit/', function() use ($app, $log) {
-    $body = $app->request->getBody();
-    $product = json_decode($body, TRUE);
-
-    try {
-        DB::startTransaction();
-
-        $categoryName = $product['categoryName'];
-        $productCategoryID = DB::queryOneField('SELECT ID FROM productcategory WHERE name = %s', $categoryName);
-
-        DB::insert('products', array(
-            'productCategoryID' => $productCategoryID,
-            'price' => $product['price'],
-            //'picture' => $product['picture'],
-            'nutritionalValue' => $product['nutritionalValue'],
-            'isVegetarian' => $product['isVegetarian']));
-
-        $productID = DB::insertId();
-
-        DB::insert('products_i18n', array(
-            'productID' => $productID,
-            'lang' => $product['lang'],
-            'name' => $product['name'],
-            'description' => $product['description'],
-            'slugname' => $product['slugname']));
-
-        DB::commit();
-    } catch (Exception $ex) {
-        DB::rollback();
-        $log->debug("Insert failed " . $ex);
-    }
-});
-
-
-
-$app->put('/admin/product_addedit/:ID', function($ID) use ($app) {
-    $body = $app->request->getBody();
-    $product = json_decode($body, TRUE);
-
-    try {
-
-        DB::startTransaction();
-
-        $product['ID'] = $ID;
-
-        DB::update('products', array(
-            'price' => $product['price'],
-            'nutritionalValue' => $product['nutritionalValue'],
-            'isVegetarian' => $product['isVegetarian']), "ID=%d", $ID);
-
-        DB::update('products_i18n', array(
-            'lang' => $product['lang'],
-            'name' => $product['name'],
-            'description' => $product['description'],
-            'slugname' => $product['slugname']), "productID = %d", $ID);
-
-        DB::commit();
-    } catch (Exception $ex) {
-        DB::rollback();
-        $log->debug("Update failed " . $ex);
-    }
-});
 
 
 ////////////////////////////////////////////////////////////

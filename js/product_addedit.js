@@ -4,12 +4,12 @@ $(document).ready(function () {
     var currentID = 0;
 
 
-    $('#bottom-side-addedit').load('/admin/product_addedit');
+    $('#bottom-side-addedit').load('/admin/product_addedit/form');
 
     $(".btEdit").click(function () {
         //alert("Edit button reaction");
         currentID = (this.id);
-        $('#bottom-side-addedit').load('/admin/product_addedit/' + currentID);
+        $('#bottom-side-addedit').load('/admin/product_addedit/form' + currentID);
 
     });
     
