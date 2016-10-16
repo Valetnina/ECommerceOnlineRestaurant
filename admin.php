@@ -53,16 +53,32 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
 
     foreach ($prodTable as &$product) {
 // print_r('test');
-        $product['picture'] = base64_encode($product['picture']);
+      $product['picture'] = base64_encode($product['picture']);
     }
 
     $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
 });
 
 $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
-
+        $categoryList = DB::query('SELECT en.ID as categoryID,'
+                . 'concat(en.name," / ",fr.name) as categoryname '
+                        . 'FROM '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "en") as en, '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "fr") as fr '
+                        . 'WHERE '
+                        . 'en.ID = fr.ID');
     if (empty($ID)) {
-        $app->render('form_addedit.html.twig');
+        $app->render('form_addedit.html.twig',array('categoryList' => $categoryList));
     } else {
         $prodForm = DB::queryFirstRow('SELECT '
                         . 'en.productID, '
@@ -108,24 +124,7 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
 
         $prodForm['picture'] = base64_encode($prodForm['picture']);
 
-        $categoryList = DB::query('SELECT '
-                        . 'concat(en.name," / ",fr.name) as categoryname '
-                        . 'FROM '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "en") as en, '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "fr") as fr '
-                        . 'WHERE '
-                        . 'en.ID = fr.ID');
-
+        
         $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
     }
 
@@ -188,7 +187,8 @@ $app->post('/admin/products', function() use ($app, $log) {
     } else {
         $isVegetarian = 0;
     }
-
+    $productCategoryID = $app->request->post('categoryID');
+    //Find the categoryId 
     $description_en = $app->request->post('description_en');
     $description_fr = $app->request->post('description_fr');
     $picture = $app->request->post('picture');
@@ -246,18 +246,19 @@ $app->post('/admin/products', function() use ($app, $log) {
     if (!isset($ID) || empty($ID)) { // SUCCESSFUL SUBMISSION
         DB::$error_handler = FALSE;
         DB::$throw_exception_on_error = TRUE;
-
+        print_r($valueList);
         try {
             DB::startTransaction();
-
+        
             DB::insert('products', array(
+                'productCategoryID' => $productCategoryID,
                 'price' => $price,
                 'nutritionalValue' => $nutritionalValue,
                 'isVegetarian' => $isVegetarian,
                     //'picture' => $picture
             ));
             $productID = DB::insertId();
-
+        
             DB::insert('products_i18n', array(
                 'name' => $name_en,
                 'description' => $description_en,
@@ -274,7 +275,7 @@ $app->post('/admin/products', function() use ($app, $log) {
 
             DB::commit();
             $log->debug("Product created with ID=" . $ID);
-            $app->render('product_added_succesfully.html.twig');
+            $app->render('products_container.html.twig');
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(
@@ -304,7 +305,7 @@ $app->post('/admin/products', function() use ($app, $log) {
 
             DB::commit();
             $log->debug("Product updated with ID=" . $ID);
-            $app->render('product_updated_succesfully.html.twig');
+            $app->render('products_container.html.twig');
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(
