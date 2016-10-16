@@ -1,5 +1,5 @@
 <form method="POST">    
-                <div id="left-side-addedit">                     
+                <div id="left-side-addedit" style='position:relative; top: 20px; right: -200px;'>                     
                     <label>ID: </label>
                     <input type="number" name="productID" id="productID" value="{{p.productID}}"><br><br>
                     <label>Product name en: </label>
@@ -24,7 +24,7 @@
             {% endif %}
                     <input type="checkbox" name="isVegetarian" value="{{p.isVegetarian}}"{% if selected %}checked{% endif %}><br><br>
                 </div>
-                <div id="right-side-addedit">
+                <div id="right-side-addedit" style='position:relative; top: 120px; right: 200px;'>
                     <label  name="description" style="text-align: left; width:50px;">Description: </label><br>
                     <textarea  name="description_en" cols="62" rows="5">{{p.description_en}}</textarea><br><br>
                     <label  name="description" style="text-align: left; width:50px;">Description: </label><br>

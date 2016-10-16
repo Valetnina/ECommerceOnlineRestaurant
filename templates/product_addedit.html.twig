@@ -1,9 +1,3 @@
-{% extends "master.html.twig" %}
-
-{% block title %} Page add/edit product{% endblock %}
-{% block head %} <script src="/js/product_addedit.js"></script>{% endblock %}
-
-{% block content %}
     <div id="container-addedit_product">
         <div id="top-side-addedit">
             <div class = "scrolltable">
@@ -24,7 +18,7 @@
                         {% for product in prodTable %} 
                                 <tr class = "productHeight">
                                     <td> <img src = "data:image/png;base64,{{product.picture}}" alt = "product image" width = "100px"> <br> <br>
-                                        <button <button id = "{{product.productID}}" class = "btEdit"> Edit </button></td>
+                                        <button <button  onclick='getProductsTable({{product.productID}})' class = "btEdit"> Edit </button></td>
                                     <td id = "{{product.productID}}" class = "tdID">{{product.productID}} </td>
                                     <td class="nameRow">{{product.productname}} </td>
                                     <td>{{product.price}} </td>
@@ -43,4 +37,3 @@
        
         </div>  
     </div> 
-{% endblock %}

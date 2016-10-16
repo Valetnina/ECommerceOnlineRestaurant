@@ -37,6 +37,8 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         try{
         $sentmail = mail($to, $subject, $body, $headers1);
          if ($sentmail) {
+            DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
         try {
             DB::startTransaction();
             //FIXME: update or insert
