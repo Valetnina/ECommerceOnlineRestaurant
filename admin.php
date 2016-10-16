@@ -50,7 +50,7 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
                     . 'en.productID = fr.productID');
 
     foreach ($prodTable as &$product) {
-        // print_r('test');
+// print_r('test');
         $product['picture'] = base64_encode($product['picture']);
     }
 
@@ -104,7 +104,7 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
                         . 'p.ID = pi.productID AND '
                         . 'pg.lang = pi.lang) as fr', $ID, $ID);
 
-             $prodForm['picture'] = base64_encode($prodForm['picture']);
+        $prodForm['picture'] = base64_encode($prodForm['picture']);
 
         $categoryList = DB::query('SELECT '
                         . 'concat(en.name," / ",fr.name) as categoryname '
@@ -127,148 +127,190 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
         $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
     }
 
-    //print_r($prodTable);
+//print_r($prodTable);
 });
 
-$app->post('/admin/product_addedit', function() use ($app, $log) {
-    $firstName = $app->request->post('firstName');
-    $lastName = $app->request->post('lastName');
-    $email = $app->request->post('email');
-    $gender = $app->request->post('gender');
-    $address = $app->request->post('address');
-    $street = $app->request->post('street');
-    $city = $app->request->post('city');
-    $country = $app->request->post('country');
-    $postalCode = $app->request->post('postalCode');
-    $phone = $app->request->post('phone');
-    $pass1 = $app->request->post('pass1');
-    $pass2 = $app->request->post('pass2');
+function uploadImage() {
+    $target_dir = "uploads/";
+    $max_file_size = 5 * 1024 * 1024; // 5000000
+
+    if (!isset($_POST['submit'])) {
+        $log->debug("Error: File upload expected.");
+    }
+    $fileUpload = $_FILES['fileToUpload'];
+
+    $check = getimagesize($fileUpload["tmp_name"]);
+    if (!$check) {
+        $log->debug("Error: File upload was not an image file.");
+    }
+    switch ($check['mime']) {
+        case 'image/png':
+        case 'image/gif':
+        case 'image/bmp':
+        case 'image/jpeg':
+            break;
+        default:
+            $log->debug("Error: Only accepting valie png,gif,bmp,jpg files.");
+    }
+    if ($fileUpload['size'] > $max_file_size) {
+        $log->debug("Error: File to big, maximuma accepted is $max_file_size bytes");
+    }
+
+    if (strstr($fileUpload['name'], '..')) {
+        $log->debug("Error: do not mess with the Zohan");
+    }
+    $target_file = $target_dir . $fileUpload['name'];
+
+    if (move_uploaded_file($fileUpload["tmp_name"], $target_file)) {
+        $log->debug("The file " . basename($fileUpload["name"]) . " has been uploaded.");
+    } else {
+        $log->debug("Sorry, there was an error uploading your file.");
+    }
+
+    $image = $fileUpload["tmp_name"];
+    $image = file_get_contents($image);
+    $image = base64_encode($image);
+}
+
+$app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
+
+    $name_en = $app->request->post('name_en');
+    $name_fr = $app->request->post('name_fr');
+    $price = $app->request->post('price');
+    $nutritionalValue = $app->request->post('nutritionalValue');
+
+    $isVegetarian = 0;
+    $isVegetarian = $app->request->post('isVegetarian');
+    if (isset($isVegetarian) == 'yes') {
+        $isVegetarian = 1;
+    }
+
+    $description_en = $app->request->post('description_en');
+    $description_fr = $app->request->post('description_fr');
+    $picture = $app->request->post('picture');
+
+    //$picture = base64_decode($picture);
+
 
     $valueList = array(
-        'firstName' => $firstName,
-        'lastName' => $lastName,
-        'email' => $email,
-        'gender' => $gender,
-        'address' => $address,
-        'street' => $street,
-        'city' => $city,
-        'country' => $country,
-        'postalCode' => $postalCode,
-        'phone' => $phone,
+        'name_en' => $name_en,
+        'name_fr' => $name_fr,
+        'price' => $price,
+        'nutritionalValue' => $nutritionalValue,
+        'isVegetarian' => $isVegetarian,
+        'description_en' => $description_en,
+        'description_fr' => $description_fr,
+        'picture' => $picture
     );
-    // submission received - verify
-    $errorList = array("en" => array(), "fr" => array());
-    if (strlen($firstName) < 2 || strlen($firstName) > 50) {
-        array_push($errorList["en"], "FirstName must be at least 2 and at most 50 characters long");
-        array_push($errorList["fr"], "Le prénom doit être d'au moins 2 et au plus 50 caractères");
-        unset($valueList['firstName']);
+
+    $errorList = array();
+
+    if (strlen($name_en) < 2 || strlen($name_en) > 100) {
+        array_push($errorList, "FirstName must be at least 2 and at most 100 characters long");
+        unset($valueList['name_en']);
     }
-    if (strlen($lastName) < 2 || strlen($lastName) > 50) {
-        array_push($errorList["en"], "LastName must be at least 2 and at most 50 characters long");
-        array_push($errorList["fr"], "Le nom de Famille doit être d'au moins 2 et au plus 50 caractères");
-
-        unset($valueList['lastName']);
+    if (strlen($name_fr) < 2 || strlen($name_fr) > 100) {
+        array_push($errorList, "FirstName must be at least 2 and at most 100 characters long");
+        unset($valueList['name_en']);
+    }
+    if ($price < 0 || $price > 100000000) {
+        array_push($errorList, "Invalid price");
+        unset($valueList['price']);
+    }
+    if (!in_array($isVegetarian, array('0', '1'))) {
+        array_push($errorList, "isVegetarian is not true nor false");
+        unset($valueList['isVegetarian']);
+    }
+    if (strlen($description_en) < 20 || strlen($description_en) > 500) {
+        array_push($errorList, "Description must have between 20 and 100 characters");
+        unset($valueList['description_en']);
+    }
+    if (strlen($description_fr) < 20 || strlen($description_fr) > 500) {
+        array_push($errorList, "Description must have between 20 and 100 characters");
+        unset($valueList['description_fr']);
+    }
+    if ($nutritionalValue < 0 || $nutritionalValue > 1000) {
+        array_push($errorList, "Invalid nutritional value");
+        unset($valueList['nutritionalValue']);
     }
 
-    if (empty($gender) || !in_array($gender, array('F', 'M'))) {
-        array_push($errorList["en"], "You must choose a gender");
-        array_push($errorList["fr"], "Il faut specifier le gendre");
+    if ($errorList) {
+        $app->render('admin/product_addedit/form', array(
+            'errorList' => $errorList, 'p' => $valueList
+        ));
+    } else if ($ID === '') { // SUCCESSFUL SUBMISSION
+        DB::$error_handler = FALSE;
+        DB::$throw_exception_on_error = TRUE;
 
-        unset($valueList['gender']);
-    }
-    if (empty($gender)) {
-        array_push($errorList["en"], "You must choose a gender");
-        array_push($errorList["fr"], "Il faut specifier le gendre");
+        try {
+            DB::startTransaction();
 
-        unset($valueList['gender']);
-    }
+            DB::insert('products', array(
+                'price' => $price,
+                'nutritionalValue' => $nutritionalValue,
+                'isVegetarian' => $isVegetarian
+                    //'picture' => $picture
+            ));
+            $productID = DB::insertId();
 
-    if (filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
-        array_push($errorList["en"], "Email does not look like a valid email");
-        array_push($errorList["fr"], "Le courriel ne ressemble pas à une adresse de courriel valide");
+            DB::insert('products_i18n', array(
+                'name' => $name_en,
+                'description' => $description_en,
+                'productID' => $productID,
+                'lang' => 'en'
+            ));
 
-        unset($valueList['email']);
-    } else {
-        $user = DB::queryFirstRow("SELECT ID FROM users WHERE email=%s", $email);
-        if ($user) {
-            array_push($errorList["en"], "Email already registered");
-            array_push($errorList["fr"], "Le courriel existe déjà");
-            unset($valueList['email']);
+            DB::insert('products_i18n', array(
+                'name' => $name_fr,
+                'description' => $description_fr,
+                'productID' => $productID,
+                'lang' => 'fr'
+            ));
+
+            DB::commit();
+            $log->debug("Ad created with ID=" . $ID);
+        } catch (MeekroDBException $e) {
+            DB::rollback();
+            sql_error_handler(array(
+                'error' => $e->getMessage(),
+                'query' => $e->getQuery()
+            ));
         }
-    }
-    if (strlen($address) < 1 || strlen($address) > 50) {
-        array_push($errorList["en"], "Address cannot be empty and cannot contain more than 50 characters");
-        array_push($errorList["fr"], "Adresse ne peut pas être vide et ne peut pas contenir plus de 50 caractères");
-
-        unset($valueList['address']);
-    }
-    if (strlen($street) < 1 || strlen($street) > 50) {
-        array_push($errorList["en"], "Street cannot be empty and cannot contain more than 50 characters");
-        array_push($errorList["fr"], "Rue ne peut être vide et ne peut pas contenir plus de 50 caractères");
-        unset($valueList['street']);
-    }
-    if (strlen($city) < 2 || $city > 100) {
-        array_push($errorList["en"], "City between 2 and 100 characters");
-        array_push($errorList["fr"], "La ville entre 2 et 100 caractères");
-        unset($valueList['city']);
-    }
-    if (strlen($country) < 2 || $country > 50) {
-        array_push($errorList["en"], "Country between 2 and 50 characters");
-        array_push($errorList["fr"], "Le pays entre 2 et 50 caractères");
-        unset($valueList['country']);
-    }
-    if (!preg_match('/^([A-Za-z][0-9]){3}$/', $postalCode)) {
-        echo "PostalCode " . $postalCode;
-        array_push($errorList["en"], "Phone not valid");
-        array_push($errorList["fr"], "Le tel est pas valide");
-        unset($valueList['postalCode']);
-    }
-    if (!preg_match('/^(\d{3}\s?){2}\d{4}$/', $phone)) {
-        array_push($errorList["en"], "Canadian Postal code not valid");
-        array_push($errorList["fr"], "Le code postal est pas valide");
-        unset($valueList['phone']);
-    }
-    if (!preg_match('/[0-9;\'".,<>`~|!@#$%^&*()_+=-]/', $pass1) || (!preg_match('/[a-z]/', $pass1)) || (!preg_match('/[A-Z]/', $pass1)) || (strlen($pass1) < 8)) {
-        array_push($errorList["en"], "Password must be at least 8 characters " .
-                "long, contain at least one upper case, one lower case, " .
-                " one digit or special character");
-        array_push($errorList["fr"], "Mot de passe doit être d'au moins 8 caractères, contenir au moins une majuscule, une minuscule,un chiffre ou un caractère spécial");
-    } else if ($pass1 != $pass2) {
-        array_push($errorList["en"], "Passwords don't match");
-        array_push($errorList["fr"], "Les mots de passe ne coincident pas");
-    }
-    //
-    if ($errorList["en"] || $errorList["fr"]) {
-        // STATE 3: submission failed        
-        $app->render('register.html.twig', array(
-            'errorList' => $errorList[$_COOKIE['lang']], 'v' => $valueList
-        ));
     } else {
-        // STATE 2: submission successful
-        DB::insert('users', array(
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'email' => $email,
-            'gender' => $gender,
-            'address' => $address,
-            'street' => $street,
-            'city' => $city,
-            'country' => $country,
-            'postalCode' => $postalCode,
-            'phone' => $phone,
-            'password' => password_hash($pass1, CRYPT_BLOWFISH),
-            'locked' => false,
-            'role' => 'customer',
-        ));
-        $id = DB::insertId();
-        $log->debug(sprintf("User %s created", $id));
-        $app->render('register.html.twig', array('registerSuccess'=> TRUE));
+        DB::$error_handler = FALSE;
+        DB::$throw_exception_on_error = TRUE;
+
+        try {
+            DB::startTransaction();
+
+            DB::update('products', array(
+                'price' => $price,
+                'nutritionalValue' => $nutritionalValue,
+                'isVegetarian' => 1), 'ID = %d', $ID);
+
+            DB::update('products_i18n', array(
+                'name' => $name_en,
+                'description' => $description_en), 'productID = %d AND lang = "en"', $ID);
+
+            DB::update('products_i18n', array(
+                'name' => $name_fr,
+                'description' => $description_fr), 'productID = %d AND lang = "fr"', $ID);
+
+            DB::commit();
+            $log->debug("Ad updated with ID=" . $id);
+        } catch (MeekroDBException $e) {
+            DB::rollback();
+            sql_error_handler(array(
+                'error' => $e->getMessage(),
+                'query' => $e->getQuery()
+            ));
+        }
     }
 });
 
-
-
-
+//$app->render('register.html.twig', array('registerSuccess' => TRUE));
+//
+//
 ////////////////////////////////////////////////////////////
 /////////////////////Category//////////////////////////////
 //////////////////////////////////////////////////////////
@@ -320,11 +362,11 @@ $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
 
 $app->post('/admin/category_addedit/', function() use ($app, $log) {
 
-    //$lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
+//$lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
 
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-    //$record['ID'] = $lastID;
+//$record['ID'] = $lastID;
 
     DB::insert('productcategory', $record);
     if ($record['lang'] == 'en') {
@@ -337,18 +379,18 @@ $app->post('/admin/category_addedit/', function() use ($app, $log) {
         $record['name'] = 'N/A';
         $record['slugname'] = '';
     }
-    //echo DB::insertId();
+//echo DB::insertId();
 });
 
 $app->put('/admin/category_addedit/:ID', function($ID) use ($app) {
 
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-    //$record['ID'] = $ID;
+//$record['ID'] = $ID;
     $lang = $record['lang'];
-    //print_r($record);
+//print_r($record);
     DB::update('productcategory', $record, "lang=%s AND ID=%d", $lang, $ID);
-    //echo json_encode(TRUE); // same as: echo 'true';
+//echo json_encode(TRUE); // same as: echo 'true';
 });
 
 ////////////////////////////////////////////////////////////
