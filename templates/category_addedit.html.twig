@@ -15,17 +15,15 @@
                 <select id="categoryName" class="input_category_addedit" style="height: 35px;">
                     <option selected="true" disabled="disabled">--select category--</option>
                     {% for cat in categoryList %}
-                        <option id ={{cat.ID}}>{{cat.name}}</option>
+                        <option id ={{cat.ID}}>{{cat.categoryname}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
             <div class="category_style" id="newCategory">
-                <label>New category </label>
-                <input type="text" name="name" class="input_category_addedit"><br><br>
-                <label>Lang </label>
-                <input type="text" name="lang" class="input_category_addedit"><br><br>
-                <label>Slugname </label>
-                <input type="text"  name="slugname" class="input_category_addedit"><br><br>
+                <label>Category en </label>
+                <input type="text" name="name_en" class="input_category_addedit"><br><br>
+                <label>Category fr </label>
+                <input type="text" name="name_fr" class="input_category_addedit"><br><br>
                 <button id="buttonAddedit" class="buttonCategory">Add / Edit category</button> 
                 <button id="buttonCancel" class="buttonCategory">Cancel</button>
             </div>
