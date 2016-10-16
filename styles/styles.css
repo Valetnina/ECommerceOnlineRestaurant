@@ -162,6 +162,9 @@ label {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+/*********************************
+**********Products Page**********
+*********************************/
 #container-addedit_product{
     /*border: 1px solid red;*/
     width: 1200px;
@@ -180,29 +183,31 @@ label {
     background-color: #025274;
     width: 1150px;
     margin: auto;
-/*    height: 620px;*/
+    height: 650px;
     margin-top: 20px;
 }
 #left-side-addedit{
-    border: 1px solid white;
+/*    border: 1px solid white;*/
     width: 500px;
-/*    float: left; */
-    margin-top: 20px;
+    float: left;
+    margin-top: -540px;
+    margin-left: 120px;
 }
-#right-side-addedit{
-    border: 1px solid white;
-    width: 480px;
-    float: right;
-    margin-top: -500px;
-}
-#bottom-side-addedit input{
+#containerForm input{
     /*border: 1px solid yellow;*/ 
     float: right;
     margin-bottom: 20px;
     width: 300px;
     height: 30px;
 }
-#bottom-side-addedit label{
+#right-side-addedit{
+/*    border: 1px solid white;*/
+    width: 500px;
+    float: right;
+    margin-top: -560px;
+    margin-right: 120px;
+}
+#containerForm label{
     /*border: 1px solid white;*/
     width: 180px;
     text-align: right;
@@ -211,16 +216,16 @@ label {
     padding-top: 5px;
     color: white;
     margin-bottom: 20px;
-    
+
 }
 #dvPreview{
-    border: 1px solid red;
+/*    border: 1px solid red;*/
     width: 350px;
     height: 140px;
     background-color: white;
     float: left;
-    margin-top: 20px;
-/*    margin: 15px 130px 20px 0;*/
+/*    margin-top: 10px;*/
+    /*    margin: 15px 130px 20px 0;*/
 }
 .btEdit{
     width: 100px;
@@ -253,9 +258,10 @@ label {
     font-size: 16px;
 }
 #divButtons{
-    border: 1px solid red;
+/*    border: 1px solid red;*/
     margin: auto;
-    margin-top: 40px;
+    margin-top: -80px;
+    margin-bottom: 40px;
     width: 650px;
 }
 #categoryName{
@@ -264,9 +270,9 @@ label {
     margin-left: 15px;
 }
 #chooseImage{
-/*    margin-right: 80px;*/
-border: 1px solid blue;
-width: 100px;
+    /*    margin-right: 80px;*/
+/*    border: 1px solid blue;*/
+    width: 100px;
 }
 #constrainer {            
     width: 1000px; 
@@ -301,7 +307,7 @@ th, td {
     border-bottom: 1px solid blue;
 }
 #cartItems table tr {
-  line-height: 100px;
+    line-height: 100px;
 }
 #tbProducts{
     border: 1px solid #025274; 
@@ -333,7 +339,7 @@ th, td {
 #imgCart{
     width: 50px;
     margin-top: -190px;
-    margin-left: 300px;
+    margin-left: 270px;
 }
 .caption{
     margin-top: 140px;
@@ -389,7 +395,7 @@ th, td {
     height: 10px;
 }
 input[type='checkbox'] {
-/*    -webkit-appearance:none;*/
+    /*    -webkit-appearance:none;*/
     width:30px;
     height:30px;
     background:white;
@@ -403,14 +409,14 @@ input[type='checkbox']:checked {
     border: 1px solid #025274;;
     width: 700px;
     margin: auto;
-    margin-top: 200px;
+    margin-top: 150px;
     margin-bottom: 200px;
     vertical-align: center;
     background-color: white;
     border-radius: 10px;
 }
 #container_category_form label{
-/*    border: 1px solid black;*/
+    /*    border: 1px solid black;*/
     height: 35px;
     width: 150px;
     padding-top: 5px; 
@@ -419,8 +425,8 @@ input[type='checkbox']:checked {
 }
 .category_style{
     width: 650px;
-    height: 260px;
-/*    border: 1px solid orange;*/
+    height: 200px;
+    /*    border: 1px solid orange;*/
     padding-top: 15px;
     padding-left: 50px;
 }
@@ -458,7 +464,6 @@ input[type='checkbox']:checked {
 }
 .div-products {
     min-height: 400px;
-   
 }
 #index-products {
     min-height: 600px;
@@ -476,8 +481,21 @@ input[type='checkbox']:checked {
     margin:auto;
 }
 #content_viewOrders{
-    width: 800px;
+    width: 1150px;
     height: 600px;
     border: 1px solid blue;
     margin: auto;
+    background-color: white;
+    margin-top: 100px;
+}
+tbOrders{
+    margin-top: 300px;
+    width: 500px;
+    border: 1px solid black !important;
+}
+.carstyle{
+    margin-top: 30px;
+}
+.thumbstyle{
+   border: 1px solid #b3ccff;
 }
