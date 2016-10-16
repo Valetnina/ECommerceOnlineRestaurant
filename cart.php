@@ -1,5 +1,6 @@
 <?php
-define("PREPARATIONTIME", 15*60);
+
+define("PREPARATIONTIME", 15 * 60);
 //Handling of the cart page
 //get and port /cart
 $app->post('/cart', function() use ($app, $log) {
@@ -50,9 +51,9 @@ $app->get('/cart', function() use ($app) {
     $cartTotalToPay = $cartTax + $cartTotal;
     $app->render('cart_view.html.twig', array(
         'cartItems' => $cartItems,
-        'cartTotal' => number_format($cartTotal,2),
-        'cartTax' => number_format($cartTax,2),
-        'cartTotalToPay' => number_format($cartTotalToPay,2)
+        'cartTotal' => number_format($cartTotal, 2),
+        'cartTax' => number_format($cartTax, 2),
+        'cartTotalToPay' => number_format($cartTotalToPay, 2)
     ));
 });
 
@@ -227,10 +228,9 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
 
 
         $store = DB::queryFirstRow("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
-                . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
-                . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
-                . "AS distance FROM stores HAVING distance < 20 ORDER BY distance LIMIT 0 , 1", 
-                $customerCoordinates['lat'], $customerCoordinates['lng'], $customerCoordinates['lat']);
+                        . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
+                        . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
+                        . "AS distance FROM stores HAVING distance < 20 ORDER BY distance LIMIT 0 , 1", $customerCoordinates['lat'], $customerCoordinates['lng'], $customerCoordinates['lat']);
         if (!$store) {
             $app->render('store_not_found.html.twig', array(
                 'errorList' => $errorList[$_COOKIE['lang']], 'v' => $valueList
@@ -301,13 +301,13 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                   $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
                   mail($email, "Order " .$orderID . " placed ", $emailHtml, $headers);
                  */
-                 
+
                 $log->debug("Inserted order no " . $orderID);
                 $app->render('order_submitted.html.twig', array(
                     'shippingAddress' => $valueList,
-                    'totalBeforeTax' => number_format($order['orderAmount'],2),
-                    'taxes' => number_format($order['tax'],2),
-                    'totalWithShippingAndTaxes' => number_format($order['orderAmount'] + $order['tax'],2),
+                    'totalBeforeTax' => number_format($order['orderAmount'], 2),
+                    'taxes' => number_format($order['tax'], 2),
+                    'totalWithShippingAndTaxes' => number_format($order['orderAmount'] + $order['tax'], 2),
                     'store' => $store,
                     'totalDeliveryTime' => gmdate("H:i", PREPARATIONTIME + $delivery['time']),
                     'deliveryTime' => gmdate("H:i", $delivery['time'])
@@ -319,7 +319,6 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                     'query' => $e->getQuery()
                 ));
             }
-           
         } else {
             $app->render("cart_container.html.twig");
         }
@@ -341,16 +340,20 @@ $app->get('/markers', function() use ($app) {
 });
 
 function getDeliveryTime($store, $destination) {
-    $origin = $store['lat'].','.$store['lng'];
-    $destination = $destination['lat'].','.$destination['lng'];
-   $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins='
-            .$origin.'&destinations='.$destination.'&mode=driving&sensor=false';
-   $ch = curl_init();
+    $origin = $store['lat'] . ',' . $store['lng'];
+    $destination = $destination['lat'] . ',' . $destination['lng'];
+    $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins='
+            . $origin . '&destinations=' . $destination . '&mode=driving&sensor=false';
+    $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    /*
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+     * */
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);
     curl_close($ch);
     $response_a = json_decode($response, true);
@@ -358,16 +361,16 @@ function getDeliveryTime($store, $destination) {
     $time = $response_a['rows'][0]['elements'][0]['duration']['value'];
 
     return array('distance' => $dist, 'time' => $time);
-};
+}
+
 //
 
 $app->get('/nearestStores/:postalCode', function($postalCode) use ($app, $log) {
-     $address = get_lat_long($postalCode);
-     $storeList = DB::query("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
-                . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
-                . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
-                . "AS distance FROM stores HAVING distance < 5 ORDER BY distance ASC LIMIT 0, 10", 
-                $address['lat'], $address['lng'], $address['lat']);
+    $address = get_lat_long($postalCode);
+    $storeList = DB::query("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
+                    . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
+                    . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
+                    . "AS distance FROM stores HAVING distance < 5 ORDER BY distance ASC LIMIT 0, 10", $address['lat'], $address['lng'], $address['lat']);
     $log->debug(DB::count());
     if (!$storeList) {
         $app->response->setStatus(404);
@@ -380,16 +383,20 @@ $app->get('/nearestStores/:postalCode', function($postalCode) use ($app, $log) {
 // function to get  the address
 function get_lat_long($address) {
     $array = array();
-    $geo = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&sensor=false');
+    $url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&sensor=false';
 
-// We convert the JSON to an array
-    $geo = json_decode($geo, true);
-
-// If everything is cool
-    if ($geo['status'] = 'OK') {
-        $latitude = $geo['results'][0]['geometry']['location']['lat'];
-        $longitude = $geo['results'][0]['geometry']['location']['lng'];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $response_a = json_decode($response);
+        $latitude = $response_a->results[0]->geometry->location->lat;
+        $longitude = $response_a->results[0]->geometry->location->lng;
         $array = array('lat' => $latitude, 'lng' => $longitude);
-    }
+        
     return $array;
 }

@@ -98,4 +98,10 @@ return array(
     'this link' => 'this link',
     'to reset your password' => 'to reset your password',
     'Sincerely' => 'Sincerely',
+        'Password Reset' => 'Password Reset',
+    'Invalid attempt to reset password.' => 'Invalid attempt to reset password.',
+    'Try again' => 'Try again',
+    'Password Resseted' => 'Password Resseted',
+    'Stores near you' => 'Stores near you',
+
 ); 

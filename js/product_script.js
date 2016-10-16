@@ -1,12 +1,12 @@
-function changePage(pageNum) {
-    $('#reviewList').load('/reviews/product/' + productID + '/page/' + pageNum);
-}
+        function changePage(pageNum){
+             $('#reviewList').load('/reviews/product/' + productID + '/page/' + pageNum);
+        }
 
 var pageNum = 1;
 
 $(document).ready(function () {
     productID = $('#productID').text();
-    $('#reviewList').load('/reviews/product/' + productID + '/page/' + pageNum);
+    $('#reviewList').load('/reviews/product/' + productID + '/page/' + 1);
     $('#ratingsProduct').load('/rating/' + productID);
 
     var selectedRating = 0;
@@ -28,20 +28,20 @@ $(document).ready(function () {
             $('#star' + i).removeClass('glyphicon-star-empty').addClass('glyphicon-star');
         }
     });
-
+    
     $("#postReview").click(function () {
         var review = $("textarea[name=reviewText]").val();
         var rating = selectedRating;
         //FIXME get the current date and time for mysql format
-       /* var currentdate = new Date();
-        var date2 = currentdate.getDate() + "-"
-                + (currentdate.getMonth() + 1) + "-"
-                + currentdate.getFullYear() + " "
-                + currentdate.getHours() + ":"
-                + currentdate.getMinutes() + ":"
+         var currentdate = new Date(); 
+         var date2 = currentdate.getDate() + "-"
+                + (currentdate.getMonth()+1)  + "-" 
+                + currentdate.getFullYear() + " "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
                 + currentdate.getSeconds();
-
-        var date = (new Date()).toISOString().substring(0, 19).replace('T', ' ')*/
+   
+        var date = (new Date()).toISOString().substring(0, 19).replace('T', ' ')
         var productID = $('#productID').text();
         //FIXME: validate input for stars
         if (review.length < 1 || review.length > 500) {
@@ -55,7 +55,7 @@ $(document).ready(function () {
             url: "/reviews/product/" + productID,
             data: JSON.stringify({
                 productID: productID,
-                //date: date,
+                date: date,
                 rating: rating,
                 review: review,
             }),

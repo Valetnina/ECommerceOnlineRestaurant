@@ -18,12 +18,13 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $to = $user['email'];
         //echo "your email is ::".$email;
         //Details for sending E-mail
+        $from = "FastFood Online";
         $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
         $body = $app->view()->render('email_passreset.html.twig', array(
                 'name' => $user['name'],
                 'url' => $url
             ));
-        $from = "FastFood Online";
+        $from = "sales@fastfood-online.ipd8.info";
         $subject = "Fastfood-online reset password request";
         $headers = "From: $from\n";
         $headers .= "Content-type: text/html;charset=utf-8\r\n";
@@ -97,24 +98,27 @@ $app->post('/resetPassword', function() use ($app, $log) {
         ));
     } else {
         // STATE 2: submission successful
+         DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
         try {
+            
             DB::startTransaction();
-            $userID = DB::queryOneField('userID', "SELECT * FROM resetTokens WHERE resetToken=%s", $resetToken);
+            $userID = DB::queryOneField('userID', "SELECT * FROM resettokens WHERE resetToken=%s AND expiryDateTime > NOW()", $resetToken);
             if (empty($userID)) {
                 $log->error(sprintf("Attempt to reset password for an invalid token from IP %s", $_SERVER['REMOTE_ADDR']));
                 $app->render('reset_error.html.twig');
             } else {
-                DB::delete('resetTokens', 'resetToken =%s', $resetToken);
+                DB::delete('resettokens', 'resetToken =%s', $resetToken);
                 DB::update('users', array(
                     'locked' => FALSE, 'password' => password_hash($pass1, CRYPT_BLOWFISH)), 'ID = %d', $userID);
                 DB::commit();
                 $log->debug(sprintf("Reset token for user id %s", $userID));
-                $app->render('password_success.html.twig');
+                $app->render('reset_status.html.twig');
             }
         } catch (Exception $e) {
             DB::rollback();
             $log->debug(sprintf("Could not Reset token for user id %s. Error: %s", $user['ID'], $e));
-            $app->render('forgot_password.html.twig', array('failedEmail' => TRUE));
+            $app->render('reset_status.html.twig', array('failed' => TRUE));
         }
     };
 });

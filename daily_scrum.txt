@@ -88,12 +88,8 @@ TODo: Make locations work, detect delivery time finisih the design problms, fix 
 email vm!0%.&7i{K;
 
 tHings to fix:
--transaction for reset password doesn't roll back
--server time;
--make sure the user is logged out when trying to reset password
 -reviews, cart, order - only logged in users
 -validate html
-nutritional value
 -language sometimes you have to click two times to have it changed
 -send order by email
 
@@ -101,7 +97,10 @@ nutritional value
 to fix:
 -index page when french name of the product overlaps with the price
 -cart doesn't work
--product: do not display in french inner, and if change language doesn't apper either
+-product: do not display in french inner, and if change language doesn't appear either
+-manage admin acces to admin.php
+-make cart work for the homepage
+-Remove previous markers
 
 
 
