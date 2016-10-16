@@ -6,9 +6,11 @@
             <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/templates/form_addedit.html.twig</file>
             <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/styles/styles.css</file>
             <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/js/product_addedit.js</file>
-            <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/register.php</file>
+            <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/templates/category_addedit.html.twig</file>
             <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/admin.php</file>
+            <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/templates/product_addedit.html.twig</file>
             <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/index.php</file>
+            <file>file:/C:/xampp/htdocs/ECommerceOnlineRestaurant/js/category_script.js</file>
         </group>
     </open-files>
 </project-private>

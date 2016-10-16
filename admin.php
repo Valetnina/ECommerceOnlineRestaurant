@@ -53,32 +53,32 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
 
     foreach ($prodTable as &$product) {
 // print_r('test');
-      $product['picture'] = base64_encode($product['picture']);
+        $product['picture'] = base64_encode($product['picture']);
     }
 
     $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
 });
 
 $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
-        $categoryList = DB::query('SELECT en.ID as categoryID,'
-                . 'concat(en.name," / ",fr.name) as categoryname '
-                        . 'FROM '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "en") as en, '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "fr") as fr '
-                        . 'WHERE '
-                        . 'en.ID = fr.ID');
+    $categoryList = DB::query('SELECT en.ID as categoryID,'
+                    . 'concat(en.name," / ",fr.name) as categoryname '
+                    . 'FROM '
+                    . '(SELECT '
+                    . 'ID, '
+                    . 'name '
+                    . 'FROM productcategory '
+                    . 'WHERE '
+                    . 'lang = "en") as en, '
+                    . '(SELECT '
+                    . 'ID, '
+                    . 'name '
+                    . 'FROM productcategory '
+                    . 'WHERE '
+                    . 'lang = "fr") as fr '
+                    . 'WHERE '
+                    . 'en.ID = fr.ID');
     if (empty($ID)) {
-        $app->render('form_addedit.html.twig',array('categoryList' => $categoryList));
+        $app->render('form_addedit.html.twig', array('categoryList' => $categoryList));
     } else {
         $prodForm = DB::queryFirstRow('SELECT '
                         . 'en.productID, '
@@ -124,64 +124,31 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
 
         $prodForm['picture'] = base64_encode($prodForm['picture']);
 
-        
+
         $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
     }
 
 //print_r($prodTable);
 });
 
-function uploadImage() {
-    $target_dir = "uploads/";
-    $max_file_size = 5 * 1024 * 1024; // 5000000
-
-    if (!isset($_POST['submit'])) {
-        $log->debug("Error: File upload expected.");
-    }
-    $fileUpload = $_FILES['fileToUpload'];
-
-    $check = getimagesize($fileUpload["tmp_name"]);
-    if (!$check) {
-        $log->debug("Error: File upload was not an image file.");
-    }
-    switch ($check['mime']) {
-        case 'image/png':
-        case 'image/gif':
-        case 'image/bmp':
-        case 'image/jpeg':
-            break;
-        default:
-            $log->debug("Error: Only accepting valie png,gif,bmp,jpg files.");
-    }
-    if ($fileUpload['size'] > $max_file_size) {
-        $log->debug("Error: File to big, maximuma accepted is $max_file_size bytes");
-    }
-
-    if (strstr($fileUpload['name'], '..')) {
-        $log->debug("Error: do not mess with the Zohan");
-    }
-    $target_file = $target_dir . $fileUpload['name'];
-
-    if (move_uploaded_file($fileUpload["tmp_name"], $target_file)) {
-        $log->debug("The file " . basename($fileUpload["name"]) . " has been uploaded.");
-    } else {
-        $log->debug("Sorry, there was an error uploading your file.");
-    }
-
-    $image = $fileUpload["tmp_name"];
-    $image = file_get_contents($image);
-    $image = base64_encode($image);
+function create_slug($string) {
+    $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $string);
+    return $slug;
 }
 
 $app->post('/admin/products', function() use ($app, $log) {
     $ID = $app->request->post('productID');
     $name_en = $app->request->post('name_en');
+    $slugname_en = create_slug($name_en);
+
     $name_fr = $app->request->post('name_fr');
+    $slugname_fr = create_slug($name_fr);
+
     $price = $app->request->post('price');
     $nutritionalValue = $app->request->post('nutritionalValue');
 
     $isVegetarian = $app->request->post('isVegetarian');
-    
+
     if (isset($isVegetarian)) {
         $isVegetarian = 1;
     } else {
@@ -192,8 +159,48 @@ $app->post('/admin/products', function() use ($app, $log) {
     $description_en = $app->request->post('description_en');
     $description_fr = $app->request->post('description_fr');
     $picture = $app->request->post('picture');
+//////////////////////////////////////////////////////////////////////////////
+    $errorList = array();
+    
+    $image = '';
+    if ($_FILES["imageFile"]["size"] > 10) {
+    if (isset($_FILES["imageFile"])) {
+        
+        
+   
+            if ($_FILES["imageFile"]["error"] != UPLOAD_ERR_OK) {
+                array_push($errorList, "Error uploading file");
+            } else {
+                if (strstr($_FILES["imageFile"]["name"], "..")) {
+                    array_push($errorList, "Invalid filename");
+                } else {
+                    $imageInfo = getimagesize($_FILES["imageFile"]["tmp_name"]);
+                    if (!$imageInfo) {
+                        array_push($errorList, "Uploaded file doesn't seem to be an image");
+                    }
+                }
+            }
+        } else {
+            $info = pathinfo($_FILES["imageFile"]["name"]);
+            $ext = $info['extension'];
+            $imagePath = "media/" . ($_FILES["imageFile"]["name"]);
+            move_uploaded_file($_FILES['imageFile']['tmp_name'], $imagePath);                
+        }
+        
+        $destPath = "media/" . $_FILES["imageFile"]["name"];
+        if (move_uploaded_file($_FILES["imageFile"]["tmp_name"], $destPath)) {
+            echo "The file " . basename($_FILES["imageFile"]["name"]) . " has been uploaded.";
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+        }            
+        $image = file_get_contents($destPath);
+        if($image!= ''){
+                $picture = $image;
+            }
+    }
+            
 
-    //$picture = base64_decode($picture);
+/////////////////////////////////////////////////////////////////////////
 
     $valueList = array(
         'name_en' => $name_en,
@@ -205,9 +212,6 @@ $app->post('/admin/products', function() use ($app, $log) {
         'description_fr' => $description_fr,
         'picture' => $picture
     );
-
-
-    $errorList = array();
 
     if (strlen($name_en) < 2 || strlen($name_en) > 100) {
         array_push($errorList, "Product Name_EN must be at least 2 and at most 100 characters long");
@@ -242,25 +246,26 @@ $app->post('/admin/products', function() use ($app, $log) {
             'errorList' => $errorList, 'p' => $valueList
         ));
         return;
-    } 
+    }
     if (!isset($ID) || empty($ID)) { // SUCCESSFUL SUBMISSION
         DB::$error_handler = FALSE;
         DB::$throw_exception_on_error = TRUE;
-        print_r($valueList);
+        //print_r($valueList);
         try {
             DB::startTransaction();
-        
+
             DB::insert('products', array(
                 'productCategoryID' => $productCategoryID,
                 'price' => $price,
                 'nutritionalValue' => $nutritionalValue,
                 'isVegetarian' => $isVegetarian,
-                    //'picture' => $picture
+                'picture' => $picture
             ));
             $productID = DB::insertId();
-        
+
             DB::insert('products_i18n', array(
                 'name' => $name_en,
+                'slugname' => $slugname_en,
                 'description' => $description_en,
                 'productID' => $productID,
                 'lang' => 'en'
@@ -268,6 +273,7 @@ $app->post('/admin/products', function() use ($app, $log) {
 
             DB::insert('products_i18n', array(
                 'name' => $name_fr,
+                'slugname' => $slugname_fr,
                 'description' => $description_fr,
                 'productID' => $productID,
                 'lang' => 'fr'
@@ -290,10 +296,18 @@ $app->post('/admin/products', function() use ($app, $log) {
         try {
             DB::startTransaction();
 
+            if($image == ''){
             DB::update('products', array(
                 'price' => $price,
                 'nutritionalValue' => $nutritionalValue,
-                'isVegetarian' => 1), 'ID = %d', $ID);
+                'isVegetarian' => $isVegetarian), 'ID = %d', $ID);
+            }else{
+                            DB::update('products', array(
+                'price' => $price,
+                'nutritionalValue' => $nutritionalValue,
+                'isVegetarian' => $isVegetarian,
+                'picture' => $picture), 'ID = %d', $ID);
+            }
 
             DB::update('products_i18n', array(
                 'name' => $name_en,
@@ -316,7 +330,7 @@ $app->post('/admin/products', function() use ($app, $log) {
     }
 });
 
-//$app->render('register.html.twig', array('registerSuccess' => TRUE));
+
 //
 //
 ////////////////////////////////////////////////////////////
@@ -376,32 +390,75 @@ $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
     echo json_encode($record, JSON_PRETTY_PRINT);
 });
 
-$app->post('/admin/category_addedit/', function() use ($app, $log) {
+$app->post('/admin/category_addedit', function() use ($app, $log) {
 
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
 
     DB::insert('productcategory', $record);
-    
 });
 
 $app->put('/admin/category_addedit/:ID', function($ID) use ($app) {
 
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-   
-    DB::update('productcategory', $record, "ID=%d", $ID);
 
+    DB::update('productcategory', $record, "ID=%d", $ID);
 });
 
 ////////////////////////////////////////////////////////////
 /////////////////////View Orders//////////////////////////////
 //////////////////////////////////////////////////////////
 
-$app->get('/admin/view_orders', function() use ($app, $log) {
-    
-  $orderList = DB::query('SELECT orders.ID, orderDate, orderAmount, deliveryDate,  deliveryAmount FROM orders, deliveries  WHERE  orders.ID = orderID');  
-    
-  $app->render('viewOrders.html.twig', array('orderList' => $orderList));  
+$app->get('/admin/orders', function() use ($app, $log) {
+
+    $orderList = DB::query('SELECT '
+                    . 'orders.ID as orderID, '
+                    . 'orderDate, '
+                    . 'orderAmount, '
+                    . 'deliveryDate,  '
+                    . 'deliveryAmount '
+                    . 'FROM orders, deliveries  '
+                    . 'WHERE  orders.ID = orderID');
+
+    //print_r($orderList);
+
+    $app->render('viewOrders.html.twig', array('orderList' => $orderList));
 });
 
+//$app->get('/admin/orders/:ID', function($ID) use ($app, $log) {
+//
+//    $record = DB::queryFirstRow('SELECT '
+//                    . 'orders.ID as orderID, '
+//                    . 'orderDate, '
+//                    . 'orderAmount, '
+//                    . 'deliveryDate,  '
+//                    . 'deliveryAmount '
+//                    . 'FROM orders, deliveries  '
+//                    . 'WHERE  orders.ID = orderID AND '
+//                    . 'orders.ID = %d', $ID);
+//
+//    if (!$record) {
+//        $app->response->setStatus(404);
+//        echo json_encode("Record not found");
+//        return;
+//    }
+//    echo json_encode($record, JSON_PRETTY_PRINT);
+//});
+
+$app->put('/admin/orders/:ID', function($ID) use ($app, $log) {
+    $body = $app->request->getBody();
+    $record = json_decode($body, TRUE);
+    $record['ID'] = $ID; 
+    
+    DB::update('deliveries', $record, "ID=%d", $ID);
+});
+
+$app->get('/admin/orders/details', function() use ($app, $log) {
+
+    $detailsList = DB::query('');
+
+    //print_r($orderList);
+
+    $app->render('viewOrders.html.twig', array('orderList' => $orderList));
+});

@@ -28,7 +28,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     DB::$dbName = 'ecommerce';
     DB::$user = 'root';
     DB::$password = '';
-    DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+    //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 } else { // hosted on external server
     require_once 'fbauth.php';
     DB::$dbName = 'cp4724_fastfood-online';
