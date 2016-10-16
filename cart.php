@@ -24,7 +24,8 @@ $app->post('/cart', function() use ($app, $log) {
         DB::insert('cartitems', array(
             'sessionID' => session_id(),
             'productID' => $productID,
-            'quantity' => $quantity
+            'quantity' => $quantity,
+            'dateCreated' => date('Y-m-d H:i:s')
         ));
     }
     $app->render('cart_container.html.twig');
@@ -318,9 +319,7 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                     'query' => $e->getQuery()
                 ));
             }
-            DB::$throw_exception_on_error = FALSE;
-
-            DB::$error_handler = TRUE;
+           
         } else {
             $app->render("cart_container.html.twig");
         }
@@ -362,16 +361,20 @@ function getDeliveryTime($store, $destination) {
 };
 //
 
-$app->get('/nearestStore/:lat/:long', function($lat, $lng) use ($app, $log) {
-    $store = DB::queryFirstRow("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `stores`
-        ORDER BY distance ASC LIMIT 1 ", $lng, $lat, $lng);
+$app->get('/nearestStores/:postalCode', function($postalCode) use ($app, $log) {
+     $address = get_lat_long($postalCode);
+     $storeList = DB::query("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
+                . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
+                . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
+                . "AS distance FROM stores HAVING distance < 5 ORDER BY distance ASC LIMIT 0, 10", 
+                $address['lat'], $address['lng'], $address['lat']);
     $log->debug(DB::count());
-    if (!$store) {
+    if (!$storeList) {
         $app->response->setStatus(404);
         echo json_encode("Records not found");
         return;
     }
-    echo json_encode($store, JSON_PRETTY_PRINT);
+    echo json_encode($storeList, JSON_PRETTY_PRINT);
 });
 
 // function to get  the address

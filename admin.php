@@ -3,9 +3,11 @@
 ////////////////////////////////////////////////////////////
 /////////////////////Product Add/Edit//////////////////////
 //////////////////////////////////////////////////////////
+$app->get('/admin/products', function() use ($app, $log) {
+    $app->render('products_container.html.twig');
+});
 
 $app->get('/admin/product_addedit', function() use ($app, $log) {
-
     $prodTable = DB::query('SELECT '
                     . 'en.productID, '
                     . 'concat(en.name_en," / ",fr.name_fr) as productname, '
@@ -51,16 +53,32 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
 
     foreach ($prodTable as &$product) {
 // print_r('test');
-        $product['picture'] = base64_encode($product['picture']);
+      $product['picture'] = base64_encode($product['picture']);
     }
 
     $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
 });
 
 $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
-
+        $categoryList = DB::query('SELECT en.ID as categoryID,'
+                . 'concat(en.name," / ",fr.name) as categoryname '
+                        . 'FROM '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "en") as en, '
+                        . '(SELECT '
+                        . 'ID, '
+                        . 'name '
+                        . 'FROM productcategory '
+                        . 'WHERE '
+                        . 'lang = "fr") as fr '
+                        . 'WHERE '
+                        . 'en.ID = fr.ID');
     if (empty($ID)) {
-        $app->render('form_addedit.html.twig');
+        $app->render('form_addedit.html.twig',array('categoryList' => $categoryList));
     } else {
         $prodForm = DB::queryFirstRow('SELECT '
                         . 'en.productID, '
@@ -106,24 +124,7 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
 
         $prodForm['picture'] = base64_encode($prodForm['picture']);
 
-        $categoryList = DB::query('SELECT '
-                        . 'concat(en.name," / ",fr.name) as categoryname '
-                        . 'FROM '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "en") as en, '
-                        . '(SELECT '
-                        . 'ID, '
-                        . 'name '
-                        . 'FROM productcategory '
-                        . 'WHERE '
-                        . 'lang = "fr") as fr '
-                        . 'WHERE '
-                        . 'en.ID = fr.ID');
-
+        
         $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
     }
 
@@ -172,25 +173,27 @@ function uploadImage() {
     $image = base64_encode($image);
 }
 
-$app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
-
+$app->post('/admin/products', function() use ($app, $log) {
+    $ID = $app->request->post('productID');
     $name_en = $app->request->post('name_en');
     $name_fr = $app->request->post('name_fr');
     $price = $app->request->post('price');
     $nutritionalValue = $app->request->post('nutritionalValue');
 
-    $isVegetarian = 0;
     $isVegetarian = $app->request->post('isVegetarian');
-    if (isset($isVegetarian) == 'yes') {
+    
+    if (isset($isVegetarian)) {
         $isVegetarian = 1;
+    } else {
+        $isVegetarian = 0;
     }
-
+    $productCategoryID = $app->request->post('categoryID');
+    //Find the categoryId 
     $description_en = $app->request->post('description_en');
     $description_fr = $app->request->post('description_fr');
     $picture = $app->request->post('picture');
 
     //$picture = base64_decode($picture);
-
 
     $valueList = array(
         'name_en' => $name_en,
@@ -203,17 +206,18 @@ $app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
         'picture' => $picture
     );
 
+
     $errorList = array();
 
     if (strlen($name_en) < 2 || strlen($name_en) > 100) {
-        array_push($errorList, "FirstName must be at least 2 and at most 100 characters long");
+        array_push($errorList, "Product Name_EN must be at least 2 and at most 100 characters long");
         unset($valueList['name_en']);
     }
     if (strlen($name_fr) < 2 || strlen($name_fr) > 100) {
-        array_push($errorList, "FirstName must be at least 2 and at most 100 characters long");
+        array_push($errorList, "Product Name_FR must be at least 2 and at most 100 characters long");
         unset($valueList['name_en']);
     }
-    if ($price < 0 || $price > 100000000) {
+    if ($price <= 0 || $price > 100000000) {
         array_push($errorList, "Invalid price");
         unset($valueList['price']);
     }
@@ -222,37 +226,39 @@ $app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
         unset($valueList['isVegetarian']);
     }
     if (strlen($description_en) < 20 || strlen($description_en) > 500) {
-        array_push($errorList, "Description must have between 20 and 100 characters");
+        array_push($errorList, "Description_EN must have between 20 and 100 characters");
         unset($valueList['description_en']);
     }
     if (strlen($description_fr) < 20 || strlen($description_fr) > 500) {
-        array_push($errorList, "Description must have between 20 and 100 characters");
+        array_push($errorList, "Description_FR must have between 20 and 100 characters");
         unset($valueList['description_fr']);
     }
-    if ($nutritionalValue < 0 || $nutritionalValue > 1000) {
+    if ($nutritionalValue <= 0 || $nutritionalValue > 1000) {
         array_push($errorList, "Invalid nutritional value");
         unset($valueList['nutritionalValue']);
     }
-
     if ($errorList) {
-        $app->render('admin/product_addedit/form', array(
+        $app->render('products_container.html.twig', array(
             'errorList' => $errorList, 'p' => $valueList
         ));
-    } else if ($ID === '') { // SUCCESSFUL SUBMISSION
+        return;
+    } 
+    if (!isset($ID) || empty($ID)) { // SUCCESSFUL SUBMISSION
         DB::$error_handler = FALSE;
         DB::$throw_exception_on_error = TRUE;
-
+        print_r($valueList);
         try {
             DB::startTransaction();
-
+        
             DB::insert('products', array(
+                'productCategoryID' => $productCategoryID,
                 'price' => $price,
                 'nutritionalValue' => $nutritionalValue,
-                'isVegetarian' => $isVegetarian
+                'isVegetarian' => $isVegetarian,
                     //'picture' => $picture
             ));
             $productID = DB::insertId();
-
+        
             DB::insert('products_i18n', array(
                 'name' => $name_en,
                 'description' => $description_en,
@@ -268,7 +274,8 @@ $app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
             ));
 
             DB::commit();
-            $log->debug("Ad created with ID=" . $ID);
+            $log->debug("Product created with ID=" . $ID);
+            $app->render('products_container.html.twig');
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(
@@ -297,7 +304,8 @@ $app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
                 'description' => $description_fr), 'productID = %d AND lang = "fr"', $ID);
 
             DB::commit();
-            $log->debug("Ad updated with ID=" . $id);
+            $log->debug("Product updated with ID=" . $ID);
+            $app->render('products_container.html.twig');
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(

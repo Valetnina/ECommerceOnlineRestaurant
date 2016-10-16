@@ -25,14 +25,16 @@ define("MAXPAGES", 3);
 
 define("TAX", 0.15);
 
-$totalPages = 0;
-//DB::$dbName = 'cp4724_fastfood-online';
-//DB::$user = 'cp4724_fastfood';
-//DB::$password = '[^)EJ;Fw%402';
-DB::$dbName = 'ecommerce';
-DB::$user = 'root';
-DB::$password = '';
-//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+if ($_SERVER['SERVER_NAME'] == 'localhost') {
+    DB::$dbName = 'ecommerce';
+    DB::$user = 'root';
+    DB::$password = '';
+    DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+} else { // hosted on external server
+    DB::$dbName = 'cp4724_fastfood-online';
+    DB::$user = 'cp4724_fastfood';
+    DB::$password = '[^)EJ;Fw%402';
+}
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
@@ -42,7 +44,6 @@ function nonsql_error_handler($params) {
     global $app, $log;
     $log->error("Database error: " . $params['error']);
     http_response_code(500);
-    //header('content-type: application/json');
     $app->render('error_internal.html.twig');
     die;
 }
@@ -83,38 +84,40 @@ if (!isset($_SESSION['facebook_access_token'])) {
 }
 
 
+/*
+  $lang = 'en';
+  if (isset($_GET['lang'])) {
+  // verify get[lang] is a valid language, otherwise igrnore it
+  if (in_array($_GET['lang'], array('en', 'fr'))) {
+  setcookie('lang', $_GET['lang'], time() + (10 * 365 * 24 * 60 * 60));
+  $lang = $_GET['lang'];
+  } else {
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  }
+  } elseif (isset($_COOKIE['lang'])) {
+  $lang = $_COOKIE['lang'];
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  } else {
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  } */
 
 $lang = 'en';
-if (isset($_GET['lang'])) {
-    // verify get[lang] is a valid language, otherwise igrnore it
-    if (in_array($_GET['lang'], array('en', 'fr'))) {
-        setcookie('lang', $_GET['lang'], time() + (10 * 365 * 24 * 60 * 60));
-        $lang = $_GET['lang'];
+if (!isset($_COOKIE['lang'])) {
+    if (!isset($_GET['lang'])) {
+        setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
     } else {
+        $lang = (string) $_GET['lang'];
         setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
     }
-} elseif (isset($_COOKIE['lang'])) {
-    $lang = $_COOKIE['lang'];
-    setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
 } else {
-    setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+    if (isset($_GET['lang'])) {
+        $lang = (string) $_GET['lang'];
+        setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+    } else {
+        $lang = $_COOKIE['lang'];
+    }
 }
 
-/*
-  if (!isset($_COOKIE['lang'])) {
-  if (!isset($_GET['lang'])) {
-  setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-  } else {
-  $lang = (string) $_GET['lang'];
-  setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-  }
-  } else {
-  if (isset($_GET['lang'])) {
-  $lang = (string) $_GET['lang'];
-  setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-  }
-  }
- */
 /*
   if (!isset($_GET['lang'])) {
   if (isset($_COOKIE['lang'])) {
@@ -153,7 +156,9 @@ $twig->addGlobal('user', $_SESSION['user']);
 //FIXME: VAlidate all parameters
 \Slim\Route::setDefaultConditions(array(
     'ID' => '\d+',
-    'slug' => '[A-Za-z0-9-]+'
+    'slug' => '[A-Za-z0-9-]+',
+    'isVegetarian' => '[0,1]{2}',
+    'pageNum' => '\d+',
 ));
 
 //Handler for the home page
@@ -188,6 +193,8 @@ $app->get('/', function() use ($app, $log, $lang) {
 
 //Ajax -> refresh products by filter
 $app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, $isVeget, $pageNum) use ($app, $lang) {
+    echo $lang;
+
     $start = ((int) $pageNum - 1) * PRODUCTSPERPAGE;
     $isVegetSql = ($isVeget == 1) ? 'AND isVegetarian = 1' : '';
     $prodList = DB::query('SELECT products.ID, name, description, price, picture, products_i18n.slugname '

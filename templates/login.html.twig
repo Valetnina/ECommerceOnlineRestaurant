@@ -6,12 +6,12 @@
     <div class="container" id="loginContainer">
         {% if fbUser or user %}
              <h1>{{"You are already logged in"|trans}}</h1>
-             <a class="btn btn-lg btn-primary btn-block" style="width:150px;margin:auto;" href="/">{{"Logout"|trans}}</a> {{"OR"|trans}}
-              <a class="btn btn-lg btn-primary btn-block" style="width:150px;margin:auto;" href="/">{{"Continue"|trans}}</a>
+             <a class="btn btn-lg btn-primary btn-block linkButtons" href="/">{{"Logout"|trans}}</a> {{"OR"|trans}}
+              <a class="btn btn-lg btn-primary btn-block linkButtons" href="/">{{"Continue"|trans}}</a>
             {% else %}
         {% if loginForm %}
                 <h1>{{"You are now logged In"|trans}}</h1>
-                <a class="btn btn-lg btn-primary btn-block" style="width:150px;margin:auto;" href="/">{{"Continue"|trans}}</a>
+                <a class="btn btn-lg btn-primary btn-block linkButtons"  href="/">{{"Continue"|trans}}</a>
             {% else %}
         <div class="row">
             
@@ -27,7 +27,7 @@
                     <br/>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon3">{{"Password"|trans}}</span>
-                        <input type="password" name="password" class="form-control" aria-describedby="basic-addon3" required>
+                        <input type="password" name="password" class="form-control" aria-describedby="basic-addon3" required >
                     </div> 
                     <br/>
                     <button class="btn btn-lg btn-primary btn-block"  type="submit">{{"Sign In2"|trans}}</button>

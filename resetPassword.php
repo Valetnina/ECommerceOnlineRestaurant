@@ -14,7 +14,6 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $log->debug(sprintf("User failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
         $app->render('forgot_password.html.twig', array('loginFailed' => TRUE));
     } else {
-        //FIXME: reasearch f it's unique
         $token = bin2hex(openssl_random_pseudo_bytes(16));
         $to = $user['email'];
         //echo "your email is ::".$email;
@@ -38,6 +37,8 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         try{
         $sentmail = mail($to, $subject, $body, $headers1);
          if ($sentmail) {
+            DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
         try {
             DB::startTransaction();
             //FIXME: update or insert
@@ -49,7 +50,8 @@ $app->post('/forgotPassword', function() use ($app, $log) {
             } else {
                 DB::insert('resettokens', array(
                     'resettoken' => $token,
-                    'userID' => $user['ID']
+                    'userID' => $user['ID'],
+                    'expiryDateTime' => date("Y-m-d H:i:s", strtotime("+5 days"))
                 ));
             }
 
