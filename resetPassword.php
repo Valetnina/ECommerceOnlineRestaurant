@@ -18,24 +18,21 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $to = $user['email'];
         //echo "your email is ::".$email;
         //Details for sending E-mail
+        $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
+        $body = $app->view()->render('email_passreset.html.twig', array(
+                'name' => $user['name'],
+                'url' => $url
+            ));
         $from = "FastFood Online";
-        $url = "http://fastfood-online.ipd8.info/";
-        $body = "FastFood-online password recovery Script\r\n
-		-----------------------------------------------
-		Url : $url\r\n;
-		Email Details : $to\r\n;
-		Change Password : <a href=\"http://fastfood-online.ipd8.info/resetPassword/$token\">Click to Change Password<a>\r\n;
-		Sincerely,
-		FastFood-Online";
-        $from = "sales@fastfood-online.ipd8.info";
-        $subject = "Fastfood-online reset token";
-        $headers1 = "From: $from\n";
-        $headers1 .= "Content-type: text/html;charset=utf-8\r\n";
-        $headers1 .= "X-Priority: 1\r\n";
-        $headers1 .= "X-MSMail-Priority: High\r\n";
-        $headers1 .= "X-Mailer: Just My Server\r\n";
+        $subject = "Fastfood-online reset password request";
+        $headers = "From: $from\n";
+        $headers .= "Content-type: text/html;charset=utf-8\r\n";
+        $headers .= "X-Priority: 1\r\n";
+        $headers .= "X-MSMail-Priority: High\r\n";
+        $headers .= "X-Mailer: Just My Server\r\n";
         try{
-        $sentmail = mail($to, $subject, $body, $headers1);
+        $sentmail = mail($to, $subject, $body, $headers);
+        echo 'Here';
          if ($sentmail) {
             DB::$error_handler = FALSE;
             DB::$throw_exception_on_error = TRUE;
@@ -44,23 +41,18 @@ $app->post('/forgotPassword', function() use ($app, $log) {
             //FIXME: update or insert
             //check if an use has already a reset token
             $result = DB::queryOneField('userID', "SELECT * FROM resettokens WHERE userID=%d", $user['ID']);
-            if (!empty($result)) {
-                DB::update('resettokens', array(
-                    'resetToken' => $token), 'userID', $user['ID']);
-            } else {
-                DB::insert('resettokens', array(
-                    'resettoken' => $token,
-                    'userID' => $user['ID'],
-                    'expiryDateTime' => date("Y-m-d H:i:s", strtotime("+5 days"))
-                ));
-            }
+            DB::insertUpdate('resettokens', array(
+                'userID' => $user['ID'],
+                'resetToken' => $token,
+                'expiryDateTime' => date("Y-m-d H:i:s", strtotime("+5 days"))
+            ));
 
             DB::update('users', array(
                 'locked' => TRUE,), 'ID = %d', $user['ID']);
 
             DB::commit();
             $log->debug(sprintf("Reset token for user id %s", $userID));
-            $app->render('email_success.html.twig');
+            $app->render('email_status.html.twig');
         } catch (Exception $e) {
             DB::rollback();
             $log->debug(sprintf("Could not Reset token for user id %s. Error: %s", $user['ID'], $e));
@@ -71,7 +63,7 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $app->render('forgot_password.html.twig', array('failedEmail' => TRUE));
     }
         } catch (Exception $ex){
-            echo 'Errror connecting to tha mail server';
+            $app->render('email_status.html.twig', array('failed'=> TRUE));
         }
     }
         //If the message is sent successfully, display sucess message otherwise display an error message.

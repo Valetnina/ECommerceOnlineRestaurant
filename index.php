@@ -3,8 +3,6 @@
 require_once 'vendor/autoload.php';
 session_start();
 
-//require_once 'fbauth.php';
-
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 //Internationlization
@@ -26,11 +24,13 @@ define("MAXPAGES", 3);
 define("TAX", 0.15);
 
 if ($_SERVER['SERVER_NAME'] == 'localhost') {
+    
     DB::$dbName = 'ecommerce';
     DB::$user = 'root';
     DB::$password = '';
     DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 } else { // hosted on external server
+    require_once 'fbauth.php';
     DB::$dbName = 'cp4724_fastfood-online';
     DB::$user = 'cp4724_fastfood';
     DB::$password = '[^)EJ;Fw%402';
@@ -69,13 +69,13 @@ $view->parserOptions = array(
 );
 $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
-
+if ($_SERVER['SERVER_NAME'] != 'localhost') {
 //sessions and Cookies
-//$helper = $fb->getRedirectLoginHelper();
+$helper = $fb->getRedirectLoginHelper();
 $permissions = ['public_profile', 'email', 'user_location']; // optional
-//$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
-//$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
-
+$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+}
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
 }
@@ -149,10 +149,13 @@ $view->parserExtensions = array(
     new TranslationExtension($translator)
 );
 $twig = $app->view()->getEnvironment();
-//$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+if ($_SERVER['SERVER_NAME'] != 'localhost') {
+$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+$twig->addGlobal('loginUrl', $loginUrl);
+} 
 $twig->addGlobal('user', $_SESSION['user']);
-//$twig->addGlobal('loginUrl', $loginUrl);
-//////
+
+
 //FIXME: VAlidate all parameters
 \Slim\Route::setDefaultConditions(array(
     'ID' => '\d+',

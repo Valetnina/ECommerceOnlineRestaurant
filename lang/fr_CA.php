@@ -86,4 +86,16 @@ return array(
     'Total value before tax' => 'Valeur totale avant les taxes',
     'Final total to be paid at delivery' => 'Total final à payer à la livraison',
     'No review yet for this product' => 'Pas encore d\'évaluations pour ce produit',
+    'Email Sending Status' => 'Envoi Courriel',
+        'Password reset request' => 'Demande de réinitialisation du Mot de passe',
+        'Hi' => 'Bonjour',
+        'You have requested a password reset' => 'Vous avez demandé une réinitialisation de mot de passe',
+        'Click on' => 'Clicker sur',
+    'this link' => 'ce lien',
+    'to reset your password' => 'pour réinitialisser votre mot de passe ',
+    'Sincerely' => 'Cordialement',
+
+
+
+
 );

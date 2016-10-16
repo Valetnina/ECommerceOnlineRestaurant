@@ -90,4 +90,12 @@ return array(
     'Total value before tax' => 'Total value before tax',
     'Final total to be paid at delivery' => 'Final total to be paid at delivery',
     'No review yet for this product' => 'No review yet for this product',
-);
+    'Email Sending Status' => 'Email Sending Status',
+    'Password reset request' => 'Password reset request',
+    'Hi' => 'Hi',
+    'You have requested a password reset' => 'You have requested a password reset',
+    'Click on' => 'Click on',
+    'this link' => 'this link',
+    'to reset your password' => 'to reset your password',
+    'Sincerely' => 'Sincerely',
+); 
