@@ -475,3 +475,9 @@ input[type='checkbox']:checked {
     color:white;
     margin:auto;
 }
+#content_viewOrders{
+    width: 800px;
+    height: 600px;
+    border: 1px solid blue;
+    margin: auto;
+}

@@ -316,7 +316,8 @@ $app->post('/admin/product_addedit(/:ID)', function($ID = '') use ($app, $log) {
 //////////////////////////////////////////////////////////
 $app->get('/admin/category_addedit', function() use ($app) {
     $categoryList = DB::query('SELECT '
-                    . 'concat(en.name," / ",fr.name) as categoryname '
+                    . 'concat(en.name," / ",fr.name) as categoryname, '
+                    . 'en.ID '
                     . 'FROM '
                     . '(SELECT '
                     . 'ID, '
@@ -332,15 +333,15 @@ $app->get('/admin/category_addedit', function() use ($app) {
                     . 'lang = "fr") as fr '
                     . 'WHERE '
                     . 'en.ID = fr.ID');
-
     $app->render('category_addedit.html.twig', array(
         'categoryList' => $categoryList));
 });
 
 
 $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
-    $categoryList = DB::queryFirstRow('SELECT '
-                    . 'concat(en.name," / ",fr.name) as categoryname '
+    $record = DB::queryFirstRow('SELECT '
+                    . 'en.name as name_en, '
+                    . 'fr.name as name_fr, '
                     . 'FROM '
                     . '(SELECT '
                     . 'ID, '
@@ -358,42 +359,41 @@ $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
                     . 'lang = "fr") as fr '
                     . 'WHERE '
                     . 'en.ID = fr.ID', $ID, $ID);
+
+    if (!$record) {
+        $app->response->setStatus(404);
+        echo json_encode("Record not found");
+        return;
+    }
+    echo json_encode($record, JSON_PRETTY_PRINT);
 });
 
 $app->post('/admin/category_addedit/', function() use ($app, $log) {
 
-//$lastID = DB::queryFirstField('SELECT MAX(ID) FROM productcategory');
-
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-//$record['ID'] = $lastID;
 
     DB::insert('productcategory', $record);
-    if ($record['lang'] == 'en') {
-        $record['lang'] = 'fr';
-        $record['name'] = 'N/A';
-        $record['slugname'] = '';
-        DB::insert('productcategory', $record);
-    } else {
-        $record['lang'] = 'en';
-        $record['name'] = 'N/A';
-        $record['slugname'] = '';
-    }
-//echo DB::insertId();
+    
 });
 
 $app->put('/admin/category_addedit/:ID', function($ID) use ($app) {
 
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-//$record['ID'] = $ID;
-    $lang = $record['lang'];
-//print_r($record);
-    DB::update('productcategory', $record, "lang=%s AND ID=%d", $lang, $ID);
-//echo json_encode(TRUE); // same as: echo 'true';
+   
+    DB::update('productcategory', $record, "ID=%d", $ID);
+
 });
 
 ////////////////////////////////////////////////////////////
-/////////////////////END Category//////////////////////////////
+/////////////////////View Orders//////////////////////////////
 //////////////////////////////////////////////////////////
+
+$app->get('/admin/view_orders', function() use ($app, $log) {
+    
+  $orderList = DB::query('SELECT orders.ID, orderDate, orderAmount, deliveryDate,  deliveryAmount FROM orders, deliveries  WHERE  orders.ID = orderID');  
+    
+  $app->render('viewOrders.html.twig', array('orderList' => $orderList));  
+});
 
