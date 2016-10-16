@@ -28,9 +28,8 @@ $app->post('/register', function() use ($app, $log) {
     $country = $app->request->post('country');
     $postalCode = $app->request->post('postalCode');
     $phone = $app->request->post('phone');
-    $pass1 = $app->request->post('pass1');
-    $pass2 = $app->request->post('pass2');
-
+    
+    
     $valueList = array(
         'firstName' => $firstName,
         'lastName' => $lastName,

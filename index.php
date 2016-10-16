@@ -32,7 +32,7 @@ $totalPages = 0;
 DB::$dbName = 'ecommerce';
 DB::$user = 'root';
 DB::$password = '';
-DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+//DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
