@@ -4,10 +4,16 @@
 /////////////////////Product Add/Edit//////////////////////
 //////////////////////////////////////////////////////////
 $app->get('/admin/products', function() use ($app, $log) {
-    $app->render('products_container.html.twig');
+    if ($_SESSION['user']['role'] === 'admin') {
+        $app->render('products_container.html.twig', array('isAdmin' => TRUE));
+    } else {
+        $log->debug(sprintf("Atempt to access /admin/products page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+    }
 });
 
 $app->get('/admin/product_addedit', function() use ($app, $log) {
+     if ($_SESSION['user']['role'] === 'admin') {
     $prodTable = DB::query('SELECT '
                     . 'en.productID, '
                     . 'concat(en.name_en," / ",fr.name_fr) as productname, '
@@ -56,10 +62,15 @@ $app->get('/admin/product_addedit', function() use ($app, $log) {
         $product['picture'] = base64_encode($product['picture']);
     }
 
-    $app->render('product_addedit.html.twig', array('prodTable' => $prodTable));
+    $app->render('product_addedit.html.twig', array('prodTable' => $prodTable, 'isAdmin' => TRUE));
+     } else {
+        $log->debug(sprintf("Atempt to access /admin/product_addedit page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });
 
-$app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
+$app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app, $log) {
+     if ($_SESSION['user']['role'] === 'admin') {
     $categoryList = DB::query('SELECT en.ID as categoryID,'
                     . 'concat(en.name," / ",fr.name) as categoryname '
                     . 'FROM '
@@ -78,7 +89,7 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
                     . 'WHERE '
                     . 'en.ID = fr.ID');
     if (empty($ID)) {
-        $app->render('form_addedit.html.twig', array('categoryList' => $categoryList));
+        $app->render('form_addedit.html.twig', array('categoryList' => $categoryList, 'isAdmin' => TRUE));
     } else {
         $prodForm = DB::queryFirstRow('SELECT '
                         . 'en.productID, '
@@ -125,10 +136,12 @@ $app->get('/admin/product_addedit/form(/:ID)', function($ID = "") use ($app) {
         $prodForm['picture'] = base64_encode($prodForm['picture']);
 
 
-        $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList));
+        $app->render('form_addedit.html.twig', array('p' => $prodForm, 'categoryList' => $categoryList, 'isAdmin' => TRUE));
     }
-
-//print_r($prodTable);
+     } else {
+        $log->debug(sprintf("Atempt to admin/product_addedit/form page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });
 
 function create_slug($string) {
@@ -137,6 +150,7 @@ function create_slug($string) {
 }
 
 $app->post('/admin/products', function() use ($app, $log) {
+    if ($_SESSION['user']['role'] === 'admin') {
     $ID = $app->request->post('productID');
     $name_en = $app->request->post('name_en');
     $slugname_en = create_slug($name_en);
@@ -161,13 +175,10 @@ $app->post('/admin/products', function() use ($app, $log) {
     $picture = $app->request->post('picture');
 //////////////////////////////////////////////////////////////////////////////
     $errorList = array();
-    
+
     $image = '';
     if ($_FILES["imageFile"]["size"] > 10) {
-    if (isset($_FILES["imageFile"])) {
-        
-        
-   
+        if (isset($_FILES["imageFile"])) {
             if ($_FILES["imageFile"]["error"] != UPLOAD_ERR_OK) {
                 array_push($errorList, "Error uploading file");
             } else {
@@ -184,21 +195,21 @@ $app->post('/admin/products', function() use ($app, $log) {
             $info = pathinfo($_FILES["imageFile"]["name"]);
             $ext = $info['extension'];
             $imagePath = "media/" . ($_FILES["imageFile"]["name"]);
-            move_uploaded_file($_FILES['imageFile']['tmp_name'], $imagePath);                
+            move_uploaded_file($_FILES['imageFile']['tmp_name'], $imagePath);
         }
-        
+
         $destPath = "media/" . $_FILES["imageFile"]["name"];
         if (move_uploaded_file($_FILES["imageFile"]["tmp_name"], $destPath)) {
             echo "The file " . basename($_FILES["imageFile"]["name"]) . " has been uploaded.";
         } else {
             echo "Sorry, there was an error uploading your file.";
-        }            
+        }
         $image = file_get_contents($destPath);
-        if($image!= ''){
-                $picture = $image;
-            }
+        if ($image != '') {
+            $picture = $image;
+        }
     }
-            
+
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -243,7 +254,7 @@ $app->post('/admin/products', function() use ($app, $log) {
     }
     if ($errorList) {
         $app->render('products_container.html.twig', array(
-            'errorList' => $errorList, 'p' => $valueList
+            'errorList' => $errorList, 'p' => $valueList, 'isAdmin'=> TRUE
         ));
         return;
     }
@@ -281,7 +292,7 @@ $app->post('/admin/products', function() use ($app, $log) {
 
             DB::commit();
             $log->debug("Product created with ID=" . $ID);
-            $app->render('products_container.html.twig');
+            $app->render('products_container.html.twig', array('isAdmin'=>TRUE));
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(
@@ -296,17 +307,17 @@ $app->post('/admin/products', function() use ($app, $log) {
         try {
             DB::startTransaction();
 
-            if($image == ''){
-            DB::update('products', array(
-                'price' => $price,
-                'nutritionalValue' => $nutritionalValue,
-                'isVegetarian' => $isVegetarian), 'ID = %d', $ID);
-            }else{
-                            DB::update('products', array(
-                'price' => $price,
-                'nutritionalValue' => $nutritionalValue,
-                'isVegetarian' => $isVegetarian,
-                'picture' => $picture), 'ID = %d', $ID);
+            if ($image == '') {
+                DB::update('products', array(
+                    'price' => $price,
+                    'nutritionalValue' => $nutritionalValue,
+                    'isVegetarian' => $isVegetarian), 'ID = %d', $ID);
+            } else {
+                DB::update('products', array(
+                    'price' => $price,
+                    'nutritionalValue' => $nutritionalValue,
+                    'isVegetarian' => $isVegetarian,
+                    'picture' => $picture), 'ID = %d', $ID);
             }
 
             DB::update('products_i18n', array(
@@ -319,7 +330,7 @@ $app->post('/admin/products', function() use ($app, $log) {
 
             DB::commit();
             $log->debug("Product updated with ID=" . $ID);
-            $app->render('products_container.html.twig');
+            $app->render('products_container.html.twig', array('isAdmin'=> TRUE));
         } catch (MeekroDBException $e) {
             DB::rollback();
             sql_error_handler(array(
@@ -327,7 +338,12 @@ $app->post('/admin/products', function() use ($app, $log) {
                 'query' => $e->getQuery()
             ));
         }
+    } 
     }
+    else {
+        $log->debug(sprintf("Atempt to admin/product_addedit/form page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });
 
 
@@ -336,7 +352,8 @@ $app->post('/admin/products', function() use ($app, $log) {
 ////////////////////////////////////////////////////////////
 /////////////////////Category//////////////////////////////
 //////////////////////////////////////////////////////////
-$app->get('/admin/category_addedit', function() use ($app) {
+$app->get('/admin/category_addedit', function() use ($app, $log) {
+    if ($_SESSION['user']['role'] === 'admin') {
     $categoryList = DB::query('SELECT '
                     . 'concat(en.name," / ",fr.name) as categoryname, '
                     . 'en.ID '
@@ -356,11 +373,16 @@ $app->get('/admin/category_addedit', function() use ($app) {
                     . 'WHERE '
                     . 'en.ID = fr.ID');
     $app->render('category_addedit.html.twig', array(
-        'categoryList' => $categoryList));
+        'categoryList' => $categoryList, 'isAdmin' =>TRUE));
+    } else {
+        $log->debug(sprintf("Atempt to see /admin/category_addedit page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });
 
 
-$app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
+$app->get('/admin/category_addedit/:ID', function($ID) use ($app, $log) {
+    if ($_SESSION['user']['role'] === 'admin') {
     $record = DB::queryFirstRow('SELECT '
                     . 'en.name as name_en, '
                     . 'fr.name as name_fr '
@@ -388,22 +410,26 @@ $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
         return;
     }
     echo json_encode($record, JSON_PRETTY_PRINT);
+    }
 });
 
 $app->post('/admin/category_addedit', function() use ($app, $log) {
-
+ if ($_SESSION['user']['role'] === 'admin') {
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
 
     DB::insert('productcategory', $record);
+    echo DB::insertId();
+ }
 });
 
 $app->put('/admin/category_addedit/:ID', function($ID) use ($app) {
-
+if ($_SESSION['user']['role'] === 'admin') {
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
 
     DB::update('productcategory', $record, "ID=%d", $ID);
+}
 });
 
 ////////////////////////////////////////////////////////////
@@ -411,7 +437,7 @@ $app->put('/admin/category_addedit/:ID', function($ID) use ($app) {
 //////////////////////////////////////////////////////////
 
 $app->get('/admin/orders', function() use ($app, $log) {
-
+if ($_SESSION['user']['role'] === 'admin') {
     $orderList = DB::query('SELECT '
                     . 'orders.ID as orderID, '
                     . 'orderDate, '
@@ -420,9 +446,13 @@ $app->get('/admin/orders', function() use ($app, $log) {
                     . 'deliveryAmount '
                     . 'FROM orders LEFT OUTER JOIN deliveries ON orders.ID = deliveries.orderID');
 
- // print_r($orderList);
+    // print_r($orderList);
 
-    $app->render('viewOrders.html.twig', array('orderList' => $orderList));
+    $app->render('viewOrders.html.twig', array('orderList' => $orderList, 'isAdmin'=>TRUE));
+     } else {
+        $log->debug(sprintf("Atempt to see /admin/orders page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });
 
 //$app->get('/admin/orders/:ID', function($ID) use ($app, $log) {
@@ -446,18 +476,23 @@ $app->get('/admin/orders', function() use ($app, $log) {
 //});
 
 $app->put('/admin/orders/:ID', function($ID) use ($app, $log) {
+    if ($_SESSION['user']['role'] === 'admin') {
     $body = $app->request->getBody();
     $record = json_decode($body, TRUE);
-    $record['ID'] = $ID; 
-    
+    $record['ID'] = $ID;
+
     DB::update('deliveries', $record, "ID=%d", $ID);
+    }
 });
 
 $app->get('/admin/orders/details', function() use ($app, $log) {
-
+if ($_SESSION['user']['role'] === 'admin') {
     $detailsList = DB::query('');
-
     //print_r($orderList);
 
-    $app->render('viewOrders.html.twig', array('orderList' => $orderList));
+    $app->render('viewOrders.html.twig', array('orderList' => $orderList, 'isAdmin'=>TRUE));
+     } else {
+        $log->debug(sprintf("Atempt to see /admin/order/details page from IP %s", $_SERVER['REMOTE_ADDR']));
+        $app->render('access_denied.html.twig');
+     }
 });

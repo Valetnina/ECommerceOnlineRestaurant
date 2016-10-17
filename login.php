@@ -22,7 +22,7 @@ $app->post('/login', function() use ($app, $log) {
             $log->debug(sprintf("User %s logged in successfuly from IP %s", $user['ID'], $_SERVER['REMOTE_ADDR']));
             $app->render('login.html.twig', array('loginForm' => TRUE));
         } else {
-            $log->debug(sprintf("User sdfsfdsdfsd sfsfdsdfs failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
+            $log->debug(sprintf("User failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
             $app->render('login.html.twig', array('loginFailed' => TRUE));
         }
     }

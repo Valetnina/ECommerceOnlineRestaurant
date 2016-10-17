@@ -31,6 +31,8 @@ $app->post('/cart', function() use ($app, $log) {
     }
     $app->render('cart_container.html.twig');
 });
+
+
 $app->get('/cartItems', function() use ($app) {
 
     $app->render('cart_container.html.twig', array());
@@ -103,7 +105,7 @@ $app->get('/deliveryAddress', function() use ($app, $log) {
             'firstName' => $_SESSION['facebook_access_token']['firstName'],
             'lastName' => $_SESSION['facebook_access_token']['lastName'],
             'email' => $_SESSION['facebook_access_token']['email'],
-           // 'city' => $_SESSION['facebook_access_token']['location'],
+                // 'city' => $_SESSION['facebook_access_token']['location'],
         );
         $app->render('shippingaddress.html.twig', array(
             'v' => $shippingAddress,
@@ -263,7 +265,8 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                 'tax' => $taxes,
             );
 //GET cartItems
-            $cartItems = DB::query("SELECT products.ID as productID, price, quantity FROM cartitems, products WHERE products.ID = cartitems.productID AND sessionID=%s", session_id());
+            $cartItems = DB::query("SELECT products.ID as productID, name, price, quantity FROM cartitems, products, products_i18n "
+                    . "WHERE products.ID = cartitems.productID AND products.ID = products_i18n.productID AND sessionID=%s and lang=%s", session_id(), $lang);
             foreach ($cartItems as &$item) {
                 $item['total'] = ($item['quantity'] * $item['price']);
                 $item['tax'] = ($item['quantity'] * $item['price']) * TAX;
@@ -303,14 +306,37 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                  */
 
                 $log->debug("Inserted order no " . $orderID);
+                //Send Confirmation email
+                $to = $email;
+                print_r($cartItems);
+                //Details for sending E-mail
+                $from = "FastFood Online";
+                $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
+                $body = $app->view()->render('email_order.html.twig', array(
+                    'cartItems' => $cartItems,
+                    'order' => $order,
+                    'shippingAddress' => $valueList,
+                    'totalBeforeTax' => number_format($totalBeforeTax, 2),
+                    'taxes' => number_format($taxes, 2),
+                    'totalWithShippingAndTaxes' => number_format(($totalBeforeTax + $taxes), 2),
+                ));
+                $from = "sales@fastfood-online.ipd8.info";
+                $subject = "Fastfood-online reset password request";
+                $headers = "From: $from\n";
+                $headers .= "Content-type: text/html;charset=utf-8\r\n";
+                $headers .= "X-Priority: 1\r\n";
+                $headers .= "X-MSMail-Priority: High\r\n";
+                $headers .= "X-Mailer: Just My Server\r\n";
+                $sentmail = mail($to, $subject, $body, $headers);
                 $app->render('order_submitted.html.twig', array(
                     'shippingAddress' => $valueList,
-                    'totalBeforeTax' => number_format($order['orderAmount'], 2),
-                    'taxes' => number_format($order['tax'], 2),
-                    'totalWithShippingAndTaxes' => number_format($order['orderAmount'] + $order['tax'], 2),
+                    'totalBeforeTax' => number_format($totalBeforeTax, 2),
+                    'taxes' => number_format($taxes, 2),
+                    'totalWithShippingAndTaxes' => number_format(($totalBeforeTax + $taxes), 2),
                     'store' => $store,
                     'totalDeliveryTime' => gmdate("H:i", PREPARATIONTIME + $delivery['time']),
                     'deliveryTime' => gmdate("H:i", $delivery['time'])
+
                 ));
             } catch (MeekroDBException $e) {
                 DB::rollback();
@@ -394,9 +420,9 @@ function get_lat_long($address) {
     $response = curl_exec($ch);
     curl_close($ch);
     $response_a = json_decode($response);
-        $latitude = $response_a->results[0]->geometry->location->lat;
-        $longitude = $response_a->results[0]->geometry->location->lng;
-        $array = array('lat' => $latitude, 'lng' => $longitude);
-        
+    $latitude = $response_a->results[0]->geometry->location->lat;
+    $longitude = $response_a->results[0]->geometry->location->lng;
+    $array = array('lat' => $latitude, 'lng' => $longitude);
+
     return $array;
 }

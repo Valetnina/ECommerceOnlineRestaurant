@@ -25,3 +25,5 @@
 [2016-10-16 16:59:56] main.ERROR:  in query: SELECT orders.ID as orderID, orderDate, orderAmount, deliveryDate,  deliveryAmount FROM orders LEFT OUTER JOIN deliveries [] []
 [2016-10-16 17:00:34] main.ERROR: SQL error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1 [] []
 [2016-10-16 17:00:34] main.ERROR:  in query: SELECT orders.ID as orderID, orderDate, orderAmount, deliveryDate,  deliveryAmount FROM orders LEFT OUTER JOIN deliveries [] []
+[2016-10-16 23:50:02] main.ERROR: SQL error: Cannot add or update a child row: a foreign key constraint fails (`ecommerce`.`cartitems`, CONSTRAINT `cartItems_ibfk_1` FOREIGN KEY (`productID`) REFERENCES `products` (`ID`)) [] []
+[2016-10-16 23:50:02] main.ERROR:  in query: INSERT INTO `cartitems` (`sessionID`,`productID`,`quantity`,`dateCreated`) VALUES ('c4q67v7oota2n0gkqm9af1loo0', '', '1', '2016-10-16 23:50:02') [] []

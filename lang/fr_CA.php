@@ -95,12 +95,8 @@ return array(
     'to reset your password' => 'pour réinitialisser votre mot de passe ',
     'Sincerely' => 'Cordialement',
     'Password Reset' => 'Réinitialisation du mot de passe',
-        'Invalid attempt to reset password.' => 'Tentative non valide pour réinitialiser mot de passe',
-        'Try again' => 'Réessayer',
-        'Password Resseted' => 'Mot de Passe réinitialisé',
-        'Stores near you' => 'Trouver nos restaurants aupres de chez vous',
-
-
-
-
+    'Invalid attempt to reset password.' => 'Tentative non valide pour réinitialiser mot de passe',
+    'Try again' => 'Réessayer',
+    'Password Resseted' => 'Mot de Passe réinitialisé',
+    'Stores near you' => 'Trouver nos restaurants aupres de chez vous',
 );

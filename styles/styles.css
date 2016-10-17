@@ -188,10 +188,10 @@ label {
 }
 #left-side-addedit{
 /*    border: 1px solid white;*/
+    position: relative;
     width: 500px;
-    float: left;
     margin-top: -540px;
-    margin-left: 120px;
+    margin-left: 350px;
 }
 #containerForm input{
     /*border: 1px solid yellow;*/ 
@@ -202,10 +202,11 @@ label {
 }
 #right-side-addedit{
 /*    border: 1px solid white;*/
+ position: relative;
     width: 500px;
     float: right;
     margin-top: -560px;
-    margin-right: 120px;
+    margin-right: 250px;
 }
 #containerForm label{
     /*border: 1px solid white;*/

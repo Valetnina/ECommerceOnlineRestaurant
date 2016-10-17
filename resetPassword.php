@@ -33,7 +33,6 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $headers .= "X-Mailer: Just My Server\r\n";
         try{
         $sentmail = mail($to, $subject, $body, $headers);
-        echo 'Here';
          if ($sentmail) {
             DB::$error_handler = FALSE;
             DB::$throw_exception_on_error = TRUE;
@@ -67,7 +66,6 @@ $app->post('/forgotPassword', function() use ($app, $log) {
             $app->render('email_status.html.twig', array('failed'=> TRUE));
         }
     }
-        //If the message is sent successfully, display sucess message otherwise display an error message.
     
 });
 $app->get('/resetPassword/:token', function($token) use ($app, $log) {

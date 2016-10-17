@@ -52,29 +52,11 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: "/reviews/product/" + productID,
-            data: JSON.stringify({
-                productID: productID,
-                date: date,
-                rating: rating,
-                review: review,
-            }),
-            type: "POST",
+            url: "/addToCart/" + productID,
+            type: "GET",
             dataType: "json"
         }).done(function () {
-            //Refresh fields  
-            selectedRating = 0;
-            $("textarea[name=reviewText]").val("");
-            // var reviewCount = (int)($('#reviewCount').html())+1;
-            // $('#reviewCount').html(reviewCount);
-            // $('#reviewCount').val("");
-            $('#reviewForm').hide();
-            $('#leaveReview').show();
-            for (var i = 1; i <= 5; i++) {
-                $('#star' + i).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-            }
-            $('#reviewList').load('/reviews/product/' + productID + '/page/' + 1);
-            $('#ratingsProduct').load('/rating/' + productID);
+           alert("done");
         });
 
     });

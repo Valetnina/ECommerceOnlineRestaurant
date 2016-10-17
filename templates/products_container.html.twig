@@ -9,21 +9,22 @@
 
 
 {% block content %}
-    <div id="productTable">
+    {% if user.role == 'admin' %}
+       
+        <div id="productTable">
+        </div>
+        <div style='text-align: center;'>
+            {% if errorList %}
+                <ul class="errors">
+                    {% for error in errorList %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                </ul>
+            {% endif %}
 
         </div>
-    <div style='text-align: center;'>
-    {% if errorList %}
-        <ul class="errors">
-            {% for error in errorList %}
-                <li>{{ error }}</li>
-                {% endfor %}
-        </ul>
+        <div id="productForm">
+
+        </div>
     {% endif %}
-    
-    </div>
-    <div id="productForm">
-
-    </div>
-
-        {% endblock %}  
+{% endblock %}  

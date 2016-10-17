@@ -24,7 +24,7 @@ define("MAXPAGES", 3);
 define("TAX", 0.15);
 
 if ($_SERVER['SERVER_NAME'] == 'localhost') {
-    
+
     DB::$dbName = 'ecommerce';
     DB::$user = 'root';
     DB::$password = '';
@@ -71,10 +71,10 @@ $view->setTemplatesDirectory(dirname(__FILE__) . '/templates');
 
 if ($_SERVER['SERVER_NAME'] != 'localhost') {
 //sessions and Cookies
-$helper = $fb->getRedirectLoginHelper();
-$permissions = ['public_profile', 'email', 'user_location']; // optional
-$loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
-$logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
+    $helper = $fb->getRedirectLoginHelper();
+    $permissions = ['public_profile', 'email', 'user_location']; // optional
+    $loginUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogin-callback.php', $permissions);
+    $logoutUrl = $helper->getLoginUrl('http://fastfood-online.ipd8.info/fblogout-callback.php', $permissions);
 }
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = array();
@@ -101,46 +101,52 @@ if (!isset($_SESSION['facebook_access_token'])) {
   setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
   } */
 /*
-$lang = 'en';
-if (!isset($_COOKIE['lang'])) {
-    if (!isset($_GET['lang'])) {
-        setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-        echo "6";
-    } else {
-        $lang = (string) $_GET['lang'];
-        setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-        echo "5";
-    }
-} else {
-    if (isset($_GET['lang'])) {
-        $lang = (string) $_GET['lang'];
-        setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-        echo "case 3 COOKIE". $_COOKIE['lang'];
-        echo "case 2 lang". $lang;
-    } else {
-        echo "case 4". $_COOKIE['lang'];
-        $lang = $_COOKIE['lang'];
-        echo " case 4 lang". $lang;
-    }
-}
-*/
-
+  $lang = 'en';
+  if (!isset($_COOKIE['lang'])) {
   if (!isset($_GET['lang'])) {
-  if (isset($_COOKIE['lang'])) {
-  $lang = $_COOKIE['lang'];
-  } else {
-  setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-  }
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  echo "6";
   } else {
   $lang = (string) $_GET['lang'];
-  if ($lang == 'en' || $lang == 'fr') {
-  setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-  } else {
-  setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  echo "5";
   }
-  } 
+  } else {
+  if (isset($_GET['lang'])) {
+  $lang = (string) $_GET['lang'];
+  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+  echo "case 3 COOKIE". $_COOKIE['lang'];
+  echo "case 2 lang". $lang;
+  } else {
+  echo "case 4". $_COOKIE['lang'];
+  $lang = $_COOKIE['lang'];
+  echo " case 4 lang". $lang;
+  }
+  }
+ */
+function getLang(){
+$lang = 'en';
+if (!isset($_GET['lang'])) {
+    if (isset($_COOKIE['lang'])) {
+        $lang = $_COOKIE['lang'];
+        
+    } else {
+        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    }
+} else {
+    $lang = (string) $_GET['lang'];
+    if ($lang == 'en' || $lang == 'fr') {
+        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+    } else {
+        setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
+        $lang='en';
+    }
+}
+return $lang;
+}
+ //setcookie('lang', "en", time() + (10 * 365 * 24 * 60 * 60));
 // First param is the "default language" to use.
-$translator = new Translator($lang, new MessageSelector());
+$translator = new Translator(getLang(), new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
 $translator->setFallbackLocales(['en']);
 // Add a loader that will get the php files we are going to store our translations in
@@ -156,9 +162,9 @@ $view->parserExtensions = array(
 );
 $twig = $app->view()->getEnvironment();
 if ($_SERVER['SERVER_NAME'] != 'localhost') {
-$twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
-$twig->addGlobal('loginUrl', $loginUrl);
-} 
+    $twig->addGlobal('fbUser', $_SESSION['facebook_access_token']);
+    $twig->addGlobal('loginUrl', $loginUrl);
+}
 $twig->addGlobal('user', $_SESSION['user']);
 
 
@@ -171,7 +177,7 @@ $twig->addGlobal('user', $_SESSION['user']);
 ));
 
 //Handler for the home page
-$app->get('/', function() use ($app, $log, $lang) {
+$app->get('/', function() use ($app, $log) {
     //if a fb user than check id does already have a record in the users table, 
     if ($_SESSION['facebook_access_token']) {
         $userID = DB::queryFirstField('SELECT ID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);
@@ -193,7 +199,7 @@ $app->get('/', function() use ($app, $log, $lang) {
             $_SESSION['facebook_access_token']['userID'] = $userID;
         }
     }
-    $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', $lang);
+    $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', getLang());
     //  echo "you are logged ing as:".$fbUser;
 
     $app->render('index.html.twig', array(
@@ -201,14 +207,14 @@ $app->get('/', function() use ($app, $log, $lang) {
 });
 
 //Ajax -> refresh products by filter
-$app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, $isVeget, $pageNum) use ($app, $lang) {
-    $start = (( int) $pageNum - 1) * PRODUCTSPERPAGE;
+$app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, $isVeget, $pageNum) use ($app) {
+    $start = ((int) $pageNum - 1) * PRODUCTSPERPAGE;
     $isVegetSql = ($isVeget == 1) ? 'AND isVegetarian = 1' : '';
     $prodList = DB::query('SELECT products.ID, name, description, price, picture, products_i18n.slugname '
                     . 'FROM products, products_i18n '
                     . 'WHERE products.ID = products_i18n.productID AND '
                     . 'lang=%s' . $isVegetSql . ' AND productCategoryID = %d ORDER BY products.ID DESC LIMIT %d, %d'
-                    , $_COOKIE['lang'], $categoryID, $start, PRODUCTSPERPAGE * MAXPAGES);
+                    , getLang(), $categoryID, $start, PRODUCTSPERPAGE * MAXPAGES);
     $availableRecords = DB::count();
     $maxPages = round($availableRecords / PRODUCTSPERPAGE);
     $pageProductList = array();

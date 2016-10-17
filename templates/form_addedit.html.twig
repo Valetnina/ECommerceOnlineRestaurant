@@ -17,6 +17,7 @@ $("#chooseImage").change(function(){
 });
 </script>
 {% endblock %}
+{% if user.role == 'admin' %}
 <form method="POST" id="containerForm" enctype="multipart/form-data">    
     <div id="left-side-addedit">                     
         <label>ID: </label>
@@ -57,3 +58,4 @@ $("#chooseImage").change(function(){
         <button id = "btCancelProduct" class = "buttonStyle"> Cancel </button>
     </div>
 </form>
+{% endif %}

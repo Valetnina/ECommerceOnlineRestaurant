@@ -5,7 +5,7 @@
 $app->get('/product/:slug', function($slug) use ($app) {
     $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
                     . " nutritionalValue, name, description FROM products, "
-                    . "products_i18n WHERE  products_i18n.productID = products.ID AND products_i18n.slugname=%s and lang=%s", $slug, $_COOKIE['lang']);
+                    . "products_i18n WHERE  products_i18n.productID = products.ID AND products_i18n.slugname=%s", $slug);
     $productRecord['picture'] = base64_encode($productRecord['picture']);
      $app->render('product_view.html.twig', array(
         'product' => $productRecord));

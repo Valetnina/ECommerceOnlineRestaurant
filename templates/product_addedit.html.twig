@@ -1,5 +1,7 @@
-    <div id="container-addedit_product">
+{% if user.role == 'admin' %}    
+<div id="container-addedit_product">
         <div id="top-side-addedit">
+   
             <div class = "scrolltable">
                 <table>
                     <tr id = "headRow">
@@ -37,3 +39,4 @@
        
         </div>  
     </div> 
+{% endif %}

@@ -5,6 +5,7 @@
 {% block head %}{% endblock %}
 
 {% block content %}
+    {% if user.role == 'admin' %}
     <div id="content_viewOrders">
         <table id="tbOrders" style="border: 1px solid black;margin:30px 0 0 20px;">
             <tr style="height:30px;background-color:#025274;color:white;">
@@ -31,6 +32,6 @@
     </div> 
 
 <script src="/js/orders_view.js"></script>
-
+{% endif %}
 {% endblock %}
 

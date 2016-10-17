@@ -88,19 +88,18 @@ TODo: Make locations work, detect delivery time finisih the design problms, fix 
 email vm!0%.&7i{K;
 
 tHings to fix:
--reviews, cart, order - only logged in users
 -validate html
 -language sometimes you have to click two times to have it changed
--send order by email
+-send order by email- try catch
 
 -put conditions in index php for parameters, is veget, pagenum
 to fix:
 -index page when french name of the product overlaps with the price
 -cart doesn't work
 -product: do not display in french inner, and if change language doesn't appear either
--manage admin acces to admin.php
 -make cart work for the homepage
 -Remove previous markers
+-make sure login with facebook is visible in browsers with ad blocks
 
 
 

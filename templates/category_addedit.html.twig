@@ -5,6 +5,7 @@
 {% block head %}{% endblock %}
 
 {% block content %}
+    {% if user.role == 'admin' %}
     <div id="container_category_form">
         {% if categoryFailed %}
             <h4 style="color:red; font-size: 12px;">{{"Insert category Failed"|trans}}</h4>
@@ -31,4 +32,5 @@
     </div>
 
     <script src="/js/category_script.js"></script>
+    {% endif %}
 {% endblock %}
