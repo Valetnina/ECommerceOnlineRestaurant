@@ -4,112 +4,87 @@
 {% block head %}   
     <!-- Bootstrap Core CSS -->
     <link href="/bootstrap/css/shop-item.css" rel="stylesheet">
-
-
     <!-- jQuery -->
-
-    
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>-->
-   <!--<script src="/js/locations_script.js"></script>-->
-    
-   {% endblock %}
-
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>-->
+    <!--<script src="/js/locations_script.js"></script>-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBGdAE-nd01tQ-SGkwgc0bTDnd4jXa-UM"></script> 
+{% endblock %}
 {% block content %}
-
-        <div class="container">
-            
-          <div class="row" style="margin-top:100px;">
-         <input id="address" type="text" value="Montreal" />
-<input id="search" type="submit" value="Search" />
-<div id="map_canvas" style="height: 600px; width: 800px;"></div>
-          </div>
+    <div class="container" >
+        <div class="row" style="text-align: right;">
+            <span style="color:white; font-size: 20px;"> {{"Stores near you"|trans}}</span><br>
+            <input id="address" type="text" value="{% if user %}{{user.postalCode}}{%else %} Montreal {% endif %}" />
+            <input id="search" type="submit" value="Search" />
+            <div id="dvMap" style="height: 600px; width: 850px; margin:auto;">
+            </div>
         </div>
-      <script type="text/javascript">
+    </div>
+        <script type="text/javascript">
+            var map = null;
+            var geocoder = geocoder = new google.maps.Geocoder();
+            var markers = [];
+            var infoWindow = null;
 
-var map = null;
-var geocoder = null;
-var markers = [];
-var infoWindow = null;
+            function searchStores(address) {
+                          //  var markers = [];
+                $.ajax({
+                    url: '/nearestStores/' + address,
+                    type: "GET",
+                    dataType: 'json',
+                    // async: false,
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var item = data[i];
+                            markers.push(item);
+                        }
+                        LoadMap();
+                    }
+                });
+            }
+            $(document).ready(function () {
+                var address = jQuery('#address').val() || 'Montreal';
+                /*if (map === null)
+                 initializeMap();*/
+                searchStores(address);
+                $('#search').click(function () {
+                    var address = jQuery('#address').val() || 'Montreal';
+                    if (map === null)
+                        LoadMap();
+                    searchStores(address);
+                });
+            });
+            function LoadMap() {
+                var mapOptions = {
+                    center: new google.maps.LatLng(markers['lat'], markers['lng']),
+                    zoom: 8,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var infoWindow = new google.maps.InfoWindow();
+                var latlngbounds = new google.maps.LatLngBounds();
+                var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
 
-jQuery('#search').click(function() {
-	var address = jQuery('#address').val() || 'Montreal';
-	if (map === null)
-		initializeMap();
-	searchAddress(address);
-});
-
-function initializeMap() {
-    
-        
-	var mapOptions = {
-		zoom: 13,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);	
-	geocoder = new google.maps.Geocoder();
-	infoWindow = new google.maps.InfoWindow();
-}
-
-function searchAddress(address) {
-	geocoder.geocode( { 'address': address}, function(results, status) {
-		if (status === google.maps.GeocoderStatus.OK) {
-			var latlng = results[0].geometry.location;
-			map.setCenter(latlng);
-			searchStores(latlng.lat(), latlng.lng());
-			
-		} else {
-			alert('Geocode was failed: ' + status);
-		}
-	});
-}
-
-function searchStores(lat, lng) {
-	//var parameter = { lat: lat, lng: lng };
-	jQuery.ajax({
-		url: '/store-ajax/' + lat + '/' + lng,
-                type: "GET",
-		dataType: 'json',
-		success: function(data) {
-                    infoWindow.close();
-        
-	for (var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
-	}
-	markers.length = 0;
-	
-	for (var i in data) {
-		data[i];
-                var latlng = new google.maps.LatLng(
-				parseFloat(data[i]['latitude']),
-				parseFloat(data[i]['longitude'])
-			);
-	var html = "<b>" + data[i]['address'] + "</b> <br>" + data[i]['distance'] + " miles";
-	var marker = new google.maps.Marker({
-			map: map,
-			position: latlng
-		});
-                
-	google.maps.event.addListener(marker, 'click', function() {
-			infoWindow.setContent(html);
-			infoWindow.open(map, marker);
-		});
-               marker.setMap(map);
-	markers.push(marker);
-	}
+                for (var i = 0; i < markers.length; i++) {
+                    var data = markers[i]
+                    var myLatlng = new google.maps.LatLng(data['lat'], data['lng']);
+                    var marker = new google.maps.Marker({
+                        position: myLatlng,
+                        map: map,
+                        title: data.title
+                    });
+                    (function (marker, data) {
+                        google.maps.event.addListener(marker, "click", function (e) {
+                            infoWindow.setContent("<div style = 'width:200px;min-height:40px'>" + data.address + "</div>");
+                            infoWindow.open(map, marker);
+                        });
+                    })(marker, data);
+                    latlngbounds.extend(marker.position);
                 }
-	});
-
-}
-    
-
-// To add the marker to the map, call setMap();
-	
+                var bounds = new google.maps.LatLngBounds();
+                map.setCenter(latlngbounds.getCenter());
+                map.fitBounds(latlngbounds);
+            }
+        </script>
 
 
-    </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBGdAE-nd01tQ-SGkwgc0bTDnd4jXa-UM"></script>
-
-   
-        {% endblock %}  
+    {% endblock %}  

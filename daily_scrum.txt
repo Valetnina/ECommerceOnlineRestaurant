@@ -88,20 +88,18 @@ TODo: Make locations work, detect delivery time finisih the design problms, fix 
 email vm!0%.&7i{K;
 
 tHings to fix:
--transaction for reset password doesn't roll back
--server time;
--total pages issue global variable
--make sure the user is logged out when trying to reset password
--predict delivery time
--reviews, cart, order - only logged in users
 -validate html
--implement is vegetarian and nutritional value
 -language sometimes you have to click two times to have it changed
--Ask if a user gives an review, should we delete foreign key from ratings? Do  we need an aditional table
--Important: Need to ask teacher of how to catch if a db error ocurred, when fbUser could not be registered
--send order by email
--Important: total pages, query or allow request for unexisting page?
+-send order by email- try catch
+
 -put conditions in index php for parameters, is veget, pagenum
+to fix:
+-index page when french name of the product overlaps with the price
+-cart doesn't work
+-product: do not display in french inner, and if change language doesn't appear either
+-make cart work for the homepage
+-Remove previous markers
+-make sure login with facebook is visible in browsers with ad blocks
 
 
 

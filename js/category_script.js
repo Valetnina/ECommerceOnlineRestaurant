@@ -12,9 +12,8 @@ $(document).ready(function () {
             dataType: 'json'
         }).done(function (data) {
             //alert(data.name);
-            $('input[name=name]').val(data.name);
-            $('input[name=lang]').val(data.lang);
-            $('input[name=slugname]').val(data.slugname);
+            $('input[name=name_en]').val(data.name_en);
+            $('input[name=name_fr]').val(data.name_fr);
         }).fail(function () {
             alert('Failed');
         });
@@ -24,29 +23,27 @@ $(document).ready(function () {
     });
 
     $('#buttonAddedit').click(function () {
-        
+
         alert(currentID + " id from 'click' button event");
 
-        var categoryName = $('input[name=name]').val();
-        var lang = $('input[name=lang]').val();
-        var slugname = $('input[name=slugname]').val();
+        var name_en = $('input[name=name_en]').val();
+        var name_fr = $('input[name=name_fr]').val();
 
         if (currentID == 0) {
             // INSERT
             alert("Insert begin");
             $.ajax({
-                url: '/admin/category_addedit/',
+                url: '/admin/category_addedit',
                 data: JSON.stringify({
-                    ID: currentID,
-                    name: categoryName,
-                    lang: lang,
-                    slugname: slugname
+                    name_en: name_en,
+                    name_fr: name_fr
                 }),
                 type: 'POST',
                 dataType: 'json'
             }).done(function () {
                 alert("Addedd successfully");
-
+            }).fail(function () {
+                alert('Failed');
             });
         } else {
             // UPDATE
@@ -55,19 +52,19 @@ $(document).ready(function () {
             $.ajax({
                 url: '/admin/category_addedit/' + currentID,
                 data: JSON.stringify({
-                    name: categoryName,
-                    lang: lang,
-                    slugname: slugname
+                    name_en: name_en,
+                    name_fr: name_fr
                 }),
                 type: 'PUT',
                 dataType: 'json'
             }).done(function () {
                 alert("Updated successfully");
+            }).fail(function () {
+                alert('Failed');
             });
         }
-        var categoryName = $("input[name=name]").val('');
-        var lang = $("input[name=lang]").val('');
-        var slugname = $("input[name=slugname]").val('');
+        var name_en = $("input[name=name_en]").val('');
+        var name_fr = $("input[name=name_fr]").val('');
     });
 
 

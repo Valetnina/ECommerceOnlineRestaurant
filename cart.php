@@ -1,5 +1,6 @@
 <?php
 
+define("PREPARATIONTIME", 15 * 60);
 //Handling of the cart page
 //get and port /cart
 $app->post('/cart', function() use ($app, $log) {
@@ -13,7 +14,10 @@ $app->post('/cart', function() use ($app, $log) {
 // either add item to cart or change its quantity
     $productID = $app->request()->post('productID');
     $quantity = $app->request()->post('quantity');
-
+    if (!is_numeric($quantity)) {
+        $app->render('error_internal.html.twig');
+        return;
+    }
     $item = DB::queryFirstRow("SELECT * FROM cartitems WHERE sessionID=%s AND productID=%d", session_id(), $productID);
     if ($item) { // add quantity to existing item
         DB::update('cartitems', array('quantity' => $item['quantity'] + $quantity), 'ID=%i', $item['ID']);
@@ -21,11 +25,14 @@ $app->post('/cart', function() use ($app, $log) {
         DB::insert('cartitems', array(
             'sessionID' => session_id(),
             'productID' => $productID,
-            'quantity' => $quantity
+            'quantity' => $quantity,
+            'dateCreated' => date('Y-m-d H:i:s')
         ));
     }
     $app->render('cart_container.html.twig');
 });
+
+
 $app->get('/cartItems', function() use ($app) {
 
     $app->render('cart_container.html.twig', array());
@@ -46,9 +53,9 @@ $app->get('/cart', function() use ($app) {
     $cartTotalToPay = $cartTax + $cartTotal;
     $app->render('cart_view.html.twig', array(
         'cartItems' => $cartItems,
-        'cartTotal' => $cartTotal,
-        'cartTax' => $cartTax,
-        'cartTotalToPay' => $cartTotalToPay,
+        'cartTotal' => number_format($cartTotal, 2),
+        'cartTax' => number_format($cartTax, 2),
+        'cartTotalToPay' => number_format($cartTotalToPay, 2)
     ));
 });
 
@@ -98,7 +105,7 @@ $app->get('/deliveryAddress', function() use ($app, $log) {
             'firstName' => $_SESSION['facebook_access_token']['firstName'],
             'lastName' => $_SESSION['facebook_access_token']['lastName'],
             'email' => $_SESSION['facebook_access_token']['email'],
-            'city' => $_SESSION['facebook_access_token']['location'],
+                // 'city' => $_SESSION['facebook_access_token']['location'],
         );
         $app->render('shippingaddress.html.twig', array(
             'v' => $shippingAddress,
@@ -219,107 +226,130 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
             $customerID = $_SESSION['facebook_access_token']['userID'];
         }
 //Get the nearest store
-        $storeCoordinates = get_lat_long($postalCode);
-        
-        
-        $store = DB::queryFirstRow("SELECT *,(3959 * acos(cos(radians(%s)) * cos(radians(latitude))"
-                        . " * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) )"
-                        . " AS distance FROM stores HAVING distance < 1 ORDER BY distance  ASC LIMIT 1 ", $storeCoordinates['lng'], $storeCoordinates['lat'], $storeCoordinates['lng']);
-       
+        $customerCoordinates = get_lat_long($postalCode);
+
+
+        $store = DB::queryFirstRow("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
+                        . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
+                        . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
+                        . "AS distance FROM stores HAVING distance < 20 ORDER BY distance LIMIT 0 , 1", $customerCoordinates['lat'], $customerCoordinates['lng'], $customerCoordinates['lat']);
         if (!$store) {
             $app->render('store_not_found.html.twig', array(
                 'errorList' => $errorList[$_COOKIE['lang']], 'v' => $valueList
             ));
             return;
         }
+        $delivery = getDeliveryTime($store, $customerCoordinates);
         $totalBeforeTax = DB::queryFirstField("SELECT SUM(products.price * cartitems.quantity) "
-            ." FROM cartitems, products "
-            ." WHERE cartitems.sessionID=%s AND cartitems.productID=products.ID",
-            session_id());
-        if($totalBeforeTax > 0){
-        $taxes = $totalBeforeTax * TAX;
-        $totalWithTaxes = $totalBeforeTax + $taxes;
+                        . " FROM cartitems, products "
+                        . " WHERE cartitems.sessionID=%s AND cartitems.productID=products.ID", session_id());
+        if ($totalBeforeTax > 0) {
+            $taxes = $totalBeforeTax * TAX;
+            $totalWithTaxes = $totalBeforeTax + $taxes;
 
 //Gathering the rest of the information
-        $order = array(
-            'orderDate' => DB::sqleval("NOW()"),
-            'storeID' => $store['ID'],
-            'customerID' => $customerID,
-            'contactFirstName' => $firstName,
-            'contactLastName' => $lastName,
-            'email' => $email,
-            'deliveryAddress' => $address,
-            'deliveryStreet' => $street,
-            'deliveryCity' => $city,
-            'deliveryCountry' => $country,
-            'deliveryPostalCode' => $postalCode,
-            'contactPhone' => $phone,
-            'orderAmount' => $totalBeforeTax,
-            'tax' => $taxes,
-        );
+            $order = array(
+                'orderDate' => DB::sqleval("NOW()"),
+                'storeID' => $store['ID'],
+                'customerID' => $customerID,
+                'contactFirstName' => $firstName,
+                'contactLastName' => $lastName,
+                'email' => $email,
+                'deliveryAddress' => $address,
+                'deliveryStreet' => $street,
+                'deliveryCity' => $city,
+                'deliveryCountry' => $country,
+                'deliveryPostalCode' => $postalCode,
+                'contactPhone' => $phone,
+                'orderAmount' => $totalBeforeTax,
+                'tax' => $taxes,
+            );
 //GET cartItems
-        $cartItems = DB::query("SELECT products.ID as productID, price, quantity FROM cartitems, products WHERE products.ID = cartitems.productID AND sessionID=%s", session_id());
-        foreach ($cartItems as &$item) {
-            $item['total'] = ($item['quantity'] * $item['price']);
-            $item['tax'] = ($item['quantity'] * $item['price']) * TAX;
-        }
+            $cartItems = DB::query("SELECT products.ID as productID, name, price, quantity FROM cartitems, products, products_i18n "
+                    . "WHERE products.ID = cartitems.productID AND products.ID = products_i18n.productID AND sessionID=%s and lang=%s", session_id(), $lang);
+            foreach ($cartItems as &$item) {
+                $item['total'] = ($item['quantity'] * $item['price']);
+                $item['tax'] = ($item['quantity'] * $item['price']) * TAX;
+            }
 
 ///Attempt insert order
-        DB::$error_handler = FALSE;
-        DB::$throw_exception_on_error = TRUE;
+            DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
 // PLACE THE ORDER
-        try {
-            DB::startTransaction();
+            try {
+                DB::startTransaction();
 
-            DB::insert('orders', $order);
-            $orderID = DB::insertId();
+                DB::insert('orders', $order);
+                $orderID = DB::insertId();
 
 // 2. copy all records from cartitems to 'orderitems' (select & insert)
 
-            foreach ($cartItems as &$item) {
-                DB::insert('orderitems', array(
-                    'orderID' => $orderID,
-                    'productID' => $item['productID'],
-                    'quantity' => $item['quantity'],
-                    'orderItemsAmount' => $item['price'] * $item['quantity'],
-                    'tax' => ($item['price'] * $item['quantity']) * TAX
-                ));
-            }
+                foreach ($cartItems as &$item) {
+                    DB::insert('orderitems', array(
+                        'orderID' => $orderID,
+                        'productID' => $item['productID'],
+                        'quantity' => $item['quantity'],
+                        'orderItemsAmount' => $item['price'] * $item['quantity'],
+                        'tax' => ($item['price'] * $item['quantity']) * TAX
+                    ));
+                }
 // 3. delete cartitems for this user's session (delete)
 
-            DB::delete('cartitems', 'sessionID=%s', session_id());
-            DB::commit();
+                DB::delete('cartitems', 'sessionID=%s', session_id());
+                DB::commit();
 // TODO: send a confirmation email
-            /*
-              $emailHtml = $app->view()->getEnvironment()->render('email_order.html.twig');
-              $headers = "MIME-Version: 1.0\r\n";
-              $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-              mail($email, "Order " .$orderID . " placed ", $emailHtml, $headers);
-             */
+                /*
+                  $emailHtml = $app->view()->getEnvironment()->render('email_order.html.twig');
+                  $headers = "MIME-Version: 1.0\r\n";
+                  $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                  mail($email, "Order " .$orderID . " placed ", $emailHtml, $headers);
+                 */
 
-            $log->debug("Inserted order no " . $orderID);
-            $app->render('order_submitted.html.twig', array(
-                'shippingAddress' => $valueList,
-                'totalBeforeTax' => $order['orderAmount'],
-                'taxes' => $order['tax'],
-                'totalWithShippingAndTaxes' => $order['orderAmount'] + $order['tax']
-            ));
-        } catch (MeekroDBException $e) {
-            DB::rollback();
-            sql_error_handler(array(
-                'error' => $e->getMessage(),
-                'query' => $e->getQuery()
-            ));
+                $log->debug("Inserted order no " . $orderID);
+                //Send Confirmation email
+                $to = $email;
+                print_r($cartItems);
+                //Details for sending E-mail
+                $from = "FastFood Online";
+                $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
+                $body = $app->view()->render('email_order.html.twig', array(
+                    'cartItems' => $cartItems,
+                    'order' => $order,
+                    'shippingAddress' => $valueList,
+                    'totalBeforeTax' => number_format($totalBeforeTax, 2),
+                    'taxes' => number_format($taxes, 2),
+                    'totalWithShippingAndTaxes' => number_format(($totalBeforeTax + $taxes), 2),
+                ));
+                $from = "sales@fastfood-online.ipd8.info";
+                $subject = "Fastfood-online reset password request";
+                $headers = "From: $from\n";
+                $headers .= "Content-type: text/html;charset=utf-8\r\n";
+                $headers .= "X-Priority: 1\r\n";
+                $headers .= "X-MSMail-Priority: High\r\n";
+                $headers .= "X-Mailer: Just My Server\r\n";
+                $sentmail = mail($to, $subject, $body, $headers);
+                $app->render('order_submitted.html.twig', array(
+                    'shippingAddress' => $valueList,
+                    'totalBeforeTax' => number_format($totalBeforeTax, 2),
+                    'taxes' => number_format($taxes, 2),
+                    'totalWithShippingAndTaxes' => number_format(($totalBeforeTax + $taxes), 2),
+                    'store' => $store,
+                    'totalDeliveryTime' => gmdate("H:i", PREPARATIONTIME + $delivery['time']),
+                    'deliveryTime' => gmdate("H:i", $delivery['time'])
+
+                ));
+            } catch (MeekroDBException $e) {
+                DB::rollback();
+                sql_error_handler(array(
+                    'error' => $e->getMessage(),
+                    'query' => $e->getQuery()
+                ));
+            }
+        } else {
+            $app->render("cart_container.html.twig");
         }
-        DB::$throw_exception_on_error = FALSE;
-
-        DB::$error_handler = TRUE;
-    }else {
-        $app->render("cart_container.html.twig");
-    } 
     }
 });
-
 
 $app->get('/locations', function() use ($app) {
 
@@ -335,10 +365,38 @@ $app->get('/markers', function() use ($app) {
     echo json_encode($locationList, JSON_PRETTY_PRINT);
 });
 
-$app->get('/store-ajax/:lat/:long', function($lat, $lng) use ($app, $log) {
+function getDeliveryTime($store, $destination) {
+    $origin = $store['lat'] . ',' . $store['lng'];
+    $destination = $destination['lat'] . ',' . $destination['lng'];
+    $url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins='
+            . $origin . '&destinations=' . $destination . '&mode=driving&sensor=false';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    /*
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+     * */
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $response_a = json_decode($response, true);
+    $dist = $response_a['rows'][0]['elements'][0]['distance']['value'];
+    $time = $response_a['rows'][0]['elements'][0]['duration']['value'];
 
-    $storeList = DB::query("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `stores`
-        ORDER BY distance LIMIT 30 ", $lng, $lat, $lng);
+    return array('distance' => $dist, 'time' => $time);
+}
+
+//
+
+$app->get('/nearestStores/:postalCode', function($postalCode) use ($app, $log) {
+    $address = get_lat_long($postalCode);
+    $storeList = DB::query("SELECT *, ( 3959 * acos( cos( radians(%s) ) "
+                    . "* cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) "
+                    . "+ sin( radians(%s) ) * sin( radians( lat ) ) ) ) "
+                    . "AS distance FROM stores HAVING distance < 5 ORDER BY distance ASC LIMIT 0, 10", $address['lat'], $address['lng'], $address['lat']);
     $log->debug(DB::count());
     if (!$storeList) {
         $app->response->setStatus(404);
@@ -348,31 +406,23 @@ $app->get('/store-ajax/:lat/:long', function($lat, $lng) use ($app, $log) {
     echo json_encode($storeList, JSON_PRETTY_PRINT);
 });
 
-$app->get('/nearestStore/:lat/:long', function($lat, $lng) use ($app, $log) {
-    $store = DB::queryFirstRow("SELECT *,(6371 * acos(cos(radians(%s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(latitude))) ) AS distance FROM `stores`
-        ORDER BY distance ASC LIMIT 1 ", $lng, $lat, $lng);
-    $log->debug(DB::count());
-    if (!$store) {
-        $app->response->setStatus(404);
-        echo json_encode("Records not found");
-        return;
-    }
-    echo json_encode($store, JSON_PRETTY_PRINT);
-});
-
 // function to get  the address
 function get_lat_long($address) {
     $array = array();
-    $geo = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&sensor=false');
+    $url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&sensor=false';
 
-// We convert the JSON to an array
-    $geo = json_decode($geo, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $response_a = json_decode($response);
+    $latitude = $response_a->results[0]->geometry->location->lat;
+    $longitude = $response_a->results[0]->geometry->location->lng;
+    $array = array('lat' => $latitude, 'lng' => $longitude);
 
-// If everything is cool
-    if ($geo['status'] = 'OK') {
-        $latitude = $geo['results'][0]['geometry']['location']['lat'];
-        $longitude = $geo['results'][0]['geometry']['location']['lng'];
-        $array = array('lat' => $latitude, 'lng' => $longitude);
-    }
     return $array;
 }

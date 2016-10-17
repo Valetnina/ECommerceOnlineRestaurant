@@ -1,7 +1,6 @@
  function changePage(pageNum){
              $('#index-products').load('/category/' + 1 + '/' + 0 + '/page/' + pageNum);
         }
-
 var pageNum = 1;
 
 

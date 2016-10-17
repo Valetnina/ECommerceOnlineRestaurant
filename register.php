@@ -31,6 +31,8 @@ $app->post('/register', function() use ($app, $log) {
     $pass1 = $app->request->post('pass1');
     $pass2 = $app->request->post('pass2');
 
+    
+    
     $valueList = array(
         'firstName' => $firstName,
         'lastName' => $lastName,

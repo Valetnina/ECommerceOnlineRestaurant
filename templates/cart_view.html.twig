@@ -27,12 +27,12 @@
         {{"Total Order"|trans}}: <span id="total">{{cartTotal}}</span><br><br><br>
         {{"Tax"|trans}}: <span id="tax">{{cartTax}}</span><br><br><br>
         {{"Total to pay at delivery"|trans}}: <span id="totalToPay">{{cartTotalToPay}}</span><br><br><br>
-        <a href="/deliveryAddress" style="" class="btn btn-lg btn-primary btn-block" id="placeOrder">{{"Place Order"|trans}}</a>
+        <a href="/deliveryAddress" class="btn btn-lg btn-primary btn-block  linkButtons" id="placeOrder">{{"Place Order"|trans}}</a>
 
         </div>
         {% else %}
             <h4>No Products in the Cart Yet</h4>
-            <a href="/" style="width: 250px; margin:auto; " class="btn btn-lg btn-primary btn-block ">{{"Continue"|trans}} </a>
+            <a href="/" class="btn btn-lg btn-primary btn-block linkButtons">{{"Continue"|trans}} </a>
             {% endif %}
                  
                     

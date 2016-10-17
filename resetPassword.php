@@ -14,51 +14,45 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $log->debug(sprintf("User failed for email %s from IP %s", $email, $_SERVER['REMOTE_ADDR']));
         $app->render('forgot_password.html.twig', array('loginFailed' => TRUE));
     } else {
-        //FIXME: reasearch f it's unique
         $token = bin2hex(openssl_random_pseudo_bytes(16));
         $to = $user['email'];
         //echo "your email is ::".$email;
         //Details for sending E-mail
         $from = "FastFood Online";
-        $url = "http://fastfood-online.ipd8.info/";
-        $body = "FastFood-online password recovery Script\r\n
-		-----------------------------------------------
-		Url : $url\r\n;
-		Email Details : $to\r\n;
-		Change Password : <a href=\"http://fastfood-online.ipd8.info/resetPassword/$token\">Click to Change Password<a>\r\n;
-		Sincerely,
-		FastFood-Online";
+        $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
+        $body = $app->view()->render('email_passreset.html.twig', array(
+                'name' => $user['name'],
+                'url' => $url
+            ));
         $from = "sales@fastfood-online.ipd8.info";
-        $subject = "Fastfood-online reset token";
-        $headers1 = "From: $from\n";
-        $headers1 .= "Content-type: text/html;charset=utf-8\r\n";
-        $headers1 .= "X-Priority: 1\r\n";
-        $headers1 .= "X-MSMail-Priority: High\r\n";
-        $headers1 .= "X-Mailer: Just My Server\r\n";
+        $subject = "Fastfood-online reset password request";
+        $headers = "From: $from\n";
+        $headers .= "Content-type: text/html;charset=utf-8\r\n";
+        $headers .= "X-Priority: 1\r\n";
+        $headers .= "X-MSMail-Priority: High\r\n";
+        $headers .= "X-Mailer: Just My Server\r\n";
         try{
-        $sentmail = mail($to, $subject, $body, $headers1);
+        $sentmail = mail($to, $subject, $body, $headers);
          if ($sentmail) {
+            DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
         try {
             DB::startTransaction();
             //FIXME: update or insert
             //check if an use has already a reset token
             $result = DB::queryOneField('userID', "SELECT * FROM resettokens WHERE userID=%d", $user['ID']);
-            if (!empty($result)) {
-                DB::update('resettokens', array(
-                    'resetToken' => $token), 'userID', $user['ID']);
-            } else {
-                DB::insert('resettokens', array(
-                    'resettoken' => $token,
-                    'userID' => $user['ID']
-                ));
-            }
+            DB::insertUpdate('resettokens', array(
+                'userID' => $user['ID'],
+                'resetToken' => $token,
+                'expiryDateTime' => date("Y-m-d H:i:s", strtotime("+5 days"))
+            ));
 
             DB::update('users', array(
                 'locked' => TRUE,), 'ID = %d', $user['ID']);
 
             DB::commit();
             $log->debug(sprintf("Reset token for user id %s", $userID));
-            $app->render('email_success.html.twig');
+            $app->render('email_status.html.twig');
         } catch (Exception $e) {
             DB::rollback();
             $log->debug(sprintf("Could not Reset token for user id %s. Error: %s", $user['ID'], $e));
@@ -69,10 +63,9 @@ $app->post('/forgotPassword', function() use ($app, $log) {
         $app->render('forgot_password.html.twig', array('failedEmail' => TRUE));
     }
         } catch (Exception $ex){
-            echo 'Errror connecting to tha mail server';
+            $app->render('email_status.html.twig', array('failed'=> TRUE));
         }
     }
-        //If the message is sent successfully, display sucess message otherwise display an error message.
     
 });
 $app->get('/resetPassword/:token', function($token) use ($app, $log) {
@@ -103,24 +96,27 @@ $app->post('/resetPassword', function() use ($app, $log) {
         ));
     } else {
         // STATE 2: submission successful
+         DB::$error_handler = FALSE;
+            DB::$throw_exception_on_error = TRUE;
         try {
+            
             DB::startTransaction();
-            $userID = DB::queryOneField('userID', "SELECT * FROM resetTokens WHERE resetToken=%s", $resetToken);
+            $userID = DB::queryOneField('userID', "SELECT * FROM resettokens WHERE resetToken=%s AND expiryDateTime > NOW()", $resetToken);
             if (empty($userID)) {
                 $log->error(sprintf("Attempt to reset password for an invalid token from IP %s", $_SERVER['REMOTE_ADDR']));
                 $app->render('reset_error.html.twig');
             } else {
-                DB::delete('resetTokens', 'resetToken =%s', $resetToken);
+                DB::delete('resettokens', 'resetToken =%s', $resetToken);
                 DB::update('users', array(
                     'locked' => FALSE, 'password' => password_hash($pass1, CRYPT_BLOWFISH)), 'ID = %d', $userID);
                 DB::commit();
                 $log->debug(sprintf("Reset token for user id %s", $userID));
-                $app->render('password_success.html.twig');
+                $app->render('reset_status.html.twig');
             }
         } catch (Exception $e) {
             DB::rollback();
             $log->debug(sprintf("Could not Reset token for user id %s. Error: %s", $user['ID'], $e));
-            $app->render('forgot_password.html.twig', array('failedEmail' => TRUE));
+            $app->render('reset_status.html.twig', array('failed' => TRUE));
         }
     };
 });
