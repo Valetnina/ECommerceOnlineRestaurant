@@ -5,7 +5,7 @@
 $app->get('/product/:slug', function($slug) use ($app) {
     $productRecord = DB::queryFirstRow("SELECT products.ID, price, picture,"
                     . " nutritionalValue, name, description FROM products, "
-                    . "products_i18n WHERE  products_i18n.productID = products.ID AND products_i18n.slugname=%s", $slug);
+                    . "products_i18n WHERE  products_i18n.productID = products.ID AND products_i18n.slugname=%s and lang=%s", $slug, $_COOKIE['lang']);
     $productRecord['picture'] = base64_encode($productRecord['picture']);
      $app->render('product_view.html.twig', array(
         'product' => $productRecord));
@@ -16,7 +16,7 @@ $app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($ap
     $start = ((int) $pageNum - 1) * ROWSPERPAGE;
 
     $reviewList = DB::query('SELECT ratingsreviews.ID, productID, '
-                    . 'date, review, rating, customerFirstName FROM ratingsreviews'
+                    . 'DATEDIFF(NOW(), date) AS daysCount, review, rating, customerFirstName FROM ratingsreviews'
                     . '  WHERE productID=%d ORDER BY ratingsreviews.ID DESC '
                     . 'LIMIT %d, %d', $ID, $start, ROWSPERPAGE * MAXPAGES);
     $availableRecords = DB::count();
@@ -30,11 +30,7 @@ $app->get('/reviews/product/:ID/page/:pageNum', function($ID, $pageNum) use ($ap
             $pageReviewList[$x] = $reviewList[$x];
         }
     }
-    foreach ($reviewList as &$value) {
-        $now = new DateTime('now');
-        $value['daysCount'] = $now->diff(new DateTime($value['date']))->format("%a") - 1;
-    }
-
+   
     $pagination = array('min' => max(($pageNum - MAXPAGES - 1), 1), 'max' => $maxPages, 'current' => $pageNum);
     $app->render('reviews.html.twig', array(
         'reviewList' => $pageReviewList,
@@ -90,7 +86,7 @@ $app->post('/reviews/product/:ID', function($ID) use ($app, $log) {
 
 function isReviewPostValid($review, &$error) {
 
-    if (count($review) != 3) {
+    if (count($review) != 4) {
         $error = 'Invalid number of fields in data provided';
         return FALSE;
     }

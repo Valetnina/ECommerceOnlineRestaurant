@@ -363,21 +363,21 @@ $app->get('/admin/category_addedit', function() use ($app) {
 $app->get('/admin/category_addedit/:ID', function($ID) use ($app) {
     $record = DB::queryFirstRow('SELECT '
                     . 'en.name as name_en, '
-                    . 'fr.name as name_fr, '
+                    . 'fr.name as name_fr '
                     . 'FROM '
                     . '(SELECT '
                     . 'ID, '
                     . 'name '
                     . 'FROM productcategory '
                     . 'WHERE '
-                    . 'ID = %d, '
+                    . 'ID = %d AND '
                     . 'lang = "en") as en, '
                     . '(SELECT '
                     . 'ID, '
                     . 'name '
                     . 'FROM productcategory '
                     . 'WHERE '
-                    . 'ID = %d, '
+                    . 'ID = %d AND '
                     . 'lang = "fr") as fr '
                     . 'WHERE '
                     . 'en.ID = fr.ID', $ID, $ID);
@@ -418,10 +418,9 @@ $app->get('/admin/orders', function() use ($app, $log) {
                     . 'orderAmount, '
                     . 'deliveryDate,  '
                     . 'deliveryAmount '
-                    . 'FROM orders, deliveries  '
-                    . 'WHERE  orders.ID = orderID');
+                    . 'FROM orders LEFT OUTER JOIN deliveries ON orders.ID = deliveries.orderID');
 
-    //print_r($orderList);
+ // print_r($orderList);
 
     $app->render('viewOrders.html.twig', array('orderList' => $orderList));
 });

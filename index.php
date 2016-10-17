@@ -28,7 +28,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     DB::$dbName = 'ecommerce';
     DB::$user = 'root';
     DB::$password = '';
-    //DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+    DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 } else { // hosted on external server
     require_once 'fbauth.php';
     DB::$dbName = 'cp4724_fastfood-online';
@@ -100,25 +100,31 @@ if (!isset($_SESSION['facebook_access_token'])) {
   } else {
   setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
   } */
-
+/*
 $lang = 'en';
 if (!isset($_COOKIE['lang'])) {
     if (!isset($_GET['lang'])) {
         setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+        echo "6";
     } else {
         $lang = (string) $_GET['lang'];
         setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+        echo "5";
     }
 } else {
     if (isset($_GET['lang'])) {
         $lang = (string) $_GET['lang'];
         setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
+        echo "case 3 COOKIE". $_COOKIE['lang'];
+        echo "case 2 lang". $lang;
     } else {
+        echo "case 4". $_COOKIE['lang'];
         $lang = $_COOKIE['lang'];
+        echo " case 4 lang". $lang;
     }
 }
+*/
 
-/*
   if (!isset($_GET['lang'])) {
   if (isset($_COOKIE['lang'])) {
   $lang = $_COOKIE['lang'];
@@ -132,7 +138,7 @@ if (!isset($_COOKIE['lang'])) {
   } else {
   setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
   }
-  } */
+  } 
 // First param is the "default language" to use.
 $translator = new Translator($lang, new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
@@ -168,7 +174,7 @@ $twig->addGlobal('user', $_SESSION['user']);
 $app->get('/', function() use ($app, $log, $lang) {
     //if a fb user than check id does already have a record in the users table, 
     if ($_SESSION['facebook_access_token']) {
-        $userID = DB::queryFirstField('SELECT fbID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);
+        $userID = DB::queryFirstField('SELECT ID from users WHERE fbID = %s', $_SESSION['facebook_access_token']['ID']);
         if (!$userID) {
             $result = DB::insert('users', array(
                         'fbID' => $_SESSION['facebook_access_token']['ID'],
@@ -196,15 +202,13 @@ $app->get('/', function() use ($app, $log, $lang) {
 
 //Ajax -> refresh products by filter
 $app->get('/category/:categoryID/:isVeget/page/:pageNum', function($categoryID, $isVeget, $pageNum) use ($app, $lang) {
-    echo $lang;
-
-    $start = ((int) $pageNum - 1) * PRODUCTSPERPAGE;
+    $start = (( int) $pageNum - 1) * PRODUCTSPERPAGE;
     $isVegetSql = ($isVeget == 1) ? 'AND isVegetarian = 1' : '';
     $prodList = DB::query('SELECT products.ID, name, description, price, picture, products_i18n.slugname '
                     . 'FROM products, products_i18n '
                     . 'WHERE products.ID = products_i18n.productID AND '
                     . 'lang=%s' . $isVegetSql . ' AND productCategoryID = %d ORDER BY products.ID DESC LIMIT %d, %d'
-                    , $lang, $categoryID, $start, PRODUCTSPERPAGE * MAXPAGES);
+                    , $_COOKIE['lang'], $categoryID, $start, PRODUCTSPERPAGE * MAXPAGES);
     $availableRecords = DB::count();
     $maxPages = round($availableRecords / PRODUCTSPERPAGE);
     $pageProductList = array();

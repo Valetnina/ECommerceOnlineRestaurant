@@ -103,7 +103,7 @@ $app->get('/deliveryAddress', function() use ($app, $log) {
             'firstName' => $_SESSION['facebook_access_token']['firstName'],
             'lastName' => $_SESSION['facebook_access_token']['lastName'],
             'email' => $_SESSION['facebook_access_token']['email'],
-            'city' => $_SESSION['facebook_access_token']['location'],
+           // 'city' => $_SESSION['facebook_access_token']['location'],
         );
         $app->render('shippingaddress.html.twig', array(
             'v' => $shippingAddress,
