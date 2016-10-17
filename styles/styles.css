@@ -500,3 +500,20 @@ tbOrders{
 .thumbstyle{
    border: 1px solid #b3ccff;
 }
+#productTable {
+    background-image: url("/images/swirl.gif");
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+#index-products {
+    background-image: url("/images/swirl.gif");
+    background-repeat: no-repeat;
+    background-position:center center;
+}
+#cartContainer {
+    background-image: url("/images/swirl.gif");
+    background-repeat: no-repeat;
+    background-position:center center;
+    min-width: 600px;
+    min-height: 600px;
+}

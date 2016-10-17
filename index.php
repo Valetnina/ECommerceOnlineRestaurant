@@ -3,6 +3,11 @@
 require_once 'vendor/autoload.php';
 session_start();
 
+//Prevent browser caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 //Internationlization
@@ -28,7 +33,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     DB::$dbName = 'ecommerce';
     DB::$user = 'root';
     DB::$password = '';
-    DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
+   // DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
 } else { // hosted on external server
     require_once 'fbauth.php';
     DB::$dbName = 'cp4724_fastfood-online';
@@ -83,68 +88,26 @@ if (!isset($_SESSION['facebook_access_token'])) {
     $_SESSION['facebook_access_token'] = array();
 }
 
+function getLang() {
+    $lang = 'en';
+    if (!isset($_GET['lang'])) {
+        if (isset($_COOKIE['lang'])) {
+            $lang = $_COOKIE['lang'];
+        } else {
+            setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+        }
+    } else {
+        $lang = (string) $_GET['lang'];
+        if ($lang == 'en' || $lang == 'fr') {
+            setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
+        } else {
+            setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
+            $lang = 'en';
+        }
+    }
+    return $lang;
+}
 
-/*
-  $lang = 'en';
-  if (isset($_GET['lang'])) {
-  // verify get[lang] is a valid language, otherwise igrnore it
-  if (in_array($_GET['lang'], array('en', 'fr'))) {
-  setcookie('lang', $_GET['lang'], time() + (10 * 365 * 24 * 60 * 60));
-  $lang = $_GET['lang'];
-  } else {
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  }
-  } elseif (isset($_COOKIE['lang'])) {
-  $lang = $_COOKIE['lang'];
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  } else {
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  } */
-/*
-  $lang = 'en';
-  if (!isset($_COOKIE['lang'])) {
-  if (!isset($_GET['lang'])) {
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  echo "6";
-  } else {
-  $lang = (string) $_GET['lang'];
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  echo "5";
-  }
-  } else {
-  if (isset($_GET['lang'])) {
-  $lang = (string) $_GET['lang'];
-  setcookie('lang', $lang, time() + (10 * 365 * 24 * 60 * 60));
-  echo "case 3 COOKIE". $_COOKIE['lang'];
-  echo "case 2 lang". $lang;
-  } else {
-  echo "case 4". $_COOKIE['lang'];
-  $lang = $_COOKIE['lang'];
-  echo " case 4 lang". $lang;
-  }
-  }
- */
-function getLang(){
-$lang = 'en';
-if (!isset($_GET['lang'])) {
-    if (isset($_COOKIE['lang'])) {
-        $lang = $_COOKIE['lang'];
-        
-    } else {
-        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-    }
-} else {
-    $lang = (string) $_GET['lang'];
-    if ($lang == 'en' || $lang == 'fr') {
-        setcookie('lang', $lang, time() + 60 * 60 * 24 * 30);
-    } else {
-        setcookie('lang', "en", time() + 60 * 60 * 24 * 30);
-        $lang='en';
-    }
-}
-return $lang;
-}
- //setcookie('lang', "en", time() + (10 * 365 * 24 * 60 * 60));
 // First param is the "default language" to use.
 $translator = new Translator(getLang(), new MessageSelector());
 // Set a fallback language incase you don't have a translation in the default language
@@ -200,7 +163,6 @@ $app->get('/', function() use ($app, $log) {
         }
     }
     $categoryList = DB::query('SELECT * FROM productcategory WHERE lang=%s', getLang());
-    //  echo "you are logged ing as:".$fbUser;
 
     $app->render('index.html.twig', array(
         'categoryList' => $categoryList));

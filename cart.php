@@ -4,13 +4,10 @@ define("PREPARATIONTIME", 15 * 60);
 //Handling of the cart page
 //get and port /cart
 $app->post('/cart', function() use ($app, $log) {
-//FIXME: ask if it's an overkill
 //Check if there is an attempt to see the  cart if not logged in
     if (!$_SESSION['user'] || !$_SESSION['facebook_access_token']) {
         $log->debug('Attempt to see the cart contents for un unauthorized user from the IP: ' . $_SERVER['REMOTE_ADDR']);
     }
-
-// handle incoming post, if there is one
 // either add item to cart or change its quantity
     $productID = $app->request()->post('productID');
     $quantity = $app->request()->post('quantity');
@@ -58,8 +55,6 @@ $app->get('/cart', function() use ($app) {
         'cartTotalToPay' => number_format($cartTotalToPay, 2)
     ));
 });
-
-
 
 // RESTful update cart when quantity changed
 $app->put('/cart/update/:ID', function($ID) use ($app) {
@@ -130,9 +125,6 @@ $app->get('/deliveryAddress', function() use ($app, $log) {
     }
 });
 
-function idAddessValid() {
-    
-}
 
 $app->post('/deliveryAddress', function() use ($app, $log) {
     $firstName = $app->request->post('firstName');
@@ -266,7 +258,7 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
             );
 //GET cartItems
             $cartItems = DB::query("SELECT products.ID as productID, name, price, quantity FROM cartitems, products, products_i18n "
-                    . "WHERE products.ID = cartitems.productID AND products.ID = products_i18n.productID AND sessionID=%s and lang=%s", session_id(), $lang);
+                    . "WHERE products.ID = cartitems.productID AND products.ID = products_i18n.productID AND sessionID=%s and lang=%s", session_id(), getLang());
             foreach ($cartItems as &$item) {
                 $item['total'] = ($item['quantity'] * $item['price']);
                 $item['tax'] = ($item['quantity'] * $item['price']) * TAX;
@@ -308,7 +300,6 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                 $log->debug("Inserted order no " . $orderID);
                 //Send Confirmation email
                 $to = $email;
-                print_r($cartItems);
                 //Details for sending E-mail
                 $from = "FastFood Online";
                 $url = "http://fastfood-online.ipd8.info/resetPassword/$token";
@@ -321,12 +312,13 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                     'totalWithShippingAndTaxes' => number_format(($totalBeforeTax + $taxes), 2),
                 ));
                 $from = "sales@fastfood-online.ipd8.info";
-                $subject = "Fastfood-online reset password request";
+                $subject = "Fastfood-online Order Details";
                 $headers = "From: $from\n";
                 $headers .= "Content-type: text/html;charset=utf-8\r\n";
                 $headers .= "X-Priority: 1\r\n";
                 $headers .= "X-MSMail-Priority: High\r\n";
                 $headers .= "X-Mailer: Just My Server\r\n";
+                 try {
                 $sentmail = mail($to, $subject, $body, $headers);
                 $app->render('order_submitted.html.twig', array(
                     'shippingAddress' => $valueList,
@@ -338,6 +330,9 @@ $app->post('/deliveryAddress', function() use ($app, $log) {
                     'deliveryTime' => gmdate("H:i", $delivery['time'])
 
                 ));
+                } catch (Exception $ex) {
+            $app->render('email_status.html.twig', array('failed' => TRUE));
+        }
             } catch (MeekroDBException $e) {
                 DB::rollback();
                 sql_error_handler(array(

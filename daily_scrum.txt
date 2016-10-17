@@ -76,30 +76,19 @@ Day08
 TODo: Order Submition finish
 
        Olga
+1.Done: started working on admin/addedditcategory, admin/pendingorders
+3.Finish admin part of the site
 
 
 
 Day09
         Tina
-1:Done: Finished oder submition
+1:Done: Finished oder submition.
 TODo: Make locations work, detect delivery time finisih the design problms, fix the DB transactions and error handling, email when order submitted 
-       Olga
-
-email vm!0%.&7i{K;
-
-tHings to fix:
--validate html
--language sometimes you have to click two times to have it changed
--send order by email- try catch
-
--put conditions in index php for parameters, is veget, pagenum
-to fix:
--index page when french name of the product overlaps with the price
--cart doesn't work
--product: do not display in french inner, and if change language doesn't appear either
--make cart work for the homepage
--Remove previous markers
--make sure login with facebook is visible in browsers with ad blocks
+       
+ Olga
+1.Done: continued working on admin/addedditcategory, admin/pendingorders, product add_edit fix problems
+3.Finish admin part of the site. Do the presentation
 
 
 

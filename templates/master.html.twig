@@ -29,7 +29,7 @@
     </head>
     <body>
         <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" background-color="#025274" >
+        <nav class="navbar navbar-inverse navbar-fixed-top" >
             <div class="container">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header" >
@@ -39,7 +39,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/"><img src="/images/Logo_Big.png" id="logo"></a>
+                    <a class="navbar-brand" href="/"><img src="/images/Logo_Big.png" id="logo" alt='LOGO'></a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -62,8 +62,8 @@
                         </li>
                         {% endif %}
                     </ul>
-                    <a href="/?lang=en"><img src="/images/eng.png" class="flag flag-fr" id="lang-fr"></a> 
-                    <a href="/?lang=fr"><img src="/images/french.png" class="flag flag-en" id="lang-en"></a> 
+                    <a href="/?lang=en"><img src="/images/eng.png" class="flag flag-fr" id="lang-fr" alt='EN'></a> 
+                    <a href="/?lang=fr"><img src="/images/french.png" class="flag flag-en" id="lang-en" alt='FR'></a> 
                     <span style="color:#9d9d9d; font-size: 20px;">   
                         <!--<a href="?lang=en">English</a>
                         <a href="?lang=fr">Français</a>-->
@@ -71,10 +71,10 @@
                     <ul class="nav navbar-nav log-register fontsize">
                         {% if fbUser %}
                             <li>
-                                <img src="//graph.facebook.com/{{fbUser.ID}}/picture" ><span style="color:#9d9d9d;">{{fbUser.firstName}}</span>
+                                <img src="//graph.facebook.com/{{fbUser.ID}}/picture"  alt='Facebook Login'><span style="color:#9d9d9d;">{{fbUser.firstName}}</span>
                             </li>
                             <li>
-                                <a href="/cart"><img src="/images/cart.png" class="cart"></a>
+                                <a href="/cart"><img src="/images/cart.png" class="cart" alt='cart'></a>
                             </li>
 
                             <li><a href="/logout">{{"Logout"|trans}}</a></li>
@@ -103,7 +103,7 @@
             </div>
             <!-- /.container -->
         </nav>
-        <div id="containercenterContent ">
+        <div id="containercenterContent">
             <div id="container">{% block content %}{% endblock %}</div>
 
             <div class="container">
