@@ -206,7 +206,7 @@ label {
     width: 500px;
     float: right;
     margin-top: -560px;
-    margin-right: 250px;
+    margin-right: 350px;
 }
 #containerForm label{
     /*border: 1px solid white;*/
@@ -482,7 +482,7 @@ input[type='checkbox']:checked {
     margin:auto;
 }
 #content_viewOrders{
-    width: 1150px;
+    width: 1000px;
     height: 600px;
     border: 1px solid blue;
     margin: auto;

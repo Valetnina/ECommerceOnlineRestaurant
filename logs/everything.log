@@ -296,3 +296,8 @@
 [2016-10-17 23:33:43] main.ERROR:  in query: SELECT *, ( 3959 * acos( cos( radians('45.4329436') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('-73.6708773') ) + sin( radians('45.4329436') ) * sin( radians( lat ) ) ) ) AS distance FROM stores HAVING distance < 20 ORDER BY distance LIMIT 0 , 1 [] []
 [2016-10-17 23:35:19] main.ERROR: SQL error: Unknown column 'email' in 'field list' [] []
 [2016-10-17 23:35:19] main.ERROR:  in query: INSERT INTO `orders` (`orderDate`,`storeID`,`customerID`,`contactFirstName`,`contactLastName`,`email`,`deliveryAddress`,`deliveryStreet`,`deliveryCity`,`deliveryCountry`,`deliveryPostalCode`,`contactPhone`,`orderAmount`,`tax`) VALUES (NOW(), '15039', '4', 'Iurie', 'Migalatii', 'migalatii@gmail.com', '52, 8th Avenue', '52, 8th Avenue', 'Lachine', 'Canada', 'H8S3A7', '4389855642', '3.8', 0.57) [] []
+[2016-10-18 00:17:10] main.DEBUG: User 12 logged in successfuly from IP ::1 [] []
+[2016-10-18 00:17:34] main.DEBUG: Invalid delivery amount. Failed post. [] []
+[2016-10-18 00:17:46] main.DEBUG: Invalid delivery amount. Failed post. [] []
+[2016-10-18 00:20:10] main.DEBUG: Invalid delivery amount. Failed post. [] []
+[2016-10-18 00:20:24] main.DEBUG: Invalid delivery Date. Failed post. [] []

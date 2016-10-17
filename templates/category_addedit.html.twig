@@ -2,7 +2,7 @@
 
 
 {% block title %} Page add/edit product{% endblock %}
-{% block head %}{% endblock %}
+{% block head %}<script src="/js/category_script.js"></script>{% endblock %}
 
 {% block content %}
     {% if user.role == 'admin' %}
@@ -31,6 +31,6 @@
         </div>
     </div>
 
-    <script src="/js/category_script.js"></script>
+    
     {% endif %}
 {% endblock %}
