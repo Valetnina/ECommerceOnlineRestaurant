@@ -34,12 +34,12 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     DB::$user = 'root';
     DB::$password = '';
    // DB::$host = 'localhost:3333'; // sometimes needed on Mac OSX
-} else { // hosted on external server
+} /*else { // hosted on external server
     require_once 'fbauth.php';
     DB::$dbName = 'cp4724_fastfood-online';
     DB::$user = 'cp4724_fastfood';
     DB::$password = '[^)EJ;Fw%402';
-}
+}*/
 
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'sql_error_handler';
